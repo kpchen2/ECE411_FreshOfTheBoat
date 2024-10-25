@@ -66,7 +66,7 @@ module lru_array #(
     end
 
     always_comb begin
-        dout0 = internal_array[addr0_reg];
+        dout0 = (~web1_reg && addr0_reg == addr1_reg) ? din1_reg : internal_array[addr0_reg];
         dout1 = internal_array[addr1_reg];
     end
 
