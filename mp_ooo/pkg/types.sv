@@ -4,6 +4,8 @@
 
 package rv32i_types;
 
+    parameter DATA_WIDTH = 32; 
+    parameter QUEUE_DEPTH = 64;
     typedef struct packed
     {
         logic           monitor_valid;

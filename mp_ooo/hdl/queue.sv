@@ -1,6 +1,6 @@
-module queue #(parameter DATA_WIDTH, 
-                parameter QUEUE_DEPTH
-                ) 
+module queue
+import rv32i_types::*;
+
 (
 
     input logic clk, // do we need this? Might be needed to latch on to the tail
@@ -27,6 +27,10 @@ logic [DATA_WIDTH:0] mem_next; // where to insert
 logic full; //wires, used in sequential logic and in returning output signals
 logic empty; //wires, used in sequential logic and in returning output signals
 
+logic enqueue_reg;
+logic dequeue_reg;
+
+
 
 assign full_out = full;
 assign empty_out = empty;
@@ -34,10 +38,14 @@ assign empty_out = empty;
 
 always_ff @ (posedge clk)
 begin
+    enqueue_reg <= enqueue_in;
+    dequeue_reg <= dequeue_in;
     if (rst)
     begin
         tail_reg <= '0;
         head_reg <= '0;
+        dequeue_reg <= '0;
+        enqueue_reg <= '0;
         for (int i = 0; i < QUEUE_DEPTH; i++)
         begin
             mem[i] <= '0;
@@ -45,11 +53,11 @@ begin
     end
     else begin
 
-        if (enqueue_in)
+        if (enqueue_reg)
         begin
             mem[tail_reg] <= mem_next;
         end
-        else if (dequeue_in)
+        else if (dequeue_reg)
         begin
             mem[head_reg] <= mem_next;
         end
@@ -58,7 +66,7 @@ begin
         head_reg <= head_next;
         
     end
-
+    
 
 
 end
@@ -85,8 +93,8 @@ begin
                 head_next[QUEUE_DEPTH] = head_reg[QUEUE_DEPTH]; // don't flip the overflow bit
             end
             mem_next = mem[head_reg ]; // get current data out of the queue 
-            mem_next[QUEUE_DEPTH] = 1'b0; // not valid anymore
-            rdata_out = mem_next[QUEUE_DEPTH - 1:0];
+            mem_next[DATA_WIDTH] = 1'b0; // not valid anymore
+            rdata_out = mem_next[DATA_WIDTH - 1:0];
         end
         else
         begin
