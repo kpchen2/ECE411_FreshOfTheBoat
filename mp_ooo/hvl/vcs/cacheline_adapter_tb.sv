@@ -73,6 +73,26 @@ module top_tb;
             bmem_rvalid = '1;
             repeat (1) @(posedge clk);
 
+            bmem_rdata = 'x;
+            bmem_rvalid = '0;
+            repeat (2) @(posedge clk);
+
+            bmem_rdata = 64'hCAFEBABE14159265;
+            bmem_rvalid = '1;
+            repeat (1) @(posedge clk);
+
+            bmem_rdata = 64'hDEADBEEF12345678;
+            bmem_rvalid = '1;
+            repeat (1) @(posedge clk);
+
+            bmem_rdata = 64'hFECEBECE87654321;
+            bmem_rvalid = '1;
+            repeat (1) @(posedge clk);
+
+            bmem_rdata = 64'hABCDABCD12341234;
+            bmem_rvalid = '1;
+            repeat (1) @(posedge clk);
+
             bmem_rdata = 64'hCAFEBABE14159265;
             bmem_rvalid = '1;
             repeat (1) @(posedge clk);
@@ -100,6 +120,22 @@ module top_tb;
             bmem_rdata = 'x;
             bmem_rvalid = '0;
             repeat (5) @(posedge clk);
+
+            bmem_rdata = 64'hCAFEBABE14159265;
+            bmem_rvalid = '1;
+            repeat (1) @(posedge clk);
+
+            bmem_rdata = 'x;
+            bmem_rvalid = '0;
+            repeat (1) @(posedge clk);
+
+            bmem_rdata = 64'hCAFEBABE14159265;
+            bmem_rvalid = '1;
+            repeat (1) @(posedge clk);
+
+            bmem_rdata = 'x;
+            bmem_rvalid = '0;
+            repeat (1) @(posedge clk);
 
             bmem_rdata = 64'hCAFEBABE14159265;
             bmem_rvalid = '1;
@@ -138,8 +174,8 @@ module top_tb;
     initial begin
         reset();
 
-        normal();
-        // inconsistent_rvalid();
+        // normal();
+        inconsistent_rvalid();
 
         repeat (10) @(posedge clk);
 
