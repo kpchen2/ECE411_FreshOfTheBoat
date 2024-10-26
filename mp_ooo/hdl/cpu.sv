@@ -1,5 +1,5 @@
 module cpu
-import rv32i_types::*;
+import types::*;
 (
     input   logic               clk,
     input   logic               rst,
@@ -15,6 +15,21 @@ import rv32i_types::*;
     input   logic               bmem_rvalid
 );
 
-endmodule : cpu
+    logic           cache_valid;
+    logic   [255:0] cache_wdata;
 
-//hi
+    always_ff @(posedge clk) begin
+        // stuff
+    end
+
+    // outputs cache_valid if cache_wdata is ready
+    cacheline_adapter cache_adapter_i (
+        .clk(clk),
+        .rst(rst),
+        .bmem_rdata(bmem_rdata),
+        .bmem_rvalid(bmem_rvalid),
+        .cache_wdata(cache_wdata),
+        .cache_valid(cache_valid)
+    );
+
+endmodule : cpu
