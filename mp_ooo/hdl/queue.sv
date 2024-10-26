@@ -44,8 +44,8 @@ begin
     begin
         tail_reg <= '0;
         head_reg <= '0;
-        dequeue_reg <= '0;
-        enqueue_reg <= '0;
+        // dequeue_reg <= '0;
+        // enqueue_reg <= '0;
         for (int i = 0; i < QUEUE_DEPTH; i++)
         begin
             mem[i] <= '0;
