@@ -14,5 +14,24 @@ import rv32i_types::*;
     input   logic   [63:0]      bmem_rdata,
     input   logic               bmem_rvalid
 );
+    logic [31:0] pc;
+
+    always_ff @(posedge clk) begin
+        if (rst) begin
+            pc <= 32'h1eceb000;
+        end else if (!bmem_ready) begin
+            pc <= pc;
+        end else begin
+            pc <= pc + 4;
+        end
+    end
+
+    fetch fetch_i (
+        .pc(pc),
+        .bmem_addr(bmem_addr),
+        .bmem_read(bmem_read),
+        .bmem_write(bmem_write),
+        .bmem_wdata(bmem_wdata)
+    );
 
 endmodule : cpu
