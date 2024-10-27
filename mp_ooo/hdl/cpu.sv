@@ -15,12 +15,42 @@ import types::*;
     input   logic               bmem_rvalid
 );
 
+    logic   [31:0]  ufp_addr,
+    logic   [3:0]   ufp_rmask,
+    logic   [3:0]   ufp_wmask,
+    logic   [31:0]  ufp_rdata,
+    logic   [31:0]  ufp_wdata,
+    logic           ufp_resp,
+    logic   [31:0]  dfp_addr,
+    logic           dfp_read,
+    logic           dfp_write,
+    logic   [255:0] dfp_rdata,
+    logic   [255:0] dfp_wdata,
+    logic           dfp_resp
+
     logic           cache_valid;
     logic   [255:0] cache_wdata;
 
     always_ff @(posedge clk) begin
         // stuff
     end
+
+    cache cache_i (
+        .clk(clk),
+        .rst(rst),
+        .ufp_addr(),
+        .ufp_rmask(),
+        .ufp_wmask(),
+        .ufp_rdata(),
+        .ufp_wdata(),
+        .ufp_resp(),
+        .dfp_addr(),
+        .dfp_read(),
+        .dfp_write(),
+        .dfp_rdata(),
+        .dfp_wdata(),
+        .dfp_resp()
+    );
 
     // outputs cache_valid if cache_wdata is ready
     cacheline_adapter cache_adapter_i (
