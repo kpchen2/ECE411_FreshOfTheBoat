@@ -30,11 +30,15 @@ import rv32i_types::*;
     logic   [255:0] dfp_wdata;
     logic           dfp_resp;
 
+    // queue variables
+    logic [31:0] wdata_in;
+    logic enqueue_in;
+
+    logic full_out;
+
     always_ff @(posedge clk) begin
         if (rst) begin
             pc <= 32'h1eceb000;
-        end else if (!bmem_ready) begin
-            pc <= pc;
         end else begin
             pc <= pc + 4;
         end
