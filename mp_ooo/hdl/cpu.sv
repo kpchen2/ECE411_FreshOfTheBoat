@@ -15,7 +15,7 @@ import rv32i_types::*;
     input   logic               bmem_rvalid
 );
 
-    logic   [31:0]  pc;
+    logic   [31:0]  pc, pc_next;
 
     logic           cache_valid;
     logic   [255:0] cache_wdata;
@@ -35,42 +35,76 @@ import rv32i_types::*;
     logic   [255:0] dfp_wdata;
     logic           dfp_resp;
 
-    assign ufp_addr = pc;
-    assign ufp_rmask = '1;
-    assign ufp_wmask = '0;
-    assign ufp_wdata = '0;
+    logic           initial_flag, initial_flag_reg;     // for initial read AND full_stall reads
+    logic           full_stall;
+
+    // assign ufp_addr = pc;
+    // assign ufp_rmask = '1;
+    // assign ufp_wmask = '0;
+    // assign ufp_wdata = '0;
 
     always_ff @(posedge clk) begin
         if (rst) begin
             pc <= 32'h1eceb000;
-        end else if (!bmem_ready) begin
-            pc <= pc;
+            initial_flag_reg <= '1;
+
         end else begin
-            pc <= pc + 4;
+            pc <= pc_next;
+            initial_flag_reg <= initial_flag;
         end
     end
 
-    fetch fetch_i (
-        .*
-    );
+    always_comb begin
+        if (rst) begin
+            pc_next = pc;
+            initial_flag = '1;
+            ufp_rmask = '0;
+
+        end else begin
+            if ((initial_flag_reg || ufp_resp) && !full_stall) begin
+                pc_next = pc + 4;
+                initial_flag = '0;
+                ufp_rmask = '1;
+
+            end else begin
+                if (full_stall) begin
+                    pc_next = pc;
+                    initial_flag = '1;
+                    ufp_rmask = '0;
+                end else begin
+                    pc_next = pc;
+                    initial_flag = '0;
+                    ufp_rmask = '0;
+                end
+            end
+        end
+    end
+
+    // fetch fetch_i (
+    //     .pc(pc),
+    //     .bmem_addr(bmem_addr),
+    //     .bmem_read(bmem_read),
+    //     .bmem_write(bmem_write),
+    //     .bmem_wdata(bmem_wdata)
+    // );
 
     cache cache_i (
         .clk(clk),
         .rst(rst),
 
-        .ufp_addr(ufp_addr),
+        .ufp_addr(pc),
         .ufp_rmask(ufp_rmask),
-        .ufp_wmask(ufp_wmask),
+        .ufp_wmask('0),             // FILL WHEN WE WANT TO WRITE
         .ufp_rdata(ufp_rdata),
-        .ufp_wdata(ufp_wdata),
+        .ufp_wdata('0),             // FILL WHEN WE WANT TO WRITE
         .ufp_resp(ufp_resp),
 
-        .dfp_addr(dfp_addr),
-        .dfp_read(dfp_read),
-        .dfp_write(dfp_write),
-        .dfp_rdata(dfp_rdata),
-        .dfp_wdata(dfp_wdata),
-        .dfp_resp(dfp_resp)
+        .dfp_addr(bmem_addr),
+        .dfp_read(bmem_read),
+        .dfp_write(bmem_write),
+        .dfp_rdata(cache_wdata),
+        .dfp_wdata('0),             // FILL WHEN WE WANT TO WRITE
+        .dfp_resp(cache_valid)
     );
 
     // outputs cache_valid if cache_wdata is ready
@@ -81,6 +115,17 @@ import rv32i_types::*;
         .bmem_rvalid(bmem_rvalid),
         .cache_wdata(cache_wdata),
         .cache_valid(cache_valid)
+    );
+
+    queue queue_i (
+        .clk(clk),
+        .rst(rst),
+        .wdata_in(ufp_rdata),
+        .enqueue_in(ufp_resp),
+        .rdata_out(),
+        .dequeue_in(),
+        .full_out(full_stall),
+        .empty_out()
     );
 
 endmodule : cpu
