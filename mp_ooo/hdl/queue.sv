@@ -80,6 +80,7 @@ begin
     head_next = head_reg; // default
     rdata_out = 'x;
     operand = '0;
+    mem_next = '0;
     if (dequeue_in)
     begin
         if (~empty) // not empty, can take one off // worry about the valid bit
