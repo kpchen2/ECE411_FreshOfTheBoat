@@ -1,4 +1,4 @@
-package types;
+package rv32i_types;
 
     typedef struct packed {
         logic   [31:0]  addr;
@@ -10,12 +10,6 @@ package types;
         logic   [3:0]   wmask;
         logic   [31:0]  wdata;
     } stage_reg_t;
-
-endpackage/////////////////////////////////////////////////////////////
-// Maybe merge what is in mp_verif/pkg/types.sv over here? //
-/////////////////////////////////////////////////////////////
-
-package rv32i_types;
 
     parameter DATA_WIDTH = 32; 
     parameter QUEUE_DEPTH = 64;

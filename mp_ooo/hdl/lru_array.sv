@@ -1,5 +1,5 @@
 module lru_array
-import types::*;
+import rv32i_types::*;
 #(
     parameter               S_INDEX     = 4,
     parameter               WIDTH       = 3

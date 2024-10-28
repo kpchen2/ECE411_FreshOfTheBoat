@@ -1,5 +1,5 @@
 module stage_2
-import types::*;
+import rv32i_types::*;
 (
     input   logic           rst,
     input   stage_reg_t     stage_reg,
