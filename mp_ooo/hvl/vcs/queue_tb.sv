@@ -52,7 +52,7 @@ queue dut(
 );
 
 
-task queue_test1( input logic [DATA_WIDTH - 1:0] write_data1, input logic enqueue, input logic dequeue);
+task standard_task( input logic [DATA_WIDTH - 1:0] write_data1, input logic enqueue, input logic dequeue);
     begin
         wdata_in = write_data1;
         enqueue_in = enqueue;
@@ -64,118 +64,227 @@ task queue_test1( input logic [DATA_WIDTH - 1:0] write_data1, input logic enqueu
     end
 endtask
 
-// task queue_test2(input logic enqueue, input logic dequeue);
-//     begin
-//         wdata_in = write_data1;
-//         enqueue_in = enqueue;
-//         dequeue_in = dequeue;
-//         @ (posedge clk);
-//         wdata_in = 'x;
-//         enqueue_in = 1'b0;
-//         dequeue_in = 1'b0;
-//     end
-// endtask
+task queue_test1;
+    begin
+        standard_task( 32'hcafebabe, 1'b1,  1'b0);
+        standard_task( 32'hecebcafe, 1'b1,  1'b0);
+        standard_task( 32'hbabebeef, 1'b1,  1'b0);
+    end
+endtask
+
+task queue_test_overflow;
+    begin
+    standard_task( 32'hcafeface, 1'b1,  1'b0);
+    standard_task( 32'hcafebabe, 1'b1,  1'b0);
+    standard_task( 32'hecebcafe, 1'b1,  1'b0);
+    standard_task( 32'hbabebeef, 1'b1,  1'b0);
+    standard_task( 32'hcafeface, 1'b1,  1'b0);
+    standard_task( 32'hcafebabe, 1'b1,  1'b0);
+    standard_task( 32'hecebcafe, 1'b1,  1'b0);
+    standard_task( 32'hbabebeef, 1'b1,  1'b0);
+    standard_task( 32'hcafeface, 1'b1,  1'b0);
+    standard_task( 32'hcafebabe, 1'b1,  1'b0);
+    standard_task( 32'hecebcafe, 1'b1,  1'b0);
+    standard_task( 32'hbabebeef, 1'b1,  1'b0);
+    standard_task( 32'hcafeface, 1'b1,  1'b0);
+    standard_task( 32'hcafebabe, 1'b1,  1'b0);
+    standard_task( 32'hecebcafe, 1'b1,  1'b0);
+    standard_task( 32'hbabebeef, 1'b1,  1'b0);
+    standard_task( 32'hcafeface, 1'b1,  1'b0);
+    standard_task( 32'hcafebabe, 1'b1,  1'b0);
+    standard_task( 32'hecebcafe, 1'b1,  1'b0);
+    standard_task( 32'hbabebeef, 1'b1,  1'b0);
+    standard_task( 32'hcafeface, 1'b1,  1'b0);
+    standard_task( 32'hcafebabe, 1'b1,  1'b0);
+    standard_task( 32'hecebcafe, 1'b1,  1'b0);
+    standard_task( 32'hbabebeef, 1'b1,  1'b0);
+    standard_task( 32'hcafeface, 1'b1,  1'b0);
+    standard_task( 32'hcafebabe, 1'b1,  1'b0);
+    standard_task( 32'hecebcafe, 1'b1,  1'b0);
+    standard_task( 32'hbabebeef, 1'b1,  1'b0);
+    standard_task( 32'hcafeface, 1'b1,  1'b0);
+    standard_task( 32'hcafebabe, 1'b1,  1'b0);
+    standard_task( 32'hecebcafe, 1'b1,  1'b0);
+    standard_task( 32'hbabebeef, 1'b1,  1'b0);
+    standard_task( 32'hcafeface, 1'b1,  1'b0);
+    standard_task( 32'hcafebabe, 1'b1,  1'b0);
+    standard_task( 32'hecebcafe, 1'b1,  1'b0);
+    standard_task( 32'hbabebeef, 1'b1,  1'b0);
+    standard_task( 32'hcafeface, 1'b1,  1'b0);
+    standard_task( 32'hcafebabe, 1'b1,  1'b0);
+    standard_task( 32'hecebcafe, 1'b1,  1'b0);
+    standard_task( 32'hbabebeef, 1'b1,  1'b0);
+    standard_task( 32'hcafeface, 1'b1,  1'b0);
+    standard_task( 32'hcafebabe, 1'b1,  1'b0);
+    standard_task( 32'hcafebabe, 1'b1,  1'b0);
+    standard_task( 32'hecebcafe, 1'b1,  1'b0);
+    standard_task( 32'hbabebeef, 1'b1,  1'b0);
+    standard_task( 32'hcafeface, 1'b1,  1'b0);
+    standard_task( 32'hcafebabe, 1'b1,  1'b0);
+    standard_task( 32'hecebcafe, 1'b1,  1'b0);
+    standard_task( 32'hbabebeef, 1'b1,  1'b0);
+    standard_task( 32'hcafeface, 1'b1,  1'b0);
+    standard_task( 32'hcafebabe, 1'b1,  1'b0);
+    standard_task( 32'hecebcafe, 1'b1,  1'b0);
+    standard_task( 32'hbabebeef, 1'b1,  1'b0);
+    standard_task( 32'hcafeface, 1'b1,  1'b0);
+    standard_task( 32'hecebcafe, 1'b1,  1'b0);
+    standard_task( 32'hbabebeef, 1'b1,  1'b0);
+    standard_task( 32'hcafeface, 1'b1,  1'b0);
+    standard_task( 32'hcafebabe, 1'b1,  1'b0);
+    standard_task( 32'hecebcafe, 1'b1,  1'b0);
+    standard_task( 32'hbabebeef, 1'b1,  1'b0);
+    standard_task( 32'hcafeface, 1'b1,  1'b0);
+    standard_task( 32'hcafebabe, 1'b1,  1'b0);
+    standard_task( 32'hecebcafe, 1'b1,  1'b0);
+    standard_task( 32'hbabebeef, 1'b1,  1'b0);
+    standard_task( 32'hcafeface, 1'b1,  1'b0);
+    standard_task( 32'hcafebabe, 1'b1,  1'b0);
+    standard_task( 32'hecebcafe, 1'b1,  1'b0);
+    standard_task( 32'hbabebeef, 1'b1,  1'b0);
+    end
+endtask
+
+task queue_test_overflow_then_dequeue;
+    begin
+        queue_test_overflow;
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+    end
+endtask
+
+
+task queue_test_underflow;
+    begin
+        standard_task( 32'hecebcafe, 1'b1,  1'b0);
+        standard_task( 32'hbabebeef, 1'b1,  1'b0);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+    end
+endtask
+
+task queue_test_underflow_many_times;
+    begin
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+        standard_task('x, 1'b0,1'b1);
+    end
+endtask
+
+task queue_test_underflow_then_enqueue;
+    begin
+        queue_test_underflow;
+        standard_task( 32'hecebcafe, 1'b1,  1'b0);
+        standard_task( 32'hbabebeef, 1'b1,  1'b0);
+        standard_task( 32'hecebcafe, 1'b1,  1'b0);
+        standard_task( 32'hbabebeef, 1'b1,  1'b0);
+    end
+endtask
+
+task queue_test_overflow_then_underflow;
+    begin
+            queue_test_overflow;
+            queue_test_underflow_many_times;
+            queue_test1;
+            standard_task( 32'hbabebeef, 1'b0,  1'b1);
+            standard_task( 32'hbabebeef, 1'b0,  1'b1);
+            standard_task( 32'hbabebeef, 1'b0,  1'b1);
+            standard_task( 32'hbabebeef, 1'b0,  1'b1);
+            standard_task( 32'hbabebeef, 1'b0,  1'b1);
+            standard_task( 32'hbabebeef, 1'b0,  1'b1);
+
+    end
+
+endtask;
+
+task queue_test_underflow_then_overflow;
+    
+    begin
+        queue_test_underflow;
+        queue_test_overflow;
+    end
+
+endtask
 
 initial
 begin
-
     generate_reset;
-    queue_test1( 32'hcafebabe, 1'b1,  1'b0);
-    queue_test1( 32'hecebcafe, 1'b1,  1'b0);
-    queue_test1( 32'hbabebeef, 1'b1,  1'b0);
-    // queue_test1( 32'hcafeface, 1'b1,  1'b0);
-    // queue_test1( 32'hcafebabe, 1'b1,  1'b0);
-    // queue_test1( 32'hecebcafe, 1'b1,  1'b0);
-    // queue_test1( 32'hbabebeef, 1'b1,  1'b0);
-    // queue_test1( 32'hcafeface, 1'b1,  1'b0);
-    // queue_test1( 32'hcafebabe, 1'b1,  1'b0);
-    // queue_test1( 32'hecebcafe, 1'b1,  1'b0);
-    // queue_test1( 32'hbabebeef, 1'b1,  1'b0);
-    // queue_test1( 32'hcafeface, 1'b1,  1'b0);
-    // queue_test1( 32'hcafebabe, 1'b1,  1'b0);
-    // queue_test1( 32'hecebcafe, 1'b1,  1'b0);
-    // queue_test1( 32'hbabebeef, 1'b1,  1'b0);
-    // queue_test1( 32'hcafeface, 1'b1,  1'b0);
-    // queue_test1( 32'hcafebabe, 1'b1,  1'b0);
-    // queue_test1( 32'hecebcafe, 1'b1,  1'b0);
-    // queue_test1( 32'hbabebeef, 1'b1,  1'b0);
-    // queue_test1( 32'hcafeface, 1'b1,  1'b0);
-    // queue_test1( 32'hcafebabe, 1'b1,  1'b0);
-    // queue_test1( 32'hecebcafe, 1'b1,  1'b0);
-    // queue_test1( 32'hbabebeef, 1'b1,  1'b0);
-    // queue_test1( 32'hcafeface, 1'b1,  1'b0);
-    // queue_test1( 32'hcafebabe, 1'b1,  1'b0);
-    // queue_test1( 32'hecebcafe, 1'b1,  1'b0);
-    // queue_test1( 32'hbabebeef, 1'b1,  1'b0);
-    // queue_test1( 32'hcafeface, 1'b1,  1'b0);
-    // queue_test1( 32'hcafebabe, 1'b1,  1'b0);
-    // queue_test1( 32'hecebcafe, 1'b1,  1'b0);
-    // queue_test1( 32'hbabebeef, 1'b1,  1'b0);
-    // queue_test1( 32'hcafeface, 1'b1,  1'b0);
-    // queue_test1( 32'hcafebabe, 1'b1,  1'b0);
-    // queue_test1( 32'hecebcafe, 1'b1,  1'b0);
-    // queue_test1( 32'hbabebeef, 1'b1,  1'b0);
-    // queue_test1( 32'hcafeface, 1'b1,  1'b0);
-    // queue_test1( 32'hcafebabe, 1'b1,  1'b0);
-    // queue_test1( 32'hecebcafe, 1'b1,  1'b0);
-    // queue_test1( 32'hbabebeef, 1'b1,  1'b0);
-    // queue_test1( 32'hcafeface, 1'b1,  1'b0);
-    // queue_test1( 32'hcafebabe, 1'b1,  1'b0);
-    // queue_test1( 32'hecebcafe, 1'b1,  1'b0);
-    // queue_test1( 32'hbabebeef, 1'b1,  1'b0);
-    // queue_test1( 32'hcafeface, 1'b1,  1'b0);
-    // queue_test1( 32'hcafebabe, 1'b1,  1'b0);
-    // queue_test1( 32'hcafebabe, 1'b1,  1'b0);
-    // queue_test1( 32'hecebcafe, 1'b1,  1'b0);
-    // queue_test1( 32'hbabebeef, 1'b1,  1'b0);
-    // queue_test1( 32'hcafeface, 1'b1,  1'b0);
-    // queue_test1( 32'hcafebabe, 1'b1,  1'b0);
-    // queue_test1( 32'hecebcafe, 1'b1,  1'b0);
-    // queue_test1( 32'hbabebeef, 1'b1,  1'b0);
-    // queue_test1( 32'hcafeface, 1'b1,  1'b0);
-    // queue_test1( 32'hcafebabe, 1'b1,  1'b0);
-    // queue_test1( 32'hecebcafe, 1'b1,  1'b0);
-    // queue_test1( 32'hbabebeef, 1'b1,  1'b0);
-    // queue_test1( 32'hcafeface, 1'b1,  1'b0);
-    // queue_test1( 32'hecebcafe, 1'b1,  1'b0);
-    // queue_test1( 32'hbabebeef, 1'b1,  1'b0);
-    // queue_test1( 32'hcafeface, 1'b1,  1'b0);
-    // queue_test1( 32'hcafebabe, 1'b1,  1'b0);
-    // queue_test1( 32'hecebcafe, 1'b1,  1'b0);
-    // queue_test1( 32'hbabebeef, 1'b1,  1'b0);
-    // queue_test1( 32'hcafeface, 1'b1,  1'b0);
-    // queue_test1( 32'hcafebabe, 1'b1,  1'b0);
-    // queue_test1( 32'hecebcafe, 1'b1,  1'b0);
-    // queue_test1( 32'hbabebeef, 1'b1,  1'b0);
-    // queue_test1( 32'hcafeface, 1'b1,  1'b0);
-    // queue_test1( 32'hcafebabe, 1'b1,  1'b0);
-    // queue_test1( 32'hecebcafe, 1'b1,  1'b0);
-    // queue_test1( 32'hbabebeef, 1'b1,  1'b0);
-    // queue_test1( 32'hcafeface, 1'b1,  1'b0);
-    // queue_test1( 32'hcafebabe, 1'b1,  1'b0);
-    // queue_test1( 32'hecebcafe, 1'b1,  1'b0);
-    // queue_test1( 32'hbabebeef, 1'b1,  1'b0);
-    // queue_test1( 32'hcafeface, 1'b1,  1'b0);
-    // queue_test1( 32'hcafebabe, 1'b1,  1'b0);
-    // queue_test1( 32'hecebcafe, 1'b1,  1'b0);
-    // queue_test1( 32'hbabebeef, 1'b1,  1'b0);
-    // queue_test1( 32'hcafeface, 1'b1,  1'b0);
-    queue_test1('x, 1'b0,1'b1);
-    queue_test1('x, 1'b0,1'b1);
-    queue_test1('x, 1'b0,1'b1);
-    queue_test1('x, 1'b0,1'b1);
-    queue_test1('x, 1'b0,1'b1);
-    queue_test1('x, 1'b0,1'b1);
-    queue_test1( 32'hecebcafe, 1'b1,  1'b0);
-    queue_test1( 32'hbabebeef, 1'b1,  1'b0);
-    queue_test1('x, 1'b0,1'b0);
-    queue_test1('x, 1'b0,1'b0);
-    queue_test1('x, 1'b0,1'b0);
-    queue_test1('x, 1'b0,1'b0);
-    // queue_test1('x, 1'b0,1'b1);
-    // queue_test1('x, 1'b0,1'b1);
-    // queue_test1('x, 1'b0,1'b1);
-
+    // queue_test1;
+    // queue_test_overflow;
+    // queue_test_overflow_then_dequeue;
+    // queue_test_underflow;
+    // queue_test_underflow_then_enqueue;
+    // queue_test_overflow_then_underflow;
+        queue_test_underflow_then_overflow;
     #100000;
     $finish;
 end
