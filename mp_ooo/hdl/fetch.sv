@@ -6,7 +6,7 @@ import rv32i_types::*;
     output  logic   [31:0]      bmem_addr,
     output  logic               bmem_read,
     output  logic               bmem_write,
-    output  logic   [63:0]      bmem_wdata,
+    output  logic   [63:0]      bmem_wdata
 );
     always_comb begin
         bmem_addr = pc;
