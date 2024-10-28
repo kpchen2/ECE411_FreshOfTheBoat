@@ -55,7 +55,7 @@ endinterface
 
 interface mem_itf_wo_mask #(
     parameter               CHANNELS = 1,
-    parameter               DWIDTH = 32
+    parameter               DWIDTH = 256
 )(
     input   bit             clk,
     input   bit             rst

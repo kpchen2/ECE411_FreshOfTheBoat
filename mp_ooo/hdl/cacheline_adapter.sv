@@ -1,5 +1,5 @@
 module cacheline_adapter
-import types::*;
+import rv32i_types::*;
 (
     input   logic               clk,
     input   logic               rst,

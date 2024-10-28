@@ -1,5 +1,5 @@
 module stage_1
-import types::*;
+import rv32i_types::*;
 (
     input   logic           rst,
     input   logic   [31:0]  ufp_addr,
