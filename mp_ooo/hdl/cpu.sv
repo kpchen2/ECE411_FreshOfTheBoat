@@ -37,6 +37,9 @@ import rv32i_types::*;
 
     logic           initial_flag, initial_flag_reg;     // for initial read AND full_stall reads
     logic           full_stall;
+    
+    logic           bmem_ready_dummy;
+    logic   [31:0]  bmem_raddr_dummy;
 
     // assign ufp_addr = pc;
     // assign ufp_rmask = '1;
@@ -44,6 +47,9 @@ import rv32i_types::*;
     // assign ufp_wdata = '0;
 
     always_ff @(posedge clk) begin
+        bmem_ready_dummy <= bmem_ready;
+        bmem_raddr_dummy <= bmem_raddr;
+
         if (rst) begin
             pc <= 32'h1eceb000;
             initial_flag_reg <= '1;
@@ -103,7 +109,7 @@ import rv32i_types::*;
         .dfp_read(bmem_read),
         .dfp_write(bmem_write),
         .dfp_rdata(cache_wdata),
-        .dfp_wdata('0),             // FILL WHEN WE WANT TO WRITE
+        .dfp_wdata(dfp_wdata),             // FILL WHEN WE WANT TO WRITE
         .dfp_resp(cache_valid)
     );
 
@@ -123,7 +129,7 @@ import rv32i_types::*;
         .wdata_in(ufp_rdata),
         .enqueue_in(ufp_resp),
         .rdata_out(),
-        .dequeue_in(),
+        .dequeue_in('0),
         .full_out(full_stall),
         .empty_out()
     );
