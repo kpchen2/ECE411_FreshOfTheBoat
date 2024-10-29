@@ -90,14 +90,6 @@ import rv32i_types::*;
         end
     end
 
-    // fetch fetch_i (
-    //     .pc(pc),
-    //     .bmem_addr(bmem_addr),
-    //     .bmem_read(bmem_read),
-    //     .bmem_write(bmem_write),
-    //     .bmem_wdata(bmem_wdata)
-    // );
-
     cache cache_i (
         .clk(clk),
         .rst(rst),
