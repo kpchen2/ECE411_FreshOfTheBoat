@@ -1,6 +1,9 @@
 module queue
 import rv32i_types::*;
-
+#(
+    parameter DATA_WIDTH = 32,
+    parameter QUEUE_DEPTH = 64
+)
 (
 
     input logic clk, // do we need this? Might be needed to latch on to the tail
