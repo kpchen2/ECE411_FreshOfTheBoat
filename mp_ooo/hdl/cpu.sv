@@ -119,7 +119,7 @@ import rv32i_types::*;
         .cache_valid(cache_valid)
     );
 
-    queue queue_i (
+    queue #(.DATA_WIDTH(32), .QUEUE_DEPTH(64)) queue_i (
         .clk(clk),
         .rst(rst),
         .wdata_in(ufp_rdata),

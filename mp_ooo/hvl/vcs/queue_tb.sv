@@ -6,8 +6,8 @@
 
 // timeunit 1ps;
 //     timeprecision 1ps;
-//     parameter DATA_WIDTH = 32; 
-//     parameter QUEUE_DEPTH = 64;
+//     // parameter DATA_WIDTH = 32; 
+//     // parameter QUEUE_DEPTH = 64;
 //     int clock_half_period_ps = getenv("ECE411_CLOCK_PERIOD_PS").atoi() / 2;
 
 //     bit clk;
@@ -24,9 +24,9 @@
 //         rst <= 1'b0;
 //     end
 
-//     logic [DATA_WIDTH - 1:0] wdata_in;
+//     logic [32 - 1:0] wdata_in;
 //     logic enqueue_in;
-//     logic [DATA_WIDTH - 1:0] rdata_out;
+//     logic [32 - 1:0] rdata_out;
 //     logic dequeue_in;
 //     logic full_out;
 //     logic empty_out;
@@ -40,7 +40,7 @@
 //     end
 // endtask;
 
-// queue dut(
+// queue #(.DATA_WIDTH(32), .QUEUE_DEPTH(64)) dut(
 //     .clk(clk),
 //     .rst(rst),
 //     .wdata_in(wdata_in),
@@ -52,7 +52,7 @@
 // );
 
 
-// task standard_task( input logic [DATA_WIDTH - 1:0] write_data1, input logic enqueue, input logic dequeue);
+// task standard_task( input logic [32 - 1:0] write_data1, input logic enqueue, input logic dequeue);
 //     begin
 //         wdata_in = write_data1;
 //         enqueue_in = enqueue;

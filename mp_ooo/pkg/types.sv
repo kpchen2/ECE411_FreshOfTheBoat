@@ -11,8 +11,8 @@ package rv32i_types;
         logic   [31:0]  wdata;
     } stage_reg_t;
 
-    parameter DATA_WIDTH = 32; 
-    parameter QUEUE_DEPTH = 64;
+    // parameter DATA_WIDTH = 32; 
+    // parameter QUEUE_DEPTH = 64;
     typedef struct packed
     {
         logic           monitor_valid;
