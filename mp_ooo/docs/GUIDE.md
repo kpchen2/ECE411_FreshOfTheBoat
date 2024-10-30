@@ -1,7 +1,5 @@
 # ECE 411: mp_ooo GUIDE
 
-## Out-of-Order RISC-V Processor
-
 **This document, GUIDE.md, provides some extra resources and tips for
 the MP. For strictly the specification and rubric, see
 [README.md](../README.md). For more details on out-of-order processors
@@ -15,8 +13,8 @@ list of them here:
 $DW/doc/datasheets
 ```
 
-You are free to use any of them in your design. To use them in your
-design, first, find its actual name in:
+You are free to use any of the whitelisted IP in your design. To use
+them in your design, first, find its actual name in:
 
 ```
 $DW/sim_ver
@@ -28,7 +26,7 @@ them in `options.json` as follows:
 
 ```
 ...
-"dw_ip" : ["DW_mult_pipe", "DW_div],
+"dw_ip" : ["DW_mult_pipe", "DW_div"],
 ...
 ```
 
