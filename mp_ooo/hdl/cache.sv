@@ -45,11 +45,11 @@ import rv32i_types::*;
 
     logic           dfp_resp_reg;
     logic           write_done_reg;
-    logic   [1:0]   index;
-
+    // logic   [1:0]   index;
     logic           dfp_switch;
     logic           dfp_switch_reg;
     logic           dfp_write_read;
+
 
     always_ff @(posedge clk) begin
         if (rst) begin
@@ -89,7 +89,7 @@ import rv32i_types::*;
         .write_done_reg(write_done_reg),
         .write_halt(write_halt),
         .data_array_wmask(data_array_wmask),
-        .index(index),
+        // .index(index),
         .dirty_halt(dirty_halt),
         .dfp_switch(dfp_switch),
         .dfp_write_read(dfp_write_read)
@@ -115,7 +115,7 @@ import rv32i_types::*;
         .write_way(write_way),
         .write_halt(write_halt),
         .write_done_reg(write_done_reg),
-        .index(index),
+        // .index(index),
         .dirty_halt(dirty_halt),
         .dfp_switch_reg(dfp_switch_reg),
         .dfp_write_read(dfp_write_read)
@@ -127,7 +127,7 @@ import rv32i_types::*;
             .csb0       ('0),
             .web0       (web_in[i]),
             .wmask0     (data_array_wmask),
-            .addr0      ((read_halt || write_done) ? stage_reg.set : stage_reg_next.set),
+            .addr0      ((read_halt || write_done) ? stage_reg.set_no : stage_reg_next.set_no),
             .din0       (data_in[i]),
             .dout0      (data_out[i])
         );
@@ -135,7 +135,7 @@ import rv32i_types::*;
             .clk0       (clk),
             .csb0       ('0),
             .web0       (web_in[i]),
-            .addr0      ((read_halt || write_done) ? stage_reg.set : stage_reg_next.set),
+            .addr0      ((read_halt || write_done) ? stage_reg.set_no : stage_reg_next.set_no),
             .din0       (tag_in[i]),
             .dout0      (tag_out[i])
         );
@@ -144,7 +144,7 @@ import rv32i_types::*;
             .rst0       (rst),
             .csb0       ('0),
             .web0       (web_in[i]),
-            .addr0      ((read_halt || write_done) ? stage_reg.set : stage_reg_next.set),
+            .addr0      ((read_halt || write_done) ? stage_reg.set_no : stage_reg_next.set_no),
             .din0       (valid_in[i]),
             .dout0      (valid_out[i])
         );
@@ -155,12 +155,12 @@ import rv32i_types::*;
         .rst0       (rst),
         .csb0       ('0),
         .web0       ('1),
-        .addr0      (stage_reg_next.set),
+        .addr0      (stage_reg_next.set_no),
         .din0       ('0),
         .dout0      (lru_read),
         .csb1       ('0),
         .web1       (lru_web),
-        .addr1      (stage_reg.set),
+        .addr1      (stage_reg.set_no),
         .din1       (lru_write),
         .dout1      (dummy)
     );

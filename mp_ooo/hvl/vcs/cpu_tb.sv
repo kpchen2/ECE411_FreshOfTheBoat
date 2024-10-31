@@ -43,7 +43,7 @@ module top_tb;
     // TODO: Instantiate the DUT and physical memory:
     //---------------------------------------------------------------------------------
     mem_itf_banked mem_itf(.*); 
-    banked_memory banked_memory_i(.itf(mem_itf));
+    dram_w_burst_frfcfs_controller banked_memory_i(.itf(mem_itf));
 
     cpu dut(
         .clk        (clk),

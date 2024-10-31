@@ -23,7 +23,7 @@ import rv32i_types::*;
     output  logic   [1:0]   write_way,
     output  logic           write_halt,
     input   logic           write_done_reg,
-    input   logic   [1:0]   index,
+    // input   logic   [1:0]   index,
     output  logic           dirty_halt,
     input   logic           dfp_switch_reg,
     input   logic           dfp_write_read
@@ -32,6 +32,7 @@ import rv32i_types::*;
     logic           cache_hit;
     logic   [31:0]  rmask_ext;
     logic   [2:0]   way;
+    logic   [1:0]   idx;
 
     always_comb begin
         dfp_read = '0;
@@ -44,12 +45,29 @@ import rv32i_types::*;
         write_halt = '0;
         dirty_halt = '0;
         dfp_wdata = '0;
-
+        cache_hit = '0;
+        rmask_ext = 'x;
+        way  = '0;
         if (rst) begin
             dfp_addr = '0;
             ufp_resp = '0;
+            idx = '0;
 
         end else begin
+            if (lru_read[0]) begin
+                if (lru_read[1]) begin
+                    idx = 2'b00;
+                end else begin
+                    idx = 2'b01;
+                end
+            end else begin
+                if (lru_read[2]) begin
+                    idx = 2'b10;
+                end else begin
+                    idx = 2'b11;
+                end
+            end
+
             dfp_addr = stage_reg.addr;
             dfp_addr[4:0] = 5'b00000;
 
@@ -93,11 +111,11 @@ import rv32i_types::*;
                 if (!cache_hit) begin
                     read_halt = '1;
 
-                    if (valid_out[index] && tag_out[index][23] == 1 && !dfp_write_read) begin
+                    if (valid_out[idx] && tag_out[idx][23] == 1 && !dfp_write_read) begin
                         dfp_write = dfp_switch_reg ? '0 : '1;
-                        dfp_addr[31:9] = dfp_switch_reg ? dfp_addr[31:9] : tag_out[index][22:0];
+                        dfp_addr[31:9] = dfp_switch_reg ? dfp_addr[31:9] : tag_out[idx][22:0];
                         dfp_read = dfp_switch_reg ? '1 : '0;
-                        dfp_wdata = data_out[index];
+                        dfp_wdata = data_out[idx];
                         dirty_halt = '1;
                         
                     end else begin

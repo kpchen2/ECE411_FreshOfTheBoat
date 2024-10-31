@@ -3,7 +3,7 @@ package rv32i_types;
     typedef struct packed {
         logic   [31:0]  addr;
         logic   [22:0]  tag;
-        logic   [3:0]   set;
+        logic   [3:0]   set_no;
         logic   [4:0]   offset;
         logic   [3:0]   rmask;
 

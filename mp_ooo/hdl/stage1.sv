@@ -31,12 +31,14 @@ import rv32i_types::*;
     input   logic           write_done_reg,
     input   logic           write_halt,
     output  logic   [31:0]  data_array_wmask,
-    output  logic   [1:0]   index,
+    // output  logic   [1:0]   index,
     input   logic           dirty_halt,
     output  logic           dfp_switch,
     input   logic           dfp_write_read
 );
 
+    logic   [1:0]   index;
+    
     always_comb begin
         write_done = '0;
         data_array_wmask = '1;
@@ -97,7 +99,7 @@ import rv32i_types::*;
                 end else begin
                     stage_reg_next.addr = ufp_addr;
                     stage_reg_next.tag = ufp_addr[31:9];
-                    stage_reg_next.set = ufp_addr[8:5];
+                    stage_reg_next.set_no = ufp_addr[8:5];
                     stage_reg_next.offset = ufp_addr[4:0];
                     stage_reg_next.rmask = ufp_rmask;
                     stage_reg_next.wmask = ufp_wmask;
