@@ -11,6 +11,21 @@ package rv32i_types;
         logic   [31:0]  wdata;
     } stage_reg_t;
 
+    typedef struct packed {
+        logic   [2:0]   funct3;
+        logic   [6:0]   funct7;
+        logic   [6:0]   opcode;
+        logic   [31:0]  i_imm;
+        logic   [31:0]  s_imm;
+        logic   [31:0]  b_imm;
+        logic   [31:0]  u_imm;
+        logic   [31:0]  j_imm;
+
+        logic   [4:0]  rs1_s;
+        logic   [4:0]  rs2_s;
+        logic   [4:0]  rd_s;
+    } decode_info_t;
+
     // parameter DATA_WIDTH = 32; 
     // parameter QUEUE_DEPTH = 64;
     typedef struct packed

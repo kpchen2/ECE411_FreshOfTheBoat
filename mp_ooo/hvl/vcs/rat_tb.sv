@@ -5,30 +5,30 @@ module top_tb;
 
 
 timeunit 1ps;
-    timeprecision 1ps;
-    // int clock_half_period_ps = getenv("ECE411_CLOCK_PERIOD_PS").atoi() / 2;
+timeprecision 1ps;
+// int clock_half_period_ps = getenv("ECE411_CLOCK_PERIOD_PS").atoi() / 2;
 
-    bit clk;
-    always #1ns clk = ~clk;
+bit clk;
+always #1ns clk = ~clk;
 
-    bit rst;
+bit rst;
 
 
-    initial begin
-        $fsdbDumpfile("dump.fsdb");
-        $fsdbDumpvars(0, "+all");
-        rst = 1'b1;
-        repeat (2) @(posedge clk);
-        rst <= 1'b0;
-    end
+initial begin
+    $fsdbDumpfile("dump.fsdb");
+    $fsdbDumpvars(0, "+all");
+    rst = 1'b1;
+    repeat (2) @(posedge clk);
+    rst <= 1'b0;
+end
 
-    logic   [4:0]   rd_dispatch, rs1, rs2, rd_cdb;
+logic   [4:0]   rd_dispatch, rs1, rs2, rd_cdb;
 
-    logic   [5:0]     pd_dispatch, pd_cdb;
-    logic   [5:0]     ps1, ps2;
-    logic   ps1_valid, ps2_valid;
+logic   [5:0]     pd_dispatch, pd_cdb;
+logic   [5:0]     ps1, ps2;
+logic   ps1_valid, ps2_valid;
 
-    logic   regf_we_dispatch, regf_we_cdb;
+logic   regf_we_dispatch, regf_we_cdb;
 
 
 task generate_reset;
