@@ -133,6 +133,17 @@ package rv32i_types;
     } arith_f3_t;
 
     typedef enum logic [2:0] {
+        mult_div_f3_mul     = 3'b000,
+        mult_div_f3_mulh    = 3'b001,
+        mult_div_f3_mulhsu  = 3'b010,
+        mult_div_f3_mulhu   = 3'b011,
+        mult_div_f3_div     = 3'b100,
+        mult_div_f3_divu    = 3'b101,
+        mult_div_f3_rem     = 3'b110,
+        mult_div_f3_remu    = 3'b111
+    } mult_div_f3_t;
+
+    typedef enum logic [2:0] {
         load_f3_lb     = 3'b000,
         load_f3_lh     = 3'b001,
         load_f3_lw     = 3'b010,
