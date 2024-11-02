@@ -58,6 +58,10 @@ import rv32i_types::*;
 
     always_comb begin
         rd_v = '0;
+        a = '0;
+        b = '0;
+        cmpop = '0;
+        aluop = '0;
         unique case (decode_info.opcode)
             op_b_imm : begin
                 a = rs1_v;
