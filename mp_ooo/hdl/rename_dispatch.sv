@@ -21,7 +21,8 @@ import rv32i_types::*;
     output  logic   [PHYS_REG_BITS-1:0]     pd,
     input   logic   [PHYS_REG_BITS-1:0]     ps1, ps2,
     input   logic                           ps1_valid, ps2_valid,
-    output  logic                           regf_we
+    output  logic                           regf_we,
+    input   logic   [PHYS_REG_BITS-1:0]     rob_num     // USE THIS SOMEWHERE
 );
 
     decode_info_t decode_info;

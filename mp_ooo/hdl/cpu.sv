@@ -40,10 +40,20 @@ import rv32i_types::*;
     
     logic   [31:0]  bmem_raddr_dummy;
 
-    // assign ufp_addr = pc;
-    // assign ufp_rmask = '1;
-    // assign ufp_wmask = '0;
-    // assign ufp_wdata = '0;
+    /* CP2 SIGNALS */
+    logic   [31:0]  inst;
+    logic           rob_full;
+    logic           iqueue_empty;
+    logic   [4:0]   rd_dispatch, rs1, rs2;
+    logic   [5:0]   pd_dispatch, ps1, ps2;
+    logic           ps1_valid, ps2_valid;
+    logic           regf_we_dispatch;
+    logic   [5:0]   rob_num;
+    logic   [4:0]   rd_rob;
+    logic   [5:0]   pd_rob;
+    logic           rob_valid;
+    logic   [31:0]  reg_rs1_v, reg_rs2_v;
+
 
     always_ff @(posedge clk) begin
         bmem_raddr_dummy <= bmem_raddr; // useless
@@ -124,14 +134,94 @@ import rv32i_types::*;
         .rst(rst),
         .wdata_in(ufp_rdata),
         .enqueue_in(ufp_resp),
-        .rdata_out(),
+        .rdata_out(inst),
         .dequeue_in('0),
         .full_out(full_stall),
-        .empty_out()
+        .empty_out(iqueue_empty)
     );
 
-    rat #(.PHYS_REG_BITS(6)) rat_i (
-        
+    rename_dispatch rename_dispatch_i (
+        .clk(clk),
+        .rst(rst),
+        .inst(inst),
+        .rob_full(rob_full),
+        .rs_full(),
+        .is_iqueue_empty(iqueue_empty),
+        .phys_reg(),
+        .is_free_list_empty(),
+        .dequeue(),
+        .rd(rd_dispatch),
+        .rs1(rs1),
+        .rs2(rs2),
+        .pd(pd_dispatch),
+        .ps1(ps1),
+        .ps2(ps2),
+        .ps1_valid(ps1_valid),
+        .ps2_valid(ps2_valid),
+        .regf_we(regf_we_dispatch),
+        .rob_num(rob_num)
+    );
+
+    rat rat_i (
+        .clk(clk),
+        .rst(rst),
+        .rd_dispatch(rd_dispatch),
+        .rs1(rs1),
+        .rs2(rs2),
+        .rd_cdb(),
+        .pd_dispatch(pd_dispatch),
+        .pd_cdb(),
+        .ps1(ps1),
+        .ps2(ps2),
+        .ps1_valid(ps1_valid),
+        .ps2_valid(ps2_valid),
+        .regf_we_dispatch(regf_we_dispatch),
+        .regf_we_cdb()
+    );
+
+    rob rob_i (
+        .clk(clk),
+        .rst(rst),
+        .phys_reg_in(pd_dispatch),
+        .arch_reg_in(rd_dispatch),
+        .enqueue_valid(regf_we_dispatch),
+        .rob_idx_in(),  // FROM CDB
+        .cdb_valid(),   // FROM CDB
+        .rob_out({pd_rob, rd_rob}),
+        .dequeue_valid(rob_valid),
+        .rob_num(rob_num),
+        .full(rob_full)
+    );
+
+    rrat rrat_i (
+        .clk(clk),
+        .rst(rst),
+        .rd(rd_rob),
+        .pd(pd_rob),
+        .regf_we(rob_valid),
+        .enqueue(), // FREE LIST
+        .old_pd()   // FREE LIST
+    );
+
+    phys_regfile phys_regfile_i (
+        .clk(clk),
+        .rst(rst),
+        .regf_we(),
+        .rd_v(),    
+        .rs1_s(),
+        .rs2_s(),
+        .rd_s(),
+        .rs1_v(reg_rs1_v),
+        .rs2_v(reg_rs2_v)
+    );
+
+    fu_add fu_add_i (
+        .clk(clk),
+        .rst(rst),
+        .rs1_v(reg_rs1_v),
+        .rs2_v(reg_rs2_v),
+        .decode_info(),
+        .rd_v()
     );
 
 endmodule : cpu
