@@ -83,6 +83,8 @@ import rv32i_types::*;
         dequeue_mem_next = '0;
         enqueue_next = enqueue_valid;
         rob_num = tail_reg[5:0];
+        full = '0;
+        dequeue_valid = '0;
 
         if (!rst) begin
             full = (tail_reg[ADDR_WIDTH - 1:0] == head_reg[ADDR_WIDTH - 1:0]) && (tail_reg[ADDR_WIDTH] != head_reg[ADDR_WIDTH]);    // logic if queue full

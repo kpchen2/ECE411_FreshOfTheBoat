@@ -53,6 +53,7 @@ import rv32i_types::*;
     logic   [5:0]   pd_rob;
     logic           rob_valid;
     logic   [31:0]  reg_rs1_v, reg_rs2_v;
+    logic   [31:0]  cdb_rd_v;
 
 
     always_ff @(posedge clk) begin
@@ -145,11 +146,11 @@ import rv32i_types::*;
         .rst(rst),
         .inst(inst),
         .rob_full(rob_full),
-        .rs_full(),
+        .rs_full(),     // FROM RS
         .is_iqueue_empty(iqueue_empty),
-        .phys_reg(),
+        .phys_reg(),    // FREE LIST
         .is_free_list_empty(),
-        .dequeue(),
+        .dequeue(),     // FREE LIST
         .rd(rd_dispatch),
         .rs1(rs1),
         .rs2(rs2),
@@ -168,15 +169,15 @@ import rv32i_types::*;
         .rd_dispatch(rd_dispatch),
         .rs1(rs1),
         .rs2(rs2),
-        .rd_cdb(),
+        .rd_cdb(),      // FROM CDB
         .pd_dispatch(pd_dispatch),
-        .pd_cdb(),
+        .pd_cdb(),      // FROM CDB
         .ps1(ps1),
         .ps2(ps2),
         .ps1_valid(ps1_valid),
         .ps2_valid(ps2_valid),
         .regf_we_dispatch(regf_we_dispatch),
-        .regf_we_cdb()
+        .regf_we_cdb()  // FROM CDB
     );
 
     rob rob_i (
@@ -207,10 +208,10 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
         .regf_we(),
-        .rd_v(),    
-        .rs1_s(),
-        .rs2_s(),
-        .rd_s(),
+        .rd_v(cdb_rd_v),
+        .rs1_s(),   // RS
+        .rs2_s(),   // RS
+        .rd_s(),    // CDB
         .rs1_v(reg_rs1_v),
         .rs2_v(reg_rs2_v)
     );
@@ -220,8 +221,8 @@ import rv32i_types::*;
         .rst(rst),
         .rs1_v(reg_rs1_v),
         .rs2_v(reg_rs2_v),
-        .decode_info(),
-        .rd_v()
+        .decode_info(),     // PHYS REGFILE
+        .rd_v(cdb_rd_v)
     );
 
 endmodule : cpu
