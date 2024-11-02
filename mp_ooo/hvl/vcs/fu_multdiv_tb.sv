@@ -45,8 +45,8 @@ task fu_mult_test;
     begin
         decode_info.opcode <= op_b_reg;
         decode_info.funct3 <= mult_div_f3_div;
-        rs1_v = 32'h0010;
-        rs2_v = 32'h0002;
+        rs1_v = 32'hffffffff;
+        rs2_v = 32'h00002;
         start <= 1'b1;
         repeat (1) @ (posedge clk);
         start <= 1'b0;
