@@ -54,6 +54,11 @@ import rv32i_types::*;
     logic           rob_valid;
     logic   [31:0]  reg_rs1_v, reg_rs2_v;
     logic   [31:0]  cdb_rd_v;
+    logic   [5:0]   old_pd;
+    logic           enqueue;
+    logic   [5:0]   phys_reg;
+    logic           dequeue_freelist;
+    logic           is_free_list_empty;
 
 
     always_ff @(posedge clk) begin
@@ -148,9 +153,9 @@ import rv32i_types::*;
         .rob_full(rob_full),
         .rs_full(),     // FROM RS
         .is_iqueue_empty(iqueue_empty),
-        .phys_reg(),    // FREE LIST
-        .is_free_list_empty(),
-        .dequeue(),     // FREE LIST
+        .phys_reg(phys_reg),
+        .is_free_list_empty(is_free_list_empty),
+        .dequeue(dequeue_freelist),
         .rd(rd_dispatch),
         .rs1(rs1),
         .rs2(rs2),
@@ -200,8 +205,8 @@ import rv32i_types::*;
         .rd(rd_rob),
         .pd(pd_rob),
         .regf_we(rob_valid),
-        .enqueue(), // FREE LIST
-        .old_pd()   // FREE LIST
+        .enqueue(enqueue), // FREE LIST
+        .old_pd(old_pd)   // FREE LIST
     );
 
     phys_regfile phys_regfile_i (
@@ -223,6 +228,19 @@ import rv32i_types::*;
         .rs2_v(reg_rs2_v),
         .decode_info(),     // PHYS REGFILE
         .rd_v(cdb_rd_v)
+    );
+
+    free_list free_list_i (
+        .clk(clk),
+        .rst(rst),
+        .wdata_in(old_pd),
+        .enqueue_in(enqueue),
+
+        .rdata_out(phys_reg),
+        .dequeue_in(dequeue_freelist),
+
+        .full_out(),    // we don't really care about this
+        .empty_out(is_free_list_empty)
     );
 
 endmodule : cpu
