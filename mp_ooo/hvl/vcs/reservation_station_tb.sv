@@ -1,8 +1,9 @@
 module top_tb;
 
 
+timeprecision 1ps;
+
 timeunit 1ps;
-    timeprecision 1ps;
     // parameter DATA_WIDTH = 32; 
     // parameter QUEUE_DEPTH = 64;
     int clock_half_period_ps;
@@ -45,9 +46,14 @@ endtask;
     logic [31:0] pd;
     logic [31:0] rob_entry;
     logic [31:0] cdb_ps_id;
-    logic fu_busy;
-    logic regf_we;
-    logic fu_ready;
+    logic add_fu_busy;
+    logic multiply_fu_busy;
+    logic add_regf_we;
+    logic multiply_regf_we;
+    logic add_fu_ready;
+    logic multiply_fu_ready;
+    logic [159:0] multiply_cdb;
+    logic [159:0] add_cdb;
 
 reservation_station dut(
     .clk(clk),
@@ -61,13 +67,16 @@ reservation_station dut(
     .pd(pd),
     .rob_entry(rob_entry),
     .cdb_ps_id(cdb_ps_id),
-    .fu_busy(fu_busy),
-    .regf_we(regf_we),
-    .fu_ready(fu_ready)
+    .add_fu_busy(add_fu_busy),
+    .multiply_fu_busy(multiply_fu_busy),
+    .add_regf_we(add_regf_we),
+    .multiply_fu_ready(multiply_fu_ready),
+    .multiply_cdb(multiply_cdb),
+    .add_cdb(add_cdb)
 );
 
 
-task standard_task( input logic [1:0] rs_select1, input logic dispatch_ps_ready1_t, input logic dispatch_ps_ready2_t, input logic [31:0] ps1_t, input logic [31:0] ps2_t, input logic [31:0] rd_t, input logic [31:0] pd_t, input logic [31:0] rob_entry_t, input logic [31:0] cdb_ps_id_t, input logic fu_busy_t);
+task standard_task( input logic [1:0] rs_select1, input logic dispatch_ps_ready1_t, input logic dispatch_ps_ready2_t, input logic [31:0] ps1_t, input logic [31:0] ps2_t, input logic [31:0] rd_t, input logic [31:0] pd_t, input logic [31:0] rob_entry_t, input logic [31:0] cdb_ps_id_t, input logic add_fu_busy_t, input logic multiply_fu_busy_t);
     begin
         rs_select = rs_select1;
         dispatch_ps_ready1 = dispatch_ps_ready1_t;
@@ -78,7 +87,8 @@ task standard_task( input logic [1:0] rs_select1, input logic dispatch_ps_ready1
         pd = pd_t;
         rob_entry = rob_entry_t;
         cdb_ps_id = cdb_ps_id_t;
-        fu_busy  = fu_busy_t;
+        add_fu_busy  = add_fu_busy_t;
+        multiply_fu_busy = multiply_fu_busy_t;
         @ (posedge clk);
         rs_select = '0;
         dispatch_ps_ready1 = '0;
@@ -89,13 +99,14 @@ task standard_task( input logic [1:0] rs_select1, input logic dispatch_ps_ready1
         pd = '0;
         rob_entry = '0;
         cdb_ps_id = '0;
-        fu_busy  = '0;
+        add_fu_busy  = '0;
+        multiply_fu_busy = '0;
     end
 endtask
 
 task rs_add_one_entry;
-    begin           //input logic [1:0] rs_select1, input logic dispatch_ps_ready1_t, input logic dispatch_ps_ready2_t, input logic [31:0] ps1_t, input logic [31:0] ps2_t, input logic [31:0] rd_t, input logic [31:0] pd_t, input logic [31:0] rob_entry_t, input logic [31:0] cdb_ps_id_t, input logic fu_busy_t)
-        standard_task(2'd0,                                 1'b1,                               1'b0,                       32'd32,                     32'd33,                  32'd2,                     32'd45,                         32'd0,                  32'd38,                         1'b0);
+    begin           //input logic [1:0] rs_select1, input logic dispatch_ps_ready1_t, input logic dispatch_ps_ready2_t, input logic [31:0] ps1_t, input logic [31:0] ps2_t, input logic [31:0] rd_t, input logic [31:0] pd_t, input logic [31:0] rob_entry_t, input logic [31:0] cdb_ps_id_t, input logic add_fu_busy_t, input logic multiply_fu_busy_t)
+        standard_task(2'd0,                                 1'b1,                               1'b0,                       32'd32,                     32'd33,                  32'd2,                     32'd45,                         32'd0,                  32'd38,                         1'b0,                           1'b0);
 
     end
 endtask;
@@ -104,8 +115,10 @@ endtask;
 initial 
 begin
     generate_reset;
-    
+    rs_add_one_entry;
 
     #100000;
     $finish;
 end
+
+endmodule

@@ -1,8 +1,9 @@
 package rv32i_types;
 
 
-    parameter NUM_ADD_REGISTERS = 8;
-    parameter NUM_MULTIPLY_REGISTERS = 8;
+    parameter NUM_ADD_REGISTERS = 4;
+    parameter NUM_MULTIPLY_REGISTERS = 4;
+    parameter MAX_ISSUES = 4; // num instructions to issue
     typedef struct packed {
        
         logic busy;
@@ -27,6 +28,13 @@ package rv32i_types;
     
     } multiply_reservation_station_data;
 
+    typedef struct packed {
+        logic [31:0] ps1;
+        logic [31:0] ps2;
+        logic [31:0]  pd;
+        logic [31:0] rd;
+        logic [31:0] rob_entry;
+    } cdb_rs_output;
 
     typedef struct packed {
         logic   [31:0]  addr;

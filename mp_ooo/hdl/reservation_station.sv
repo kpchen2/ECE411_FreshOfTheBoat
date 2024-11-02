@@ -17,11 +17,14 @@ import rv32i_types::*;
         input logic [31:0] pd       , // the phys dest register, inherited from free list, don't know width
         input logic [31:0] rob_entry , // rob entry, inherited from rob, don't know width
         input logic [31:0] cdb_ps_id       ,   // cdb tells us if a busy register can be marked as unbusy
-        input logic fu_busy,            // from FU, let us know if FU is busy currently
-        output logic regf_we,           //set based on if we are ready to issue from rs, not sure if we feed to regf or FU
-        output logic fu_ready           // tell FU if we are ready to feed it inputs
-        
-        
+        input logic add_fu_busy,            // from FU, let us know if FU is busy currently
+        input logic multiply_fu_busy,
+        output logic add_regf_we,           //set based on if we are ready to issue from rs, not sure if we feed to regf or FU
+        output logic multiply_regf_we,
+        output logic add_fu_ready,           // tell FU if we are ready to feed it inputs
+        output logic multiply_fu_ready,
+        output cdb_rs_output multiply_cdb,
+        output cdb_rs_output add_cdb     
         // Not sure if CDB might output anything to the RS
     );
 
@@ -44,11 +47,13 @@ import rv32i_types::*;
     logic [31:0] next_done_add_entry_reg; // next done entry
     logic [31:0] next_done_multiply_entry;
     logic [31:0] next_done_multiply_entry_reg;
+    logic [2:0] num_issues;
 
-
-    logic fu_full;          // functional_unit full
-    logic fu_full_reg;      // functional_unit full
-    logic rs_select_reg; // reg equivalent of rs_select
+    logic add_fu_full;          // functional_unit full
+    logic add_fu_full_reg;
+    logic multiply_fu_full;
+    logic multiply_fu_full_reg;      // functional_unit full
+    logic [1:0] rs_select_reg; // reg equivalent of rs_select
     logic [31:0] cdb_ps_id_reg;  //reg equivalent of cdb_ps_id
     
     
@@ -69,7 +74,8 @@ import rv32i_types::*;
             end
             next_free_entry_reg <= '0;
             rs_select_reg <= '0;
-            fu_full_reg <= '0;
+            add_fu_full_reg <= '0;
+            multiply_fu_full_reg <= '0;
             next_done_add_entry_reg <= '0;
             next_done_multiply_entry_reg <= '0;
         end
@@ -81,12 +87,13 @@ import rv32i_types::*;
 
             next_free_entry_reg <= next_free_entry; // track the next free entry
             rs_select_reg <= rs_select;             // which reservation station do we update?
-            fu_full_reg <= fu_full;                 //
-            if (rs_select_reg == 2'd0 && ~fu_full_reg)  // add, not full
+            add_fu_full_reg <= add_fu_full;                 //
+            multiply_fu_full_reg <= multiply_fu_full;
+            if (rs_select_reg == 2'd0 && ~add_fu_full_reg)  // add, not full
             begin
                 add_reservation_station[next_free_entry_reg] <= add_reservation_station_entry_next; // add a new entry
             end
-            else if (rs_select_reg == 2'd1 && ~fu_full_reg) // multiply
+            if (rs_select_reg == 2'd1 && ~multiply_fu_full_reg) // multiply
             begin
                 multiply_reservation_station[next_free_entry_reg] <= multiply_reservation_station_entry_next;
             end
@@ -134,11 +141,12 @@ import rv32i_types::*;
         add_reservation_station_entry_next = add_reservation_station[0];
         multiply_reservation_station_entry_next = multiply_reservation_station[0];
 
-        fu_full = 1'd1;
-
+        add_fu_full = 1'd1;
+        multiply_fu_full = 1'd1;
         next_free_entry = '0;
 
         /* * * * * * * We selected Add RS * * * * * * */
+
         if (rs_select == 2'd0) 
         begin
             add_reservation_station_entry_next.busy = 1'b1; // mark as busy
@@ -154,7 +162,7 @@ import rv32i_types::*;
                 if (~add_reservation_station[i].busy)
                 begin
                     next_free_entry = i;
-                    fu_full = 1'd0;
+                    add_fu_full = 1'd0;
                     break;
                 end
             end
@@ -181,7 +189,7 @@ import rv32i_types::*;
                 if (~multiply_reservation_station[i].busy)
                 begin
                     next_free_entry = i;
-                    fu_full = 1'd0;
+                    multiply_fu_full = 1'd0;
                     break;
                 end
             end
@@ -192,29 +200,62 @@ import rv32i_types::*;
   
     always_comb
     begin
+        num_issues = '0;
+        add_regf_we = 1'b0;
+        multiply_regf_we = 1'b0;
         add_reservation_station_entry_new = add_reservation_station[0];
         multiply_reservation_station_entry_new = multiply_reservation_station[0];
         next_done_multiply_entry = '0;
         next_done_add_entry = '0;
-        for (int i = 0; i < NUM_MULTIPLY_REGISTERS; i++)
+        multiply_fu_ready = 1'b0;
+        add_fu_ready = 1'b0;
+        add_cdb = '0;
+        multiply_cdb = '0;
+
+        if (~multiply_fu_busy && num_issues <= 3'd4)
         begin
-            if (multiply_reservation_station[i].busy && multiply_reservation_station[i].ps1_v && multiply_reservation_station[i].ps2_v)
+            for (int i = 0; i < NUM_MULTIPLY_REGISTERS; i++)
             begin
-                next_done_multiply_entry = i;
-                multiply_reservation_station_entry_new = multiply_reservation_station[i];
-                multiply_reservation_station_entry_new.busy = 1'b0;
+                if (multiply_reservation_station[i].busy && multiply_reservation_station[i].ps1_v && multiply_reservation_station[i].ps2_v)
+                begin    
+                    next_done_multiply_entry = i;
+                    multiply_reservation_station_entry_new = multiply_reservation_station[i];
+                    multiply_reservation_station_entry_new.busy = 1'b0;
+                    multiply_regf_we = 1'b1;
+                    multiply_fu_ready = 1'b1;
+                    multiply_cdb.ps1 = multiply_reservation_station_entry_new.ps1;
+                    multiply_cdb.ps2 = multiply_reservation_station_entry_new.ps2;
+                    multiply_cdb.pd = multiply_reservation_station_entry_new.pd;
+                    multiply_cdb.rd = multiply_reservation_station_entry_new.rd;
+                    multiply_cdb.rob_entry = multiply_reservation_station_entry_new.rob_entry;
+                    num_issues = num_issues + 1'd1;
+                    break;
+                end
             end
         end
 
-        for (int i = 0; i < NUM_ADD_REGISTERS; i++)
+        if (~add_fu_busy && num_issues <= 3'd4)
         begin
-            if (add_reservation_station[i].busy && add_reservation_station[i].ps1_v && add_reservation_station[i].ps2_v)
+            for (int i = 0; i < NUM_ADD_REGISTERS; i++)
             begin
-                next_done_add_entry = i;
-                add_reservation_station_entry_new = add_reservation_station[i];
-                add_reservation_station_entry_new.busy = 1'b0;
+                if (add_reservation_station[i].busy && add_reservation_station[i].ps1_v && add_reservation_station[i].ps2_v)
+                begin
+                    next_done_add_entry = i;
+                    add_reservation_station_entry_new = add_reservation_station[i];
+                    add_reservation_station_entry_new.busy = 1'b0;
+                    add_regf_we = 1'b1;
+                    add_fu_ready = 1'b1;
+                    add_cdb.ps1 = add_reservation_station_entry_new.ps1;
+                    add_cdb.ps2 = add_reservation_station_entry_new.ps2;
+                    add_cdb.pd = add_reservation_station_entry_new.pd;
+                    add_cdb.rd = add_reservation_station_entry_new.rd;
+                    add_cdb.rob_entry = add_reservation_station_entry_new.rob_entry;
+                    num_issues = num_issues + 1'd1;
+                    break;
+                end
             end
         end
+
 
         /**
         * Add more as time goes on. WE NEED to output stuff in this logic
@@ -222,9 +263,6 @@ import rv32i_types::*;
     end
 
     /* * * * * * * * * Output logic * * * * * * * * * */
-    always_comb 
-    begin
-        fu_ready = ~fu_full;
-    end
+    
 
 endmodule : reservation_station
