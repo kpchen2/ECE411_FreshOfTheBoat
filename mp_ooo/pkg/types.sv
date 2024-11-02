@@ -11,6 +11,21 @@ package rv32i_types;
         logic   [31:0]  wdata;
     } stage_reg_t;
 
+    typedef struct packed {
+        logic   [2:0]   funct3;
+        logic   [6:0]   funct7;
+        logic   [6:0]   opcode;
+        logic   [31:0]  i_imm;
+        logic   [31:0]  s_imm;
+        logic   [31:0]  b_imm;
+        logic   [31:0]  u_imm;
+        logic   [31:0]  j_imm;
+
+        logic   [4:0]  rs1_s;
+        logic   [4:0]  rs2_s;
+        logic   [4:0]  rd_s;
+    } decode_info_t;
+
     // parameter DATA_WIDTH = 32; 
     // parameter QUEUE_DEPTH = 64;
     typedef struct packed
@@ -116,6 +131,17 @@ package rv32i_types;
         arith_f3_or    = 3'b110,
         arith_f3_and   = 3'b111
     } arith_f3_t;
+
+    typedef enum logic [2:0] {
+        mult_div_f3_mul     = 3'b000,
+        mult_div_f3_mulh    = 3'b001,
+        mult_div_f3_mulhsu  = 3'b010,
+        mult_div_f3_mulhu   = 3'b011,
+        mult_div_f3_div     = 3'b100,
+        mult_div_f3_divu    = 3'b101,
+        mult_div_f3_rem     = 3'b110,
+        mult_div_f3_remu    = 3'b111
+    } mult_div_f3_t;
 
     typedef enum logic [2:0] {
         load_f3_lb     = 3'b000,
