@@ -1,4 +1,4 @@
-module fu_mult
+module fu_div_rem
 import rv32i_types::*;
 #(
     parameter PHYS_REG_BITS = 6
@@ -23,24 +23,27 @@ import rv32i_types::*;
     logic   [31:0]  aluout;
     logic           br_en;
 
+    logic           complete_inst;
+    logic   [31:0]  quotient_inst, remainder_inst;
+
     assign as =   signed'(a);
     assign bs =   signed'(b);
     assign au = unsigned'(a);
     assign bu = unsigned'(b);
 
-    logic           complete_inst;
-    logic   [63:0]  product_inst;
-
-
-    // DW02_mult #(32, 32)
-    // U1 ( .A(a), .B(b), .TC(TC), .PRODUCT(product_inst) );
-
-    DW_mult_seq #(32,   32,   0,   3, // last input on this row is # cycles
-                0,   1,   1,
-                0) 
-    U1 (.clk(clk),   .rst_n(~rst),   .hold(1'b0), 
-        .start(start),   .a(a),   .b(b), 
-        .complete(complete_inst),   .product(product_inst) );
+    DW_div_seq #(32, 32, 0, 3,
+    0, 1, 1,
+    0)
+    U1 (.clk(clk),
+    .rst_n(~rst),
+    .hold(1'b0),
+    .start(start),
+    .a(a),
+    .b(b),
+    .complete(complete_inst),
+    .divide_by_0(),
+    .quotient(quotient_inst),
+    .remainder(remainder_inst) );
 
     always_comb begin
         rd_v = '0;
@@ -53,7 +56,7 @@ import rv32i_types::*;
                 b = rs2_v;
                 unique case (decode_info.funct3)
                     mult_div_f3_mul : begin
-                        rd_v = product_inst[31:0];
+                        
                     end
                     mult_div_f3_mulh : begin
 
@@ -65,13 +68,13 @@ import rv32i_types::*;
 
                     end
                     mult_div_f3_div : begin
-
+                        rd_v = quotient_inst;
                     end
                     mult_div_f3_divu : begin
 
                     end
                     mult_div_f3_rem : begin
-
+                        rd_v = remainder_inst;
                     end
                     mult_div_f3_remu : begin
 
@@ -87,4 +90,4 @@ import rv32i_types::*;
         endcase
     end
 
-endmodule : fu_mult
+endmodule : fu_div_rem

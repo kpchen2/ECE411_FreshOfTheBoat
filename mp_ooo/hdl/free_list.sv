@@ -46,7 +46,7 @@ import rv32i_types::*;
         dequeue_reg <= dequeue_in;
         if (rst)
         begin
-            tail_reg <= {1'b1, $clog2(QUEUE_DEPTH){1'b0}};
+            tail_reg <= {1'b1, {$clog2(QUEUE_DEPTH){1'b0}}};
             head_reg <= '0;
             // i = 32, i < 64 and then and queue indexed at i-32 = i
             for (int i = QUEUE_DEPTH; i < 2 * QUEUE_DEPTH; i++) begin

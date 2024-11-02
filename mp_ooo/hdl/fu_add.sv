@@ -8,7 +8,9 @@ import rv32i_types::*;
     input   logic           rst,
     input   logic   [31:0]  rs1_v, rs2_v,
     input   decode_info_t   decode_info,
-    output  logic   [31:0]  rd_v
+    output  logic   [31:0]  rd_v,
+    input   logic           start,
+    output  logic           valid
 );
 
     logic signed   [31:0] as;
@@ -62,71 +64,76 @@ import rv32i_types::*;
         b = '0;
         cmpop = '0;
         aluop = '0;
-        unique case (decode_info.opcode)
-            op_b_imm : begin
-                a = rs1_v;
-                b = decode_info.i_imm;
-                unique case (decode_info.funct3)
-                    arith_f3_slt: begin
-                        cmpop = branch_f3_blt;
-                        rd_v = {31'd0, br_en};
-                    end
-                    arith_f3_sltu: begin
-                        cmpop = branch_f3_bltu;
-                        rd_v = {31'd0, br_en};
-                    end
-                    arith_f3_sr: begin
-                        if (decode_info.funct7[5]) begin
-                            aluop = alu_op_sra;
-                        end else begin
-                            aluop = alu_op_srl;
+        valid = 1'b0;
+        if (start) begin
+            valid = 1'b1;
+            unique case (decode_info.opcode)
+                op_b_imm : begin
+                    a = rs1_v;
+                    b = decode_info.i_imm;
+                    unique case (decode_info.funct3)
+                        arith_f3_slt: begin
+                            cmpop = branch_f3_blt;
+                            rd_v = {31'd0, br_en};
                         end
-                        rd_v = aluout;
-                    end
-                    default: begin
-                        aluop = decode_info.funct3;
-                        rd_v = aluout;
-                    end
-                endcase
-            end
-            op_b_reg : begin
-                a = rs1_v;
-                b = rs2_v;
-                unique case (decode_info.funct3)
-                    arith_f3_slt: begin
-                        cmpop = branch_f3_blt;
-                        rd_v = {31'd0, br_en};
-                    end
-                    arith_f3_sltu: begin
-                        cmpop = branch_f3_bltu;
-                        rd_v = {31'd0, br_en};
-                    end
-                    arith_f3_sr: begin
-                        if (decode_info.funct7[5]) begin
-                            aluop = alu_op_sra;
-                        end else begin
-                            aluop = alu_op_srl;
+                        arith_f3_sltu: begin
+                            cmpop = branch_f3_bltu;
+                            rd_v = {31'd0, br_en};
                         end
-                        rd_v = aluout;
-                    end
-                    arith_f3_add: begin
-                        if (decode_info.funct7[5]) begin
-                            aluop = alu_op_sub;
-                        end else begin
-                            aluop = alu_op_add;
+                        arith_f3_sr: begin
+                            if (decode_info.funct7[5]) begin
+                                aluop = alu_op_sra;
+                            end else begin
+                                aluop = alu_op_srl;
+                            end
+                            rd_v = aluout;
                         end
-                        rd_v = aluout;
-                    end
-                    default: begin
-                        aluop = decode_info.funct3;
-                        rd_v = aluout;
-                    end
-                endcase
-            end
-            default : begin
-                // do nothing
-            end
-        endcase
+                        default: begin
+                            aluop = decode_info.funct3;
+                            rd_v = aluout;
+                        end
+                    endcase
+                end
+                op_b_reg : begin
+                    a = rs1_v;
+                    b = rs2_v;
+                    unique case (decode_info.funct3)
+                        arith_f3_slt: begin
+                            cmpop = branch_f3_blt;
+                            rd_v = {31'd0, br_en};
+                        end
+                        arith_f3_sltu: begin
+                            cmpop = branch_f3_bltu;
+                            rd_v = {31'd0, br_en};
+                        end
+                        arith_f3_sr: begin
+                            if (decode_info.funct7[5]) begin
+                                aluop = alu_op_sra;
+                            end else begin
+                                aluop = alu_op_srl;
+                            end
+                            rd_v = aluout;
+                        end
+                        arith_f3_add: begin
+                            if (decode_info.funct7[5]) begin
+                                aluop = alu_op_sub;
+                            end else begin
+                                aluop = alu_op_add;
+                            end
+                            rd_v = aluout;
+                        end
+                        default: begin
+                            aluop = decode_info.funct3;
+                            rd_v = aluout;
+                        end
+                    endcase
+                end
+                default : begin
+                    // do nothing
+                end
+            endcase
+        end
+        
     end
 
 endmodule : fu_add
