@@ -16,6 +16,9 @@ import rv32i_types::*;
     input   logic   [$clog2(QUEUE_DEPTH)-1:0]   rob_idx_in,
     input   logic                               cdb_valid,
 
+    // rename/dispatch outputs
+    output  logic   [5:0]                       rob_num,
+
     // rrf outputs
     output  rob_out_t                           rob_out,
     output  logic                               dequeue_valid,
@@ -82,6 +85,7 @@ import rv32i_types::*;
         enqueue_mem_next = '0;
         dequeue_mem_next = '0;
         enqueue_next = enqueue_valid;
+        rob_num = tail_reg[5:0];
 
         if (!rst) begin
             full = (tail_reg[ADDR_WIDTH - 1:0] == head_reg[ADDR_WIDTH - 1:0]) && (tail_reg[ADDR_WIDTH] != head_reg[ADDR_WIDTH]);    // logic if queue full
