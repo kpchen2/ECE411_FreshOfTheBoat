@@ -16,15 +16,12 @@ import rv32i_types::*;
     input   logic   [$clog2(QUEUE_DEPTH)-1:0]   rob_idx_in,
     input   logic                               cdb_valid,
 
-    // rename/dispatch outputs
-    output  logic   [5:0]                       rob_num,
-
     // rrf outputs
     output  rob_out_t                           rob_out,
     output  logic                               dequeue_valid,
 
     // other output
-    // output  logic   [$clog2(QUEUE_DEPTH)-1:0]   rob_idx_out,
+    output  logic   [$clog2(QUEUE_DEPTH)-1:0]   rob_num,
     output  logic                               full
 );
 
