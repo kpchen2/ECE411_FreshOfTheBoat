@@ -130,4 +130,8 @@ import rv32i_types::*;
         .empty_out()
     );
 
+    rat #(.PHYS_REG_BITS(6)) rat_i (
+        
+    );
+
 endmodule : cpu
