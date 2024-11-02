@@ -1,24 +1,29 @@
 package rv32i_types;
 
 
-    parameter NUM_ADD_REGISTERS = 7;
-    parameter NUM_MULTIPLY_REGISTERS = 7;
-    parameter ADD_TAG_WIDTH = $clog2(NUM_ADD_REGISTERS + 1);
-    parameter MULTIPLY_TAG_WIDTH = $clog2(NUM_MULTIPLY_REGISTERS + 1);
+    parameter NUM_ADD_REGISTERS = 8;
+    parameter NUM_MULTIPLY_REGISTERS = 8;
     typedef struct packed {
-        logic [ADD_TAG_WIDTH - 1: 0] sink_tag;
-        logic [31:0] sink_data;
-        logic [ADD_TAG_WIDTH - 1:0] source_tag;
-        logic [31:0] source_data;
-        
+       
+        logic busy;
+        logic ps1_v;
+        logic [31:0] ps1;
+        logic ps2_v;
+        logic [31:0] ps2;
+        logic [31:0] pd;
+        logic [31:0] rd;
+        logic [31:0] rob_entry;
     
     } add_reservation_station_data;
     typedef struct packed {
-        logic [MULTIPLY_TAG_WIDTH - 1: 0] sink_tag;
-        logic [31:0] sink_data;
-        logic [MULTIPLY_TAG_WIDTH - 1:0] source_tag;
-        logic [31:0] source_data;
-        
+        logic busy;
+        logic ps1_v;
+        logic [31:0] ps1;
+        logic ps2_v;
+        logic [31:0] ps2;
+        logic [31:0] pd;
+        logic [31:0] rd;
+        logic [31:0] rob_entry;
     
     } multiply_reservation_station_data;
 
