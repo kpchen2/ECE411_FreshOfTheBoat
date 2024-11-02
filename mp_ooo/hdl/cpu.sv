@@ -141,7 +141,7 @@ import rv32i_types::*;
         .wdata_in(ufp_rdata),
         .enqueue_in(ufp_resp),
         .rdata_out(inst),
-        .dequeue_in('0),
+        .dequeue_in('1),
         .full_out(full_stall),
         .empty_out(iqueue_empty)
     );
@@ -205,8 +205,8 @@ import rv32i_types::*;
         .rd(rd_rob),
         .pd(pd_rob),
         .regf_we(rob_valid),
-        .enqueue(enqueue), // FREE LIST
-        .old_pd(old_pd)   // FREE LIST
+        .enqueue(enqueue),  // FREE LIST
+        .old_pd(old_pd)     // FREE LIST
     );
 
     phys_regfile phys_regfile_i (
@@ -239,7 +239,6 @@ import rv32i_types::*;
         .rdata_out(phys_reg),
         .dequeue_in(dequeue_freelist),
 
-        .full_out(),    // we don't really care about this
         .empty_out(is_free_list_empty)
     );
 

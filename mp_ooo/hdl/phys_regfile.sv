@@ -19,7 +19,7 @@ import rv32i_types::*;
             for (int i = 0; i < 32; i++) begin
                 data[i] <= '0;
             end
-        end else if (regf_we && (rd_s != 5'd0)) begin
+        end else if (regf_we && (rd_s != 0)) begin
             data[rd_s] <= rd_v;
         end
     end
@@ -34,8 +34,8 @@ import rv32i_types::*;
     //     end
     // end
     always_comb begin
-        rs1_v = (rs1_s != 5'd0) ? data[rs1_s] : '0;
-        rs2_v = (rs2_s != 5'd0) ? data[rs2_s] : '0;
+        rs1_v = (rs1_s != 0) ? data[rs1_s] : '0;
+        rs2_v = (rs2_s != 0) ? data[rs2_s] : '0;
     end
 
 endmodule : phys_regfile
