@@ -7,7 +7,7 @@ import rv32i_types::*;
     input   logic           clk,
     input   logic           rst,
     input   logic   [31:0]  reg_rs1_v, reg_rs2_v,
-    input   decode_info_t   decode_info,
+    input   decode_info_t   decode_info_add, decode_info_mul, decode_info_div,
     input   logic           start_add, start_mul, start_div,
 
     // ADD PORTS
@@ -69,7 +69,7 @@ import rv32i_types::*;
         .rst(rst),
         .rs1_v(reg_rs1_v),
         .rs2_v(reg_rs2_v),
-        .decode_info(decode_info),     // PHYS REGFILE
+        .decode_info(decode_info_add),     // PHYS REGFILE
         .rd_v(rd_v_add),
         .start(start_add),
         .valid(valid_add)
@@ -80,7 +80,7 @@ import rv32i_types::*;
         .rst(rst),
         .rs1_v(reg_rs1_v),
         .rs2_v(reg_rs2_v),
-        .decode_info(decode_info),     // PHYS REGFILE
+        .decode_info(decode_info_mul),     // PHYS REGFILE
         .rd_v(rd_v_mul),
         .start(start_mul),
         .valid(valid_mul)
@@ -91,7 +91,7 @@ import rv32i_types::*;
         .rst(rst),
         .rs1_v(reg_rs1_v),
         .rs2_v(reg_rs2_v),
-        .decode_info(decode_info),     // PHYS REGFILE
+        .decode_info(decode_info_div),     // PHYS REGFILE
         .rd_v(rd_v_div),
         .start(start_div),
         .valid(valid_div)
