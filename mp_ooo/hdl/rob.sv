@@ -40,34 +40,34 @@ import rv32i_types::*;
 
     logic                       enqueue_reg, enqueue_next;
     logic                       dequeue_reg;
+    logic                       cdb_valid_next;
+
+    logic   [$clog2(QUEUE_DEPTH)-1:0]   rob_idx_in_next;
 
     always_ff @ (posedge clk) begin
-        if (rst) begin
-            enqueue_reg <= '0;
-            dequeue_reg <= '0;
+        enqueue_reg <= enqueue_next;
+        dequeue_reg <= dequeue_valid;
 
-            tail_reg <= '0;
-            head_reg <= '0;
+        if (rst) begin
+            tail_reg <= '1;
+            head_reg <= '1;
 
             for (int i = 0; i < QUEUE_DEPTH; i++) begin
                 mem[i] <= '0;
             end
 
         end else begin
-            enqueue_reg <= enqueue_next;
-            dequeue_reg <= dequeue_valid;
-
             // enqueue
             if (enqueue_next) begin
-                mem[tail_reg[ADDR_WIDTH - 1:0]] <= enqueue_mem_next;
+                mem[tail_next[ADDR_WIDTH - 1:0]] <= enqueue_mem_next;
             end
             // dequeue
             if (dequeue_valid) begin
-                mem[head_reg[ADDR_WIDTH - 1:0]] <= dequeue_mem_next;
+                mem[head_next[ADDR_WIDTH - 1:0]] <= dequeue_mem_next;
             end
             // instruction done
-            if (cdb_valid) begin
-                mem[rob_idx_in][DATA_WIDTH - 1] <= '1;
+            if (cdb_valid_next) begin
+                mem[rob_idx_in_next][DATA_WIDTH - 1] <= '1;
             end
 
             tail_reg <= tail_next;
@@ -82,18 +82,21 @@ import rv32i_types::*;
         enqueue_mem_next = '0;
         dequeue_mem_next = '0;
         enqueue_next = enqueue_valid;
+
+        cdb_valid_next = cdb_valid;
+        rob_idx_in_next = rob_idx_in;
         rob_num = tail_reg[5:0];
         full = '0;
-        dequeue_valid = '0;
 
+        dequeue_valid = '0;
         if (!rst) begin
             full = (tail_reg[ADDR_WIDTH - 1:0] == head_reg[ADDR_WIDTH - 1:0]) && (tail_reg[ADDR_WIDTH] != head_reg[ADDR_WIDTH]);    // logic if queue full
-            dequeue_valid = (mem[head_reg][DATA_WIDTH:DATA_WIDTH - 1] == 2'b11);  // dequeue if tail's inst is valid and ready to commit
+            dequeue_valid = (mem[head_reg+1'b1][DATA_WIDTH:DATA_WIDTH - 1] == 2'b11);  // dequeue if tail's inst is valid and ready to commit
 
             // send dequeue inst same cycle; update queue next cycle
             if (dequeue_valid) begin
                 head_next = head_reg + 1'd1;
-                dequeue_mem_next = mem[head_reg[ADDR_WIDTH - 1:0]];     // get current data out of the queue 
+                dequeue_mem_next = mem[head_reg[ADDR_WIDTH - 1:0]+1'b1];     // get current data out of the queue 
                 dequeue_mem_next[DATA_WIDTH] = 1'b0;                    // not valid anymore
                 
                 rob_out = dequeue_mem_next[DATA_WIDTH - 2:0];
@@ -108,7 +111,7 @@ import rv32i_types::*;
                 end else begin
                     tail_next = tail_reg; 
                     head_next = (head_next == head_reg) ? head_reg : head_reg + 1'd1;   // don't change what dequeue set head_next to
-                    enqueue_mem_next = mem[tail_reg[ADDR_WIDTH - 1:0]];
+                    enqueue_mem_next = mem[tail_reg[ADDR_WIDTH - 1:0]+1'b1];
                 end
             end
         end
