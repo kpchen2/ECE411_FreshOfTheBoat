@@ -91,7 +91,7 @@ import rv32i_types::*;
         dequeue_valid = '0;
         if (!rst) begin
             full = (tail_reg[ADDR_WIDTH - 1:0] == head_reg[ADDR_WIDTH - 1:0]) && (tail_reg[ADDR_WIDTH] != head_reg[ADDR_WIDTH]);    // logic if queue full
-            dequeue_valid = (mem[head_reg+1'b1][DATA_WIDTH:DATA_WIDTH - 1] == 2'b11);  // dequeue if tail's inst is valid and ready to commit
+            dequeue_valid = (mem[head_reg[5:0]+1'b1][DATA_WIDTH:DATA_WIDTH - 1] == 2'b11);  // dequeue if tail's inst is valid and ready to commit
 
             // send dequeue inst same cycle; update queue next cycle
             if (dequeue_valid) begin
