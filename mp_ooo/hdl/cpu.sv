@@ -221,14 +221,25 @@ import rv32i_types::*;
         .rs2_v(reg_rs2_v)
     );
 
-    fu_add fu_add_i (
-        .clk(clk),
-        .rst(rst),
-        .rs1_v(reg_rs1_v),
-        .rs2_v(reg_rs2_v),
-        .decode_info(),     // PHYS REGFILE
-        .rd_v(cdb_rd_v)
-    );
+    // fu_add fu_add_i (
+    //     .clk(clk),
+    //     .rst(rst),
+    //     .rs1_v(reg_rs1_v),
+    //     .rs2_v(reg_rs2_v),
+    //     .decode_info(),     // PHYS REGFILE
+    //     .rd_v(cdb_rd_v),
+    //     .rs1_s(),           // FROM RS
+    //     .rs2_s(),           // FROM RS
+    //     .rob_idx(),         // FROM RS
+    //     .rs1_cdb(),           // CDB
+    //     .rs2_cdb(),           // CDB
+    //     .rob_cdb(),         // CDB
+    //     .valid()
+    // );
+
+    // execute execute_i (
+
+    // );
 
     free_list free_list_i (
         .clk(clk),

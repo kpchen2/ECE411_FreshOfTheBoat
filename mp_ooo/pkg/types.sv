@@ -27,6 +27,14 @@ package rv32i_types;
     
     } multiply_reservation_station_data;
 
+    typedef struct packed {
+        logic   [5:0]   rob_idx;
+        logic   [5:0]   pd_s;
+        logic   [4:0]   rd_s;
+        logic   [31:0]  rd_v;
+        logic           valid;
+    } cdb_t;
+
 
     typedef struct packed {
         logic   [31:0]  addr;
