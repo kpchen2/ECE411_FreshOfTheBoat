@@ -193,8 +193,12 @@ import rv32i_types::*;
         .phys_reg_in(pd_dispatch),
         .arch_reg_in(rd_dispatch),
         .enqueue_valid(regf_we_dispatch),
-        .rob_idx_in(),      // FROM CDB
-        .cdb_valid(),       // FROM CDB
+        .add_rob_idx_in(),      // FROM CDB
+        .add_cdb_valid(),       // FROM CDB
+        .mul_rob_idx_in(),      // FROM CDB
+        .mul_cdb_valid(),       // FROM CDB
+        .div_rob_idx_in(),      // FROM CDB
+        .div_cdb_valid(),       // FROM CDB
         .rob_out({pd_rob, rd_rob}),
         .dequeue_valid(rob_valid),
         .rob_num(rob_num),
