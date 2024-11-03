@@ -1,5 +1,33 @@
 package rv32i_types;
 
+
+    parameter NUM_ADD_REGISTERS = 8;
+    parameter NUM_MULTIPLY_REGISTERS = 8;
+    typedef struct packed {
+       
+        logic busy;
+        logic ps1_v;
+        logic [31:0] ps1;
+        logic ps2_v;
+        logic [31:0] ps2;
+        logic [31:0] pd;
+        logic [31:0] rd;
+        logic [31:0] rob_entry;
+    
+    } add_reservation_station_data;
+    typedef struct packed {
+        logic busy;
+        logic ps1_v;
+        logic [31:0] ps1;
+        logic ps2_v;
+        logic [31:0] ps2;
+        logic [31:0] pd;
+        logic [31:0] rd;
+        logic [31:0] rob_entry;
+    
+    } multiply_reservation_station_data;
+
+
     typedef struct packed {
         logic   [31:0]  addr;
         logic   [22:0]  tag;
