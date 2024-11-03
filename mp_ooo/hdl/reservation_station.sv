@@ -42,14 +42,12 @@ import rv32i_types::*;
     multiply_reservation_station_data multiply_reservation_station_entry_new; // this is for updating an entry, changing it's busy and register flags
 
     logic [31:0] next_free_entry; // next free entry
-    logic [31:0] next_free_entry_reg; // next free entry
 
-    // assert(entries[next_free_reg].valid != 1)
+    // assert(entries[next_free_reg].valid != 1) // note left by Alex Maiorov during office hours
 
     logic [31:0] next_done_add_entry; // next done entry
-    logic [31:0] next_done_add_entry_reg; // next done entry
     logic [31:0] next_done_multiply_entry;
-    logic [31:0] next_done_multiply_entry_reg;
+
     logic [2:0] num_issues;
 
     logic add_fu_full;          // functional_unit full
@@ -79,12 +77,9 @@ import rv32i_types::*;
             begin
                 multiply_reservation_station[i] <= '0;
             end
-            next_free_entry_reg <= '0;
             rs_select_reg <= '0;
             add_fu_full_reg <= '0;
             multiply_fu_full_reg <= '0;
-            next_done_add_entry_reg <= '0;
-            next_done_multiply_entry_reg <= '0;
             busy_reg_dummy <= 1'b0;
         end
         else
@@ -93,7 +88,7 @@ import rv32i_types::*;
             
             /* * * * * * add entry  * * * * */
 
-            next_free_entry_reg <= next_free_entry; // track the next free entry
+            // next_free_entry_reg <= next_free_entry; // track the next free entry
             rs_select_reg <= rs_select;             // which reservation station do we update?
             add_fu_full_reg <= add_fu_full;                 //
             multiply_fu_full_reg <= multiply_fu_full;
@@ -104,38 +99,41 @@ import rv32i_types::*;
             
 
             /* * * * * * * remove entry (if all three valids are high) * * * * * * * */
-            next_done_multiply_entry_reg <= next_done_multiply_entry;
-            next_done_add_entry_reg <= next_done_add_entry;
-            multiply_reservation_station[next_done_multiply_entry_reg] <= multiply_reservation_station_entry_new;
-            if(remove_add)
-                add_reservation_station[next_done_add_entry_reg] <= add_reservation_station_entry_new;
-        
-        
-            /* * * * * * * update entry (according to cdb_ps_id) * * * * *  */
-
-            for (int i = 0; i < NUM_MULTIPLY_REGISTERS; i++)
+          
+            if (remove_multiply)
             begin
-                if (multiply_reservation_station[i].ps1 == cdb_ps_id_reg)
-                begin
-                    multiply_reservation_station[i].ps1_v <= 1'b1;
-                end
-                if (multiply_reservation_station[i].ps2 == cdb_ps_id_reg)
-                begin
-                    multiply_reservation_station[i].ps2_v <= 1'b1;
-                end
-            end 
-
-            for (int i = 0 ; i < NUM_ADD_REGISTERS; i++)
-            begin
-                if (add_reservation_station[i].ps1 == cdb_ps_id_reg)
-                begin
-                    add_reservation_station[i].ps1_v <= 1'b1;
-                end
-                if (add_reservation_station[i].ps2 == cdb_ps_id_reg)
-                begin
-                    add_reservation_station[i].ps2_v <= 1'b1;
-                end
+               multiply_reservation_station[next_done_multiply_entry] <= multiply_reservation_station_entry_new;
             end
+            if(remove_add)
+            begin
+                add_reservation_station[next_done_add_entry] <= add_reservation_station_entry_new;
+            end
+        
+            // /* * * * * * * update entry (according to cdb_ps_id) * * * * *  */
+
+            // for (int i = 0; i < NUM_MULTIPLY_REGISTERS; i++)
+            // begin
+            //     if (multiply_reservation_station[i].ps1 == cdb_ps_id_reg)
+            //     begin
+            //         multiply_reservation_station[i].ps1_v <= 1'b1;
+            //     end
+            //     if (multiply_reservation_station[i].ps2 == cdb_ps_id_reg)
+            //     begin
+            //         multiply_reservation_station[i].ps2_v <= 1'b1;
+            //     end
+            // end 
+
+            // for (int i = 0 ; i < NUM_ADD_REGISTERS; i++)
+            // begin
+            //     if (add_reservation_station[i].ps1 == cdb_ps_id_reg)
+            //     begin
+            //         add_reservation_station[i].ps1_v <= 1'b1;
+            //     end
+            //     if (add_reservation_station[i].ps2 == cdb_ps_id_reg)
+            //     begin
+            //         add_reservation_station[i].ps2_v <= 1'b1;
+            //     end
+            // end
         end
     end
 
