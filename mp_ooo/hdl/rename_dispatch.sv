@@ -22,10 +22,11 @@ import rv32i_types::*;
     input   logic   [PHYS_REG_BITS-1:0]     ps1, ps2,
     input   logic                           ps1_valid, ps2_valid,
     output  logic                           regf_we,
-    input   logic   [PHYS_REG_BITS-1:0]     rob_num     // USE THIS SOMEWHERE
+    input   logic   [PHYS_REG_BITS-1:0]     rob_num,     // USE THIS SOMEWHERE
+    output  decode_info_t                   decode_info
 );
 
-    decode_info_t decode_info;
+    // decode_info_t decode_info;
 
     always_comb begin
         rd = '0;

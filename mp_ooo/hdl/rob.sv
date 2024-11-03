@@ -13,8 +13,12 @@ import rv32i_types::*;
     input   logic                               enqueue_valid,
     
     // cdb inputs
-    input   logic   [$clog2(QUEUE_DEPTH)-1:0]   rob_idx_in,
-    input   logic                               cdb_valid,
+    input   logic   [$clog2(QUEUE_DEPTH)-1:0]   add_rob_idx_in,
+    input   logic                               add_cdb_valid,
+    input   logic   [$clog2(QUEUE_DEPTH)-1:0]   mul_rob_idx_in,
+    input   logic                               mul_cdb_valid,
+    input   logic   [$clog2(QUEUE_DEPTH)-1:0]   div_rob_idx_in,
+    input   logic                               div_cdb_valid,
 
     // rrf outputs
     output  rob_out_t                           rob_out,
@@ -40,9 +44,13 @@ import rv32i_types::*;
 
     logic                       enqueue_reg, enqueue_next;
     logic                       dequeue_reg;
-    logic                       cdb_valid_next;
+    logic                       add_cdb_valid_next;
+    logic                       mul_cdb_valid_next;
+    logic                       div_cdb_valid_next;
 
-    logic   [$clog2(QUEUE_DEPTH)-1:0]   rob_idx_in_next;
+    logic   [$clog2(QUEUE_DEPTH)-1:0]   add_rob_idx_in_next;
+    logic   [$clog2(QUEUE_DEPTH)-1:0]   mul_rob_idx_in_next;
+    logic   [$clog2(QUEUE_DEPTH)-1:0]   div_rob_idx_in_next;
 
     always_ff @ (posedge clk) begin
         enqueue_reg <= enqueue_next;
@@ -65,9 +73,17 @@ import rv32i_types::*;
             if (dequeue_valid) begin
                 mem[head_next[ADDR_WIDTH - 1:0]] <= dequeue_mem_next;
             end
-            // instruction done
-            if (cdb_valid_next) begin
-                mem[rob_idx_in_next][DATA_WIDTH - 1] <= '1;
+            // add instruction done
+            if (add_cdb_valid_next) begin
+                mem[add_rob_idx_in_next][DATA_WIDTH - 1] <= '1;
+            end
+            // mul instruction done
+            if (mul_cdb_valid_next) begin
+                mem[mul_rob_idx_in_next][DATA_WIDTH - 1] <= '1;
+            end
+            // div instruction done
+            if (div_cdb_valid_next) begin
+                mem[div_rob_idx_in_next][DATA_WIDTH - 1] <= '1;
             end
 
             tail_reg <= tail_next;
@@ -83,12 +99,18 @@ import rv32i_types::*;
         dequeue_mem_next = '0;
         enqueue_next = enqueue_valid;
 
-        cdb_valid_next = cdb_valid;
-        rob_idx_in_next = rob_idx_in;
+        add_cdb_valid_next = add_cdb_valid;
+        mul_cdb_valid_next = mul_cdb_valid;
+        div_cdb_valid_next = div_cdb_valid;
+
+        add_rob_idx_in_next = add_rob_idx_in;
+        mul_rob_idx_in_next = mul_rob_idx_in;
+        div_rob_idx_in_next = div_rob_idx_in;
+
         rob_num = tail_reg[5:0];
         full = '0;
-
         dequeue_valid = '0;
+        
         if (!rst) begin
             full = (tail_reg[ADDR_WIDTH - 1:0] == head_reg[ADDR_WIDTH - 1:0]) && (tail_reg[ADDR_WIDTH] != head_reg[ADDR_WIDTH]);    // logic if queue full
             dequeue_valid = (mem[head_reg[5:0]+1'b1][DATA_WIDTH:DATA_WIDTH - 1] == 2'b11);  // dequeue if tail's inst is valid and ready to commit
@@ -103,7 +125,7 @@ import rv32i_types::*;
             end
             
             if (enqueue_valid) begin
-                if (~full || dequeue_valid || (cdb_valid && rob_idx_in == head_reg[5:0])) begin
+                if (~full || dequeue_valid || (add_cdb_valid && add_rob_idx_in == head_reg[5:0]) || (mul_cdb_valid && mul_rob_idx_in == head_reg[5:0]) || (div_cdb_valid && div_rob_idx_in == head_reg[5:0])) begin
                     tail_next = tail_reg + 1'b1;
                     head_next = (head_next == head_reg) ? head_reg : head_reg + 1'd1;   // don't change what dequeue set head_next to
                     enqueue_mem_next = {2'b10, phys_reg_in, arch_reg_in};               // 1 bit for valid, 1 bit for commit, 6 bits for phys reg, 5 bits for arch reg

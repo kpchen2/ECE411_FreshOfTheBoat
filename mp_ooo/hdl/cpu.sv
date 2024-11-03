@@ -59,6 +59,7 @@ import rv32i_types::*;
     logic   [5:0]   phys_reg;
     logic           dequeue_freelist;
     logic           is_free_list_empty;
+    decode_info_t   decode_info;
 
 
     always_ff @(posedge clk) begin
@@ -165,7 +166,8 @@ import rv32i_types::*;
         .ps1_valid(ps1_valid),
         .ps2_valid(ps2_valid),
         .regf_we(regf_we_dispatch),
-        .rob_num(rob_num)
+        .rob_num(rob_num),
+        .decode_info(decode_info)
     );
 
     rat rat_i (
@@ -205,8 +207,25 @@ import rv32i_types::*;
         .rd(rd_rob),
         .pd(pd_rob),
         .regf_we(rob_valid),
-        .enqueue(enqueue),  // FREE LIST
-        .old_pd(old_pd)     // FREE LIST
+        .enqueue(enqueue),
+        .old_pd(old_pd)
+    );
+
+    reservation_station reservation_station_i (
+        .clk(clk),
+        .rst(rst),
+        .rs_select(),
+        .dispatch_ps_ready1(),
+        .dispatch_ps_ready2(),
+        .ps1(),
+        .ps2(),
+        .rd(),
+        .pd(),
+        .rob_entry(),
+        .cdb_ps_id(),
+        .fu_busy(),
+        .regf_we(),
+        .fu_ready()
     );
 
     phys_regfile phys_regfile_i (
@@ -221,25 +240,14 @@ import rv32i_types::*;
         .rs2_v(reg_rs2_v)
     );
 
-    // fu_add fu_add_i (
-    //     .clk(clk),
-    //     .rst(rst),
-    //     .rs1_v(reg_rs1_v),
-    //     .rs2_v(reg_rs2_v),
-    //     .decode_info(),     // PHYS REGFILE
-    //     .rd_v(cdb_rd_v),
-    //     .rs1_s(),           // FROM RS
-    //     .rs2_s(),           // FROM RS
-    //     .rob_idx(),         // FROM RS
-    //     .rs1_cdb(),           // CDB
-    //     .rs2_cdb(),           // CDB
-    //     .rob_cdb(),         // CDB
-    //     .valid()
-    // );
-
-    // execute execute_i (
-
-    // );
+    fu_add fu_add_i (
+        .clk(clk),
+        .rst(rst),
+        .rs1_v(reg_rs1_v),
+        .rs2_v(reg_rs2_v),
+        .decode_info(),     // PHYS REGFILE
+        .rd_v(cdb_rd_v)
+    );
 
     free_list free_list_i (
         .clk(clk),
