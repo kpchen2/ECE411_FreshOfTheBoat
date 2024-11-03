@@ -6,9 +6,9 @@ import rv32i_types::*;
 (
     input   logic           clk,
     input   logic           rst,
-    input   logic           regf_we,
-    input   logic   [31:0]  rd_v,
-    input   logic   [PHYS_REG_BITS-1:0]   rs1_s, rs2_s, rd_s,
+    input   logic           regf_we_add, regf_we_mul, regf_we_div,
+    input   logic   [31:0]  rd_v_add, rd_v_mul, rd_v_div,
+    input   logic   [PHYS_REG_BITS-1:0]   rs1_s, rs2_s, rd_add, rd_mul, rd_div,
     output  logic   [31:0]  rs1_v, rs2_v
 );
 
@@ -19,8 +19,18 @@ import rv32i_types::*;
             for (int i = 0; i < 32; i++) begin
                 data[i] <= '0;
             end
-        end else if (regf_we && (rd_s != 0)) begin
-            data[rd_s] <= rd_v;
+        end
+        
+        if (!rst && (regf_we_add && (rd_add != 0))) begin
+            data[rd_add] <= rd_v_add;
+        end
+
+        if (!rst && (regf_we_mul && (rd_mul != 0))) begin
+            data[rd_mul] <= rd_v_mul;
+        end
+
+        if (!rst && (regf_we_div && (rd_div != 0))) begin
+            data[rd_div] <= rd_v_div;
         end
     end
 

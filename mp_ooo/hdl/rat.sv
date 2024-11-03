@@ -5,13 +5,14 @@ import rv32i_types::*;
 )
 (
     input   logic   clk, rst,
-    input   logic   [4:0]   rd_dispatch, rs1, rs2, rd_cdb,
+    input   logic   [4:0]   rd_dispatch, rs1, rs2, rd_add, rd_mul, rd_div,
 
-    input   logic   [PHYS_REG_BITS-1:0]     pd_dispatch, pd_cdb,
+    input   logic   [PHYS_REG_BITS-1:0]     pd_dispatch, pd_add, pd_mul, pd_div,
     output  logic   [PHYS_REG_BITS-1:0]     ps1, ps2,
     output  logic   ps1_valid, ps2_valid,
 
-    input   logic   regf_we_dispatch, regf_we_cdb
+    input   logic   regf_we_dispatch,
+    input   logic   regf_we_add, regf_we_mul, regf_we_div
 );
 
     logic [PHYS_REG_BITS-1:0] rat[32]; // holds mapping from arch register to phys register
@@ -50,8 +51,16 @@ import rv32i_types::*;
         ps2_valid = valid[rs2];
 
         // CDB: set entry rd to valid if it still maps to pd
-        if (regf_we_cdb && pd_cdb == rat[rd_cdb]) begin
-            valid_next[rd_cdb] = 1'b1;
+        if (regf_we_add && pd_add == rat[rd_add]) begin
+            valid_next[rd_add] = 1'b1;
+        end
+
+        if (regf_we_mul && pd_mul == rat[rd_mul]) begin
+            valid_next[rd_mul] = 1'b1;
+        end
+
+        if (regf_we_div && pd_div == rat[rd_div]) begin
+            valid_next[rd_div] = 1'b1;
         end
     end
 

@@ -60,6 +60,8 @@ import rv32i_types::*;
     logic           dequeue_freelist;
     logic           is_free_list_empty;
 
+    cdb_t           cdb_add, cdb_mul, cdb_div;
+
 
     always_ff @(posedge clk) begin
         bmem_raddr_dummy <= bmem_raddr; // useless
@@ -174,15 +176,15 @@ import rv32i_types::*;
         .rd_dispatch(rd_dispatch),
         .rs1(rs1),
         .rs2(rs2),
-        .rd_cdb(),          // FROM CDB
+        .rd_add(cdb_add.rd_s), .rd_mul(cdb_mul.rd_s), .rd_div(cdb_div.rd_s),         // FROM CDB
         .pd_dispatch(pd_dispatch),
-        .pd_cdb(),          // FROM CDB
+        .pd_add(cdb_add.pd_s), .pd_mul(cdb_mul.pd_s), .pd_div(cdb_div.pd_s),         // FROM CDB
         .ps1(ps1),
         .ps2(ps2),
         .ps1_valid(ps1_valid),
         .ps2_valid(ps2_valid),
         .regf_we_dispatch(regf_we_dispatch),
-        .regf_we_cdb()      // FROM CDB
+        .regf_we_add(cdb_add.valid), .regf_we_mul(cdb_mul.valid), .regf_we_div(cdb_div.valid)      // FROM CDB
     );
 
     rob rob_i (
@@ -212,11 +214,11 @@ import rv32i_types::*;
     phys_regfile phys_regfile_i (
         .clk(clk),
         .rst(rst),
-        .regf_we(),
-        .rd_v(cdb_rd_v),
+        .regf_we_add(cdb_add.valid), .regf_we_mul(cdb_mul.valid), .regf_we_div(cdb_div.valid),
+        .rd_v(cdb_add.rd_v), .rd_v_mul(cdb_mul.rd_v), .rd_v_div(cdb_div.rd_v),
         .rs1_s(),           // RS
         .rs2_s(),           // RS
-        .rd_s(),            // CDB
+        .rd_add(cdb_add.pd_s), .rd_mul(cdb_mul.pd_s), .rd_div(cdb_div.pd_s),           // CDB
         .rs1_v(reg_rs1_v),
         .rs2_v(reg_rs2_v)
     );
