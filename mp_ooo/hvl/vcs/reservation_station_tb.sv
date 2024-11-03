@@ -162,8 +162,10 @@ begin
     // rs_add_multiple_entries;
     // rs_add_entry_remove;
     // rs_add_entry_remove_then_add_one;
-    rs_add_fill_entries;
-    
+    // rs_add_fill_entries;
+    rs_add_perform_updation;
+    rs_add_one_entry;
+    rs_add_one_entry;
     #100000;
     $finish;
 end

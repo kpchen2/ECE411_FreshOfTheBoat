@@ -111,29 +111,29 @@ import rv32i_types::*;
         
             // /* * * * * * * update entry (according to cdb_ps_id) * * * * *  */
 
-            // for (int i = 0; i < NUM_MULTIPLY_REGISTERS; i++)
-            // begin
-            //     if (multiply_reservation_station[i].ps1 == cdb_ps_id_reg)
-            //     begin
-            //         multiply_reservation_station[i].ps1_v <= 1'b1;
-            //     end
-            //     if (multiply_reservation_station[i].ps2 == cdb_ps_id_reg)
-            //     begin
-            //         multiply_reservation_station[i].ps2_v <= 1'b1;
-            //     end
-            // end 
+            for (int i = 0; i < NUM_MULTIPLY_REGISTERS; i++)
+            begin
+                if (multiply_reservation_station[i].ps1 == cdb_ps_id_reg)
+                begin
+                    multiply_reservation_station[i].ps1_v <= 1'b1;
+                end
+                if (multiply_reservation_station[i].ps2 == cdb_ps_id_reg)
+                begin
+                    multiply_reservation_station[i].ps2_v <= 1'b1;
+                end
+            end 
 
-            // for (int i = 0 ; i < NUM_ADD_REGISTERS; i++)
-            // begin
-            //     if (add_reservation_station[i].ps1 == cdb_ps_id_reg)
-            //     begin
-            //         add_reservation_station[i].ps1_v <= 1'b1;
-            //     end
-            //     if (add_reservation_station[i].ps2 == cdb_ps_id_reg)
-            //     begin
-            //         add_reservation_station[i].ps2_v <= 1'b1;
-            //     end
-            // end
+            for (int i = 0 ; i < NUM_ADD_REGISTERS; i++)
+            begin
+                if (add_reservation_station[i].ps1 == cdb_ps_id_reg)
+                begin
+                    add_reservation_station[i].ps1_v <= 1'b1;
+                end
+                if (add_reservation_station[i].ps2 == cdb_ps_id_reg)
+                begin
+                    add_reservation_station[i].ps2_v <= 1'b1;
+                end
+            end
         end
     end
 
