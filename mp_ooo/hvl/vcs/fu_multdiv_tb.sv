@@ -27,6 +27,7 @@ end
     decode_info_t   decode_info;
     logic   [31:0]  rd_v;
     logic           start;
+    logic           valid;
 
 
 task generate_reset;
@@ -37,21 +38,22 @@ task generate_reset;
     end
 endtask;
 
-fu_div_rem #(.PHYS_REG_BITS(6)) dut(
+fu_mult #(.PHYS_REG_BITS(6)) dut(
     .*
 );
 
 task fu_mult_test;
     begin
         decode_info.opcode <= op_b_reg;
-        decode_info.funct3 <= mult_div_f3_div;
-        rs1_v = 32'hffffffff;
+        decode_info.funct3 <= mult_div_f3_mul;
+        rs1_v = 32'h00003;
         rs2_v = 32'h00002;
         start <= 1'b1;
         repeat (1) @ (posedge clk);
         start <= 1'b0;
         repeat (4) @ (posedge clk);
         start <= 1'b1;
+        rs2_v = 32'h00005;
         repeat (1) @ (posedge clk);
         start <= 1'b0;
     end

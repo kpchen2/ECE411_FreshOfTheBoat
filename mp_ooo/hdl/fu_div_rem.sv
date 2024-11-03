@@ -9,7 +9,8 @@ import rv32i_types::*;
     input   logic   [31:0]  rs1_v, rs2_v,
     input   decode_info_t   decode_info,
     output  logic   [31:0]  rd_v,
-    input   logic           start
+    input   logic           start,
+    output  logic           valid
 );
 
     logic   [31:0]  a;
@@ -17,8 +18,16 @@ import rv32i_types::*;
 
     logic   [32:0]  a_final, b_final;
 
-    logic           complete_inst;
+    logic           complete_inst, complete_prev;
     logic   [32:0]  quotient_inst, remainder_inst;
+
+    always_ff @(posedge clk) begin
+        if (rst) begin
+            complete_prev <= 1'b0;
+        end else begin
+            complete_prev <= complete_inst;
+        end
+    end
 
     DW_div_seq #(33, 33, 1, 3,
     0, 1, 1,
@@ -38,6 +47,8 @@ import rv32i_types::*;
         rd_v = '0;
         a = '0;
         b = '0;
+
+        valid = complete_prev ? 1'b0 : complete_inst;
         unique case (decode_info.opcode)
             op_b_reg : begin
                 a = rs1_v;

@@ -9,13 +9,14 @@ import rv32i_types::*;
     input   logic   [31:0]  rs1_v, rs2_v,
     input   decode_info_t   decode_info,
     output  logic   [31:0]  rd_v,
-    input   logic           start
+    input   logic           start,
+    output  logic           valid
 );
 
     logic   [31:0]  a;
     logic   [31:0]  b;
 
-    logic           complete_inst;
+    logic           complete_inst, complete_prev;
     logic   [65:0]  product_inst;
 
     logic   [32:0]  a_sext, a_zext, b_sext, b_zext;
@@ -36,12 +37,22 @@ import rv32i_types::*;
         .start(start),   .a(a_final),   .b(b_final), 
         .complete(complete_inst),   .product(product_inst) );
 
+    always_ff @(posedge clk) begin
+        if (rst) begin
+            complete_prev <= 1'b0;
+        end else begin
+            complete_prev <= complete_inst;
+        end
+    end
+
     always_comb begin
         rd_v = '0;
         a = '0;
         b = '0;
         a_final = '0;
         b_final = '0;
+
+        valid = complete_prev ? 1'b0 : complete_inst;
         unique case (decode_info.opcode)
             op_b_reg : begin
                 a = rs1_v;

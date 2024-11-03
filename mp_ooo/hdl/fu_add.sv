@@ -10,7 +10,10 @@ import rv32i_types::*;
     input   decode_info_t   decode_info,
     output  logic   [31:0]  rd_v,
     input   logic           start,
-    output  logic           valid
+    output  logic           valid,
+    output  logic   [4:0]   rd_cdb,
+    output  logic   [PHYS_REG_BITS-1:0]     pd_cdb,
+    output  logic   [4:0]   rs1_cdb, rs2_cdb
 );
 
     logic signed   [31:0] as;
