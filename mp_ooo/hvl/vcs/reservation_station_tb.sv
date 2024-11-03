@@ -155,6 +155,40 @@ task rs_add_perform_updation;
     end
 
 endtask;
+
+task rs_add_one_entry_multiply_one_entry;
+    begin           //input logic [1:0] rs_select1, input logic dispatch_valid_t, input logic dispatch_ps_ready1_t, input logic dispatch_ps_ready2_t, input logic [31:0] ps1_t, input logic [31:0] ps2_t, input logic [31:0] rd_t, input logic [31:0] pd_t, input logic [31:0] rob_entry_t, input logic [31:0] cdb_ps_id_t, input logic add_fu_busy_t, input logic multiply_fu_busy_t)
+        standard_task(2'd0,                           1'b1,                                    1'b1,                               1'b0,                       32'd32,                     32'd33,                  32'd2,                     32'd64,                         32'd0,                  32'd38,                         1'b0,                           1'b0);
+        standard_task(2'd1,                           1'b1,                                    1'b1,                               1'b0,                       32'd32,                     32'd33,                  32'd2,                     32'd64,                         32'd0,                  32'd38,                         1'b0,                           1'b0);
+    end
+endtask;
+
+
+task add_entry_busy;
+    begin
+        rs_add_multiple_entries;
+        standard_task(2'd0,                           1'b1,                                    1'b1,                               1'b0,                       32'd32,                     32'd33,                  32'd2,                     32'd64,                         32'd0,                  32'd38,                         1'b1,                           1'b0);
+        
+    end
+endtask;
+
+task rs_add_fill_entries_multiply_fill_entries;
+    begin           //input logic [1:0] rs_select1, input logic dispatch_valid_t, input logic dispatch_ps_ready1_t, input logic dispatch_ps_ready2_t, input logic [31:0] ps1_t, input logic [31:0] ps2_t, input logic [31:0] rd_t, input logic [31:0] pd_t, input logic [31:0] rob_entry_t, input logic [31:0] cdb_ps_id_t, input logic add_fu_busy_t, input logic multiply_fu_busy_t)
+        standard_task(2'd0,                           1'b1,                                    1'b1,                               1'b0,                       32'd32,                     32'd33,                  32'd2,                     32'd64,                         32'd0,                  32'd38,                         1'b0,                           1'b0);
+        standard_task(2'd1,                           1'b1,                                    1'b1,                               1'b0,                       32'd32,                     32'd33,                  32'd2,                     32'd64,                         32'd0,                  32'd38,                         1'b0,                           1'b0);
+        
+        standard_task(2'd0,                           1'b1,                                    1'b1,                               1'b0,                       32'd34,                     32'd35,                  32'd4,                     32'd65,                         32'd1,                  32'd40,                         1'b0,                           1'b0);
+        standard_task(2'd1,                           1'b1,                                    1'b1,                               1'b0,                       32'd34,                     32'd35,                  32'd4,                     32'd65,                         32'd1,                  32'd40,                         1'b0,                           1'b0);
+        
+        standard_task(2'd0,                           1'b1,                                    1'b1,                               1'b0,                       32'd36,                     32'd37,                  32'd6,                     32'd66,                         32'd2,                  32'd42,                         1'b0,                           1'b0);
+        standard_task(2'd1,                           1'b1,                                    1'b1,                               1'b0,                       32'd36,                     32'd37,                  32'd6,                     32'd66,                         32'd2,                  32'd42,                         1'b0,                           1'b0);
+        standard_task(2'd0,                           1'b1,                                    1'b1,                               1'b0,                       32'd38,                     32'd39,                  32'd8,                     32'd67,                         32'd3,                  32'd44,                         1'b0,                           1'b0);
+        standard_task(2'd1,                           1'b1,                                    1'b1,                               1'b0,                       32'd38,                     32'd39,                  32'd8,                     32'd67,                         32'd3,                  32'd44,                         1'b0,                           1'b0);
+        
+        standard_task(2'd0,                           1'b1,                                    1'b1,                               1'b0,                       32'd34,                     32'd35,                  32'd4,                     32'd65,                         32'd1,                  32'd40,                         1'b0,                           1'b0);
+        standard_task(2'd1,                           1'b1,                                    1'b1,                               1'b0,                       32'd36,                     32'd37,                  32'd6,                     32'd66,                         32'd2,                  32'd44,                         1'b0,                           1'b0);
+    end
+endtask;
 initial 
 begin
     generate_reset;
@@ -163,9 +197,10 @@ begin
     // rs_add_entry_remove;
     // rs_add_entry_remove_then_add_one;
     // rs_add_fill_entries;
-    rs_add_perform_updation;
-    rs_add_one_entry;
-    rs_add_one_entry;
+    // rs_add_perform_updation;
+    // rs_add_one_entry_multiply_one_entry;
+    // add_entry_busy;
+    rs_add_fill_entries_multiply_fill_entries;
     #100000;
     $finish;
 end

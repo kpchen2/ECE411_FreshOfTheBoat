@@ -57,6 +57,9 @@ import rv32i_types::*;
     logic [1:0] rs_select_reg; // reg equivalent of rs_select
     logic [31:0] cdb_ps_id_reg;  //reg equivalent of cdb_ps_id
     
+    logic insert_add;
+    logic insert_multiply;
+
     logic remove_add;
     logic remove_multiply;
 
@@ -93,10 +96,14 @@ import rv32i_types::*;
             add_fu_full_reg <= add_fu_full;                 //
             multiply_fu_full_reg <= multiply_fu_full;
             busy_reg_dummy <= add_reservation_station_entry_next.busy;
-            
-            add_reservation_station[next_free_entry] <= add_reservation_station_entry_next; // add a new entry
-            multiply_reservation_station[next_free_entry] <= multiply_reservation_station_entry_next;
-            
+            if (insert_add && ~add_fu_full)
+            begin
+                add_reservation_station[next_free_entry] <= add_reservation_station_entry_next; // add a new entry
+            end
+            if (insert_multiply && ~multiply_fu_full)
+            begin
+                multiply_reservation_station[next_free_entry] <= multiply_reservation_station_entry_next;
+            end
 
             /* * * * * * * remove entry (if all three valids are high) * * * * * * * */
           
@@ -142,6 +149,8 @@ import rv32i_types::*;
     /* * * * * * * * * * * Input logic, add entry * * * * * * * * * * * * * * */
     always_comb
     begin
+        insert_add = 1'b0;
+        insert_multiply = 1'b0;
         add_reservation_station_entry_next = add_reservation_station[0];
         multiply_reservation_station_entry_next = multiply_reservation_station[0];
 
@@ -153,6 +162,7 @@ import rv32i_types::*;
 
         if (rs_select == 2'd0 && dispatch_valid) 
         begin
+            insert_add = 1'b1;
             add_reservation_station_entry_next.busy = 1'b1; // mark as busy
             add_reservation_station_entry_next.ps1_v = dispatch_ps_ready1;
             add_reservation_station_entry_next.ps2_v = dispatch_ps_ready2;
@@ -179,7 +189,7 @@ import rv32i_types::*;
 
         else if (rs_select == 2'd1 && dispatch_valid) 
         begin
-
+            insert_multiply = 1'b1;
             multiply_reservation_station_entry_next.busy = 1'b1; // mark as busy
             multiply_reservation_station_entry_next.ps1_v = dispatch_ps_ready1;
             multiply_reservation_station_entry_next.ps2_v = dispatch_ps_ready2;
