@@ -1,4 +1,4 @@
-module top_tb;
+// module top_tb;
 
 
 timeprecision 1ps;
@@ -14,27 +14,27 @@ timeunit 1ps;
     bit clk;
     always #(clock_half_period_ps) clk = ~clk;
 
-    bit rst;
+//     bit rst;
 
 
-    initial begin
-        $fsdbDumpfile("dump.fsdb");
-        $fsdbDumpvars(0, "+all");
-        rst = 1'b1;
-        repeat (2) @(posedge clk);
-        rst <= 1'b0;
-    end
+//     initial begin
+//         $fsdbDumpfile("dump.fsdb");
+//         $fsdbDumpvars(0, "+all");
+//         rst = 1'b1;
+//         repeat (2) @(posedge clk);
+//         rst <= 1'b0;
+//     end
 
 
 
 
-task generate_reset;
-    begin
-        rst = 1'b1;
-        repeat (2) @ (posedge clk);
-        rst <= 1'b0;
-    end
-endtask;
+// task generate_reset;
+//     begin
+//         rst = 1'b1;
+//         repeat (2) @ (posedge clk);
+//         rst <= 1'b0;
+//     end
+// endtask;
 
     logic dispatch_valid;
     logic [1:0] rs_select;

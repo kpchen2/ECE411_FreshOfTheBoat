@@ -1,8 +1,8 @@
-module queue
+module free_list
 import rv32i_types::*;
 #(
-    parameter DATA_WIDTH = 32,
-    parameter QUEUE_DEPTH = 64
+    parameter DATA_WIDTH = 6,
+    parameter QUEUE_DEPTH = 32
 )
 (
     input logic clk,
@@ -13,7 +13,6 @@ import rv32i_types::*;
     output logic [DATA_WIDTH - 1:0] rdata_out,
     input logic dequeue_in,
 
-    output logic full_out,
     output logic empty_out
 );
 
@@ -29,13 +28,11 @@ import rv32i_types::*;
     logic   [DATA_WIDTH:0] enqueue_mem_next;
     logic   [DATA_WIDTH:0] dequeue_mem_next;
 
-    logic   full;   // wires, used in sequential logic and in returning output signals
     logic   empty;  // wires, used in sequential logic and in returning output signals
 
     logic   enqueue_reg, enqueue_next;
     logic   dequeue_reg, dequeue_next;
 
-    assign  full_out = full;
     assign  empty_out = empty;
 
     always_ff @ (posedge clk) begin
@@ -43,11 +40,12 @@ import rv32i_types::*;
         dequeue_reg <= dequeue_next;
 
         if (rst) begin
-            tail_reg <= '1;
+            tail_reg <= {1'b0, {$clog2(QUEUE_DEPTH){1'b1}}};
             head_reg <= '1;
-
-            for (int i = 0; i < QUEUE_DEPTH; i++) begin
-                mem[i] <= '0;
+            
+            // i = 32, i < 64 and then and queue indexed at i-32 = i
+            for (int i = QUEUE_DEPTH; i < 2 * QUEUE_DEPTH; i++) begin
+                mem[i-32] <= i[6:0];
             end
 
         end else begin
@@ -74,10 +72,8 @@ import rv32i_types::*;
         dequeue_next = dequeue_in;
 
         if (rst) begin
-            full = '0;
             empty = '1;
         end else begin
-            full = (tail_reg[ADDR_WIDTH - 1:0] == head_reg[ADDR_WIDTH - 1:0]) && (tail_reg[ADDR_WIDTH] != head_reg[ADDR_WIDTH]);
             empty = (tail_reg[ADDR_WIDTH - 1:0] == head_reg[ADDR_WIDTH - 1:0]) && (tail_reg[ADDR_WIDTH] == head_reg[ADDR_WIDTH ]);
         end
 
@@ -94,18 +90,12 @@ import rv32i_types::*;
         end
         
         if (enqueue_in) begin
-            if (~full) begin
-                tail_next = tail_reg + 1'b1;
-                enqueue_mem_next = {1'b1, wdata_in};    // write the data to the queue. 1 means valid
-            end else begin
-                enqueue_mem_next = mem[tail_reg[ADDR_WIDTH - 1:0]]; // don't do anything
-            end
-
+            tail_next = tail_reg + 1'b1;
             head_next = (dequeue_in && !empty) ? head_reg + 1'd1 : head_reg;
+            enqueue_mem_next = {1'b1, wdata_in};
         end
 
-        full = (tail_next[ADDR_WIDTH - 1:0] == head_next[ADDR_WIDTH - 1:0]) && (tail_next[ADDR_WIDTH] != head_next[ADDR_WIDTH]);    // logic if queue full
         // empty = (tail_next[ADDR_WIDTH - 1:0] == head_next[ADDR_WIDTH - 1:0]) && (tail_next[ADDR_WIDTH] == head_next[ADDR_WIDTH]);   // logic if queue empty
     end
 
-endmodule : queue
+endmodule : free_list

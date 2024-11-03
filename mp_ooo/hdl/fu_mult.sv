@@ -1,0 +1,104 @@
+module fu_mult
+import rv32i_types::*;
+#(
+    parameter PHYS_REG_BITS = 6
+)
+(
+    input   logic           clk,
+    input   logic           rst,
+    input   logic   [31:0]  rs1_v, rs2_v,
+    input   decode_info_t   decode_info,
+    output  logic   [31:0]  rd_v,
+    input   logic           start,
+    output  logic           valid
+);
+
+    logic   [31:0]  a;
+    logic   [31:0]  b;
+
+    logic           complete_inst, complete_prev;
+    logic   [65:0]  product_inst;
+
+    logic   [32:0]  a_sext, a_zext, b_sext, b_zext;
+    logic   [32:0]  a_final, b_final;
+
+    assign  a_sext  =   {a[31], a};
+    assign  a_zext  =   {1'b0, a};
+    assign  b_sext  =   {b[31], b};
+    assign  b_zext  =   {1'b0, b};
+
+    // DW02_mult #(32, 32)
+    // U1 ( .A(a), .B(b), .TC(TC), .PRODUCT(product_inst) );
+
+    DW_mult_seq #(33,   33,   1,   3, // last input on this row is # cycles
+                0,   1,   1,
+                0) 
+    U1 (.clk(clk),   .rst_n(~rst),   .hold(1'b0), 
+        .start(start),   .a(a_final),   .b(b_final), 
+        .complete(complete_inst),   .product(product_inst) );
+
+    always_ff @(posedge clk) begin
+        if (rst) begin
+            complete_prev <= 1'b0;
+        end else begin
+            complete_prev <= complete_inst;
+        end
+    end
+
+    always_comb begin
+        rd_v = '0;
+        a = '0;
+        b = '0;
+        a_final = '0;
+        b_final = '0;
+
+        valid = complete_prev ? 1'b0 : complete_inst;
+        unique case (decode_info.opcode)
+            op_b_reg : begin
+                a = rs1_v;
+                b = rs2_v;
+                unique case (decode_info.funct3)
+                    mult_div_f3_mul : begin
+                        rd_v = product_inst[31:0];
+                        a_final = a_sext;
+                        b_final = b_sext;
+                    end
+                    mult_div_f3_mulh : begin
+                        rd_v = product_inst[63:32];
+                        a_final = a_sext;
+                        b_final = b_sext;
+                    end
+                    mult_div_f3_mulhsu : begin
+                        rd_v = product_inst[63:32];
+                        a_final = a_sext;
+                        b_final = b_zext;
+                    end
+                    mult_div_f3_mulhu : begin
+                        rd_v = product_inst[63:32];
+                        a_final = a_zext;
+                        b_final = b_zext;
+                    end
+                    mult_div_f3_div : begin
+
+                    end
+                    mult_div_f3_divu : begin
+
+                    end
+                    mult_div_f3_rem : begin
+
+                    end
+                    mult_div_f3_remu : begin
+
+                    end
+                    default : begin
+                        
+                    end
+                endcase
+            end
+            default : begin
+                // do nothing
+            end
+        endcase
+    end
+
+endmodule : fu_mult
