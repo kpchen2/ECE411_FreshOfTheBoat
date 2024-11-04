@@ -246,6 +246,8 @@ import rv32i_types::*;
         .old_pd(old_pd)
     );
 
+    logic   [31:0]  rs1_v_add, rs1_v_mul, rs1_v_div, rs2_v_add, rs2_v_mul, rs2_v_div;
+
     phys_regfile phys_regfile_i (
         .clk(clk),
         .rst(rst),
@@ -254,14 +256,14 @@ import rv32i_types::*;
         .rs1_add(), .rs1_mul(), .rs1_div(),          // RS
         .rs2_add(), .rs2_mul(), .rs2_div(),          // RS
         .rd_add(cdb_add.pd_s), .rd_mul(cdb_mul.pd_s), .rd_div(cdb_div.pd_s),           // CDB
-        .rs1_v_add(), .rs1_v_mul(), .rs1_v_div(),
-        .rs2_v_add(), .rs2_v_mul(), .rs2_v_div()
+        .rs1_v_add(rs1_v_add), .rs1_v_mul(rs1_v_mul), .rs1_v_div(rs1_v_div),
+        .rs2_v_add(rs2_v_add), .rs2_v_mul(rs2_v_mul), .rs2_v_div(rs2_v_div)
     );
 
     execute execute_i (
         .clk(clk),
         .rst(rst),
-        .rs1_v_add(), .rs2_v_add(), .rs1_v_mul(), .rs2_v_mul(), .rs1_v_div(), .rs2_v_div(),
+        .rs1_v_add(rs1_v_add), .rs2_v_add(rs2_v_add), .rs1_v_mul(rs1_v_mul), .rs2_v_mul(rs2_v_mul), .rs1_v_div(rs1_v_div), .rs2_v_div(rs2_v_div),
         .decode_info_add(), .decode_info_mul(), .decode_info_div(),     // RS
         .start_add(), .start_mul(), .start_div(),                       // RS
         .rob_idx_add(),                                                 // RS    
