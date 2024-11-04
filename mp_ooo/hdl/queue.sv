@@ -67,7 +67,7 @@ import rv32i_types::*;
     always_comb begin
         tail_next = tail_reg;
         head_next = head_reg;
-        rdata_out = 'x;
+        rdata_out = mem[head_reg[ADDR_WIDTH - 1:0] + 1'b1][DATA_WIDTH - 1: 0];
         enqueue_mem_next = '0;
         dequeue_mem_next = '0;
         enqueue_next = enqueue_in;
@@ -86,7 +86,7 @@ import rv32i_types::*;
                 head_next = head_reg + 1'd1;
                 dequeue_mem_next = mem[head_reg[ADDR_WIDTH - 1:0] + 1'b1];  // get current data out of the queue 
                 dequeue_mem_next[DATA_WIDTH] = 1'b0;                        // not valid anymore
-                rdata_out = dequeue_mem_next[DATA_WIDTH - 1:0];
+                // rdata_out = dequeue_mem_next[DATA_WIDTH - 1:0];
             end else begin
                 head_next = head_reg;
                 dequeue_mem_next = mem[head_reg[ADDR_WIDTH - 1:0]];         // don't do anything
