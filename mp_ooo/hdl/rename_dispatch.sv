@@ -68,6 +68,7 @@ import rv32i_types::*;
             decode_info.rd_s   = inst[11:7];
             decode_info.rs1_s  = inst[19:15];
             decode_info.rs2_s  = inst[24:20];
+            decode_info.inst   = inst;
             regf_we = 1'b1;
 
             rd = decode_info.rd_s;
