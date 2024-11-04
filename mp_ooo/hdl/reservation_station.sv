@@ -52,6 +52,15 @@ import rv32i_types::*;
         output decode_info_t add_decode_info_out,
         output decode_info_t multiply_decode_info_out,
         output decode_info_t divide_decode_info_out,
+
+        output logic [5:0] add_ps1,
+        output logic [5:0] add_ps2,
+
+        output logic [5:0] multiply_ps1,
+        output logic [5:0] multiply_ps2,
+
+        output logic [5:0] divide_ps1,
+        output logic [5:0] divide_ps2
         // Not sure if CDB might output anything to the RS
     );
 
@@ -336,6 +345,14 @@ import rv32i_types::*;
         multiply_decode_info_out = '0;
         divide_decode_info_out = '0;
 
+        add_ps1 = '0;
+        add_ps2 = '0;
+
+        multiply_ps1 = '0;
+        multiply_ps2 = '0;
+
+        divide_ps1 = '0;
+        divide_ps2 = '0;
         if (~multiply_fu_busy && (num_issues <= 3'd4))
         begin
             for (int i = 0; i < NUM_MULTIPLY_REGISTERS; i++)
@@ -353,6 +370,8 @@ import rv32i_types::*;
                     multiply_decode_info_out = multiply_reservation_station_entry_new.decode_info;
                     num_issues = num_issues + 1'd1;
                     remove_multiply = 1'b1;
+                    multiply_ps1 = multiply_reservation_station_entry_new.ps1;
+                    multiply_ps2 = multiply_reservation_station_entry_new.ps2;
                     break;
                 end
             end
@@ -375,6 +394,8 @@ import rv32i_types::*;
                     add_decode_info_out = add_reservation_station_entry_new.decode_info;
                     remove_add = 1'b1;
                     num_issues = num_issues + 1'd1;
+                    add_ps1 = add_reservation_station_entry_new.ps1;
+                    add_ps2 = add_reservation_station_entry_new.ps2;
                     break;
                 end
             end
@@ -396,6 +417,8 @@ import rv32i_types::*;
                     divide_decode_info_out = divide_reservation_station_entry_new.decode_info;
                     num_issues = num_issues + 1'd1;
                     remove_divide = 1'b1;
+                    divide_ps1 = divide_reservation_station_entry_new.ps1;
+                    divide_ps2 = divide_reservation_station_entry_new.ps2;
                     break;
                 end
             end

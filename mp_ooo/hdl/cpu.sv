@@ -248,22 +248,7 @@ import rv32i_types::*;
         .old_pd(old_pd)
     );
 
-    reservation_station reservation_station_i (
-        .clk(clk),
-        .rst(rst),
-        .rs_select(),
-        .dispatch_ps_ready1(),
-        .dispatch_ps_ready2(),
-        .ps1(),
-        .ps2(),
-        .rd(),
-        .pd(),
-        .rob_entry(),
-        .cdb_ps_id(),
-        .fu_busy(),
-        .regf_we(),
-        .fu_ready()
-    );
+
 
     phys_regfile phys_regfile_i (
         .clk(clk),
