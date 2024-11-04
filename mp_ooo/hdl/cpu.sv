@@ -40,25 +40,24 @@
     
 //     logic   [31:0]  bmem_raddr_dummy;
 
-//     /* CP2 SIGNALS */
-//     logic   [31:0]  inst;
-//     logic           rob_full;
-//     logic           iqueue_empty;
-//     logic   [4:0]   rd_dispatch, rs1, rs2;
-//     logic   [5:0]   pd_dispatch, ps1, ps2;
-//     logic           ps1_valid, ps2_valid;
-//     logic           regf_we_dispatch;
-//     logic   [5:0]   rob_num;
-//     logic   [4:0]   rd_rob;
-//     logic   [5:0]   pd_rob;
-//     logic           rob_valid;
-//     logic   [31:0]  reg_rs1_v, reg_rs2_v;
-//     logic   [31:0]  cdb_rd_v;
-//     logic   [5:0]   old_pd;
-//     logic           enqueue;
-//     logic   [5:0]   phys_reg;
-//     logic           dequeue;
-//     logic           is_free_list_empty;
+    /* CP2 SIGNALS */
+    logic   [31:0]  inst;
+    logic           rob_full;
+    logic           iqueue_empty;
+    logic   [4:0]   rd_dispatch, rs1, rs2;
+    logic   [5:0]   pd_dispatch, ps1, ps2;
+    logic           ps1_valid, ps2_valid;
+    logic           regf_we_dispatch;
+    logic   [5:0]   rob_num, rob_num_out;
+    logic   [4:0]   rd_rob;
+    logic   [5:0]   pd_rob;
+    logic           rob_valid;
+    logic   [31:0]  cdb_rd_v;
+    logic   [5:0]   old_pd;
+    logic           enqueue;
+    logic   [5:0]   phys_reg;
+    logic           dequeue;
+    logic           is_free_list_empty;
 
 //     cdb_t           cdb_add, cdb_mul, cdb_div;
 //     decode_info_t   decode_info ;
@@ -177,48 +176,47 @@
 //         .empty_out(iqueue_empty)
 //     );
 
-//     rename_dispatch rename_dispatch_i (
-//         .inst(inst),
-//         .rob_full(rob_full),
-//         .rs_full_add(rs_add_full), .rs_full_mul(rs_mul_full), .rs_full_div(rs_div_full),        // FROM RS
-//         .is_iqueue_empty(iqueue_empty),
-//         .phys_reg(phys_reg),
-//         .is_free_list_empty(is_free_list_empty),
-//         .dequeue(dequeue),
-//         .rd(rd_dispatch),
-//         .rs1(rs1),
-//         .rs2(rs2),
-//         .pd(pd_dispatch),
-//         .ps1(ps1),
-//         .ps2(ps2),
-//         .ps1_valid(ps1_valid),
-//         .ps2_valid(ps2_valid),
-//         .ps1_out(ps1_out),
-//         .ps2_out(ps2_out),
-//         .ps1_valid(ps1_valid_out),
-//         .ps2_valid(ps2_valid_out),  // outputs into RS
-//         .regf_we(regf_we_dispatch),
-//         .rob_num(rob_num),
-//         .decode_info(decode_info),
-//         .rs_signal(rs_signal)
-//     );
+    rename_dispatch rename_dispatch_i (
+        .inst(inst),
+        .rob_full(rob_full),
+        .rs_full_add(rs_add_full), .rs_full_mul(rs_mul_full), .rs_full_div(rs_div_full),        // FROM RS
+        .is_iqueue_empty(iqueue_empty),
+        .phys_reg(phys_reg),
+        .is_free_list_empty(is_free_list_empty),
+        .dequeue(dequeue),
+        .rd(rd_dispatch),
+        .rs1(rs1),
+        .rs2(rs2),
+        .pd(pd_dispatch),
+        .ps1(ps1),
+        .ps2(ps2),
+        .ps1_valid(ps1_valid),
+        .ps2_valid(ps2_valid),
+        .ps1_out(ps1_out),
+        .ps2_out(ps2_out),
+        .ps1_valid_out(ps1_valid_out),
+        .ps2_valid_out(ps2_valid_out),  // outputs into RS
+        .regf_we(regf_we_dispatch),
+        .rob_num(rob_num),
+        .rob_num_out(rob_num_out),
+        .decode_info(decode_info),
+        .rs_signal(rs_signal)
+    );
 
-//     rat rat_i (
-//         .clk(clk),
-//         .rst(rst),
-//         .rd_dispatch(rd_dispatch),
-//         .rs1(rs1),
-//         .rs2(rs2),
-//         .rd_add(cdb_add.rd_s), .rd_mul(cdb_mul.rd_s), .rd_div(cdb_div.rd_s),         // FROM CDB
-//         .pd_dispatch(pd_dispatch),
-//         .pd_add(cdb_add.pd_s), .pd_mul(cdb_mul.pd_s), .pd_div(cdb_div.pd_s),         // FROM CDB
-//         .ps1(ps1),
-//         .ps2(ps2),
-//         .ps1_valid(ps1_valid),
-//         .ps2_valid(ps2_valid),
-//         .regf_we_dispatch(regf_we_dispatch),
-//         .regf_we_add(cdb_add.valid), .regf_we_mul(cdb_mul.valid), .regf_we_div(cdb_div.valid)      // FROM CDB
-//     );
+    rat rat_i (
+        .clk(clk),
+        .rst(rst),
+        .rd_dispatch(rd_dispatch),
+        .rd_add(cdb_add.rd_s), .rd_mul(cdb_mul.rd_s), .rd_div(cdb_div.rd_s),         // FROM CDB
+        .pd_dispatch(pd_dispatch),
+        .pd_add(cdb_add.pd_s), .pd_mul(cdb_mul.pd_s), .pd_div(cdb_div.pd_s),         // FROM CDB
+        .ps1(ps1),
+        .ps2(ps2),
+        .ps1_valid(ps1_valid),
+        .ps2_valid(ps2_valid),
+        .regf_we_dispatch(regf_we_dispatch),
+        .regf_we_add(cdb_add.valid), .regf_we_mul(cdb_mul.valid), .regf_we_div(cdb_div.valid)      // FROM CDB
+    );
 
 //     rob rob_i (
 //         .clk(clk),
@@ -248,39 +246,37 @@
 //         .old_pd(old_pd)
 //     );
 
+    phys_regfile phys_regfile_i (
+        .clk(clk),
+        .rst(rst),
+        .regf_we_add(cdb_add.valid), .regf_we_mul(cdb_mul.valid), .regf_we_div(cdb_div.valid),
+        .rd_v_add(cdb_add.rd_v), .rd_v_mul(cdb_mul.rd_v), .rd_v_div(cdb_div.rd_v),
+        .rs1_add(), .rs1_mul(), .rs1_div(),          // RS
+        .rs2_add(), .rs2_mul(), .rs2_div(),          // RS
+        .rd_add(cdb_add.pd_s), .rd_mul(cdb_mul.pd_s), .rd_div(cdb_div.pd_s),           // CDB
+        .rs1_v_add(), .rs1_v_mul(), .rs1_v_div(),
+        .rs2_v_add(), .rs2_v_mul(), .rs2_v_div()
+    );
 
-
-//     phys_regfile phys_regfile_i (
-//         .clk(clk),
-//         .rst(rst),
-//         .regf_we_add(cdb_add.valid), .regf_we_mul(cdb_mul.valid), .regf_we_div(cdb_div.valid),
-//         .rd_v_add(cdb_add.rd_v), .rd_v_mul(cdb_mul.rd_v), .rd_v_div(cdb_div.rd_v),
-//         .rs1_s(),           // RS
-//         .rs2_s(),           // RS
-//         .rd_add(cdb_add.pd_s), .rd_mul(cdb_mul.pd_s), .rd_div(cdb_div.pd_s),           // CDB
-//         .rs1_v(reg_rs1_v),
-//         .rs2_v(reg_rs2_v)
-//     );
-
-//     execute execute_i (
-//         .clk(clk),
-//         .rst(rst),
-//         .reg_rs1_v(), .reg_rs2_v(),                                     // RS
-//         .decode_info_add(add_decode_info), .decode_info_mul(multiply_decode_info), .decode_info_div(divide_decode_info),     // RS
-//         .start_add(add_fu_ready), .start_mul(multiply_fu_ready), .start_div(divide_fu_ready),                       // RS
-//         .rob_idx_add(add_rob_entry),                                                 // RS    
-//         .pd_s_add(add_pd),                                                    // RS
-//         .rd_s_add(add_rd),                                                    // RS
-//         .cdb_add(cdb_add),
-//         .rob_idx_mul(multiply_rob_entry),                                                 // RS
-//         .pd_s_mul(multiply_pd),                                                    // RS
-//         .rd_s_mul(multiply_rd),                                                    // RS
-//         .cdb_mul(cdb_mul),
-//         .rob_idx_div(divide_rob_entry),                                                 // RS
-//         .pd_s_div(divide_pd),                                                    // RS
-//         .rd_s_div(divide_rd),                                                    // RS
-//         .cdb_div(cdb_div)
-//     );
+    execute execute_i (
+        .clk(clk),
+        .rst(rst),
+        .rs1_v_add(), .rs2_v_add(), .rs1_v_mul(), .rs2_v_mul(), .rs1_v_div(), .rs2_v_div(),
+        .decode_info_add(), .decode_info_mul(), .decode_info_div(),     // RS
+        .start_add(), .start_mul(), .start_div(),                       // RS
+        .rob_idx_add(),                                                 // RS    
+        .pd_s_add(),                                                    // RS
+        .rd_s_add(),                                                    // RS
+        .cdb_add(cdb_add),
+        .rob_idx_mul(),                                                 // RS
+        .pd_s_mul(),                                                    // RS
+        .rd_s_mul(),                                                    // RS
+        .cdb_mul(cdb_mul),
+        .rob_idx_div(),                                                 // RS
+        .pd_s_div(),                                                    // RS
+        .rd_s_div(),                                                    // RS
+        .cdb_div(cdb_div)
+    );
 
 //     reservation_station reservation_stations_i
 //     (
