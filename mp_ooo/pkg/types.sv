@@ -3,58 +3,9 @@ package rv32i_types;
 
     parameter NUM_ADD_REGISTERS = 4;
     parameter NUM_MULTIPLY_REGISTERS = 4;
+    parameter NUM_DIVIDE_REGISTERS = 4;
     parameter MAX_ISSUES = 4; // num instructions to issue
-    typedef struct packed {
-       
-        logic busy;
-        logic ps1_v;
-        logic [31:0] ps1;
-        logic ps2_v;
-        logic [31:0] ps2;
-        logic [31:0] pd;
-        logic [31:0] rd;
-        logic [31:0] rob_entry;
     
-    } add_reservation_station_data;
-    typedef struct packed {
-        logic busy;
-        logic ps1_v;
-        logic [31:0] ps1;
-        logic ps2_v;
-        logic [31:0] ps2;
-        logic [31:0] pd;
-        logic [31:0] rd;
-        logic [31:0] rob_entry;
-    
-    } multiply_reservation_station_data;
-
-    typedef struct packed {
-        logic   [5:0]   rob_idx;
-        logic   [5:0]   pd_s;
-        logic   [4:0]   rd_s;
-        logic   [31:0]  rd_v;
-        logic           valid;
-    } cdb_t;
-
-    typedef struct packed {
-        logic [31:0] ps1;
-        logic [31:0] ps2;
-        logic [31:0]  pd;
-        logic [31:0] rd;
-        logic [31:0] rob_entry;
-    } cdb_rs_output;
-
-    typedef struct packed {
-        logic   [31:0]  addr;
-        logic   [22:0]  tag;
-        logic   [3:0]   set_no;
-        logic   [4:0]   offset;
-        logic   [3:0]   rmask;
-
-        logic   [3:0]   wmask;
-        logic   [31:0]  wdata;
-    } stage_reg_t;
-
     typedef struct packed {
         logic   [2:0]   funct3;
         logic   [6:0]   funct7;
@@ -69,6 +20,72 @@ package rv32i_types;
         logic   [4:0]  rs2_s;
         logic   [4:0]  rd_s;
     } decode_info_t;
+
+    typedef struct packed {
+       
+        logic busy;
+        logic ps1_v;
+        logic [5:0] ps1;
+        logic ps2_v;
+        logic [5:0] ps2;
+        logic [5:0] pd;
+        logic [4:0] rd;
+        logic [5:0] rob_entry;
+        decode_info_t decode_info;
+    
+    } add_reservation_station_data;
+    typedef struct packed {
+        logic busy;
+        logic ps1_v;
+        logic [5:0] ps1;
+        logic ps2_v;
+        logic [5:0] ps2;
+        logic [5:0] pd;
+        logic [4:0] rd;
+        logic [5:0] rob_entry;
+        decode_info_t decode_info;
+    } multiply_reservation_station_data;
+    typedef struct packed {
+        logic busy;
+        logic ps1_v;
+        logic [5:0] ps1;
+        logic ps2_v;
+        logic [5:0] ps2;
+        logic [5:0] pd;
+        logic [4:0] rd;
+        logic [5:0] rob_entry;
+        decode_info_t decode_info;
+    
+    } divide_reservation_station_data;
+
+    typedef struct packed {
+        logic   [5:0]   rob_idx;
+        logic   [5:0]   pd_s;
+        logic   [4:0]   rd_s;
+        logic   [31:0]  rd_v;
+        logic           valid;
+    } cdb_t;
+
+    typedef struct packed {
+        logic [5:0] ps1;
+        logic [5:0] ps2;
+        logic [5:0]  pd;
+        logic [4:0] rd;
+        logic [5:0] rob_entry;
+    } cdb_rs_output;
+
+    typedef struct packed {
+        logic   [31:0]  addr;
+        logic   [22:0]  tag;
+        logic   [3:0]   set_no;
+        logic   [4:0]   offset;
+        logic   [3:0]   rmask;
+
+        logic   [3:0]   wmask;
+        logic   [31:0]  wdata;
+    } stage_reg_t;
+
+    
 
     typedef struct packed {
         logic   [5:0]   phys_reg;

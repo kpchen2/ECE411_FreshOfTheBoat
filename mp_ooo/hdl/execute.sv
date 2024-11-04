@@ -76,7 +76,7 @@ import rv32i_types::*;
         .valid(valid_add)
     );
 
-    fu_add fu_mul_i (
+    fu_mult fu_mul_i (
         .clk(clk),
         .rst(rst),
         .rs1_v(reg_rs1_v),
@@ -87,7 +87,7 @@ import rv32i_types::*;
         .valid(valid_mul)
     );
 
-    fu_add fu_div_i (
+    fu_div_rem fu_div_i (
         .clk(clk),
         .rst(rst),
         .rs1_v(reg_rs1_v),
