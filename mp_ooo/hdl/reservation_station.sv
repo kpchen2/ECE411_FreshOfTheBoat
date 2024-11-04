@@ -49,7 +49,9 @@ import rv32i_types::*;
         output logic multiply_full,
         output logic divide_full,
 
-        output decode_info_t decode_info_out
+        output decode_info_t add_decode_info_out,
+        output decode_info_t multiply_decode_info_out,
+        output decode_info_t divide_decode_info_out,
         // Not sure if CDB might output anything to the RS
     );
 
@@ -330,6 +332,10 @@ import rv32i_types::*;
         remove_multiply = 1'b0;
         remove_divide = 1'b0;
 
+        add_decode_info_out = '0;
+        multiply_decode_info_out = '0;
+        divide_decode_info_out = '0;
+
         if (~multiply_fu_busy && (num_issues <= 3'd4))
         begin
             for (int i = 0; i < NUM_MULTIPLY_REGISTERS; i++)
@@ -344,7 +350,7 @@ import rv32i_types::*;
                     multiply_pd = multiply_reservation_station_entry_new.pd;
                     multiply_rd = multiply_reservation_station_entry_new.rd;
                     multiply_rob_entry = multiply_reservation_station_entry_new.rob_entry;
-                    decode_info_out = multiply_reservation_station_entry_new.decode_info;
+                    multiply_decode_info_out = multiply_reservation_station_entry_new.decode_info;
                     num_issues = num_issues + 1'd1;
                     remove_multiply = 1'b1;
                     break;
@@ -366,7 +372,7 @@ import rv32i_types::*;
                     add_pd = add_reservation_station_entry_new.pd;
                     add_rd = add_reservation_station_entry_new.rd;
                     add_rob_entry = add_reservation_station_entry_new.rob_entry;
-                    decode_info_out = add_reservation_station_entry_new.decode_info;
+                    add_decode_info_out = add_reservation_station_entry_new.decode_info;
                     remove_add = 1'b1;
                     num_issues = num_issues + 1'd1;
                     break;
@@ -387,7 +393,7 @@ import rv32i_types::*;
                     divide_pd = divide_reservation_station_entry_new.pd;
                     divide_rd = divide_reservation_station_entry_new.rd;
                     divide_rob_entry = divide_reservation_station_entry_new.rob_entry;
-                    decode_info_out = divide_reservation_station_entry_new.decode_info;
+                    divide_decode_info_out = divide_reservation_station_entry_new.decode_info;
                     num_issues = num_issues + 1'd1;
                     remove_divide = 1'b1;
                     break;

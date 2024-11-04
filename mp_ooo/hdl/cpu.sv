@@ -61,7 +61,29 @@ import rv32i_types::*;
     logic           is_free_list_empty;
 
     cdb_t           cdb_add, cdb_mul, cdb_div;
-    decode_info_t   decode_info;
+    decode_info_t   decode_info ;
+
+    decode_info_t add_decode_info;
+    decode_info_t multiply_decode_info;
+    decode_info_t divide_decode_info;
+    
+    logic    add_fu_ready;
+    logic multiply_fu_ready;
+    logic divide_fu_ready;
+
+    logic [5:0] add_rob_entry,
+    logic [5:0] multiply_rob_entry,
+    logic [5:0] divide_rob_entry,
+
+    logic [5:0] add_pd,
+    logic [5:0] multiply_pd,
+    logic [5:0] divide_pd,
+
+    logic [4:0] add_rd,
+    logic [4:0 ] multiply_rd,
+    logic [4:0] divide_rd,
+
+
     logic   [1:0]   rs_signal;
 
     logic           rs_add_full, rs_mul_full, rs_div_full;
@@ -238,20 +260,69 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
         .reg_rs1_v(), .reg_rs2_v(),                                     // RS
-        .decode_info_add(), .decode_info_mul(), .decode_info_div(),     // RS
-        .start_add(), .start_mul(), .start_div(),                       // RS
-        .rob_idx_add(),                                                 // RS    
-        .pd_s_add(),                                                    // RS
-        .rd_s_add(),                                                    // RS
+        .decode_info_add(add_decode_info), .decode_info_mul(multiply_decode_info), .decode_info_div(divide_decode_info),     // RS
+        .start_add(add_fu_ready), .start_mul(multiply_fu_ready), .start_div(divide_fu_ready),                       // RS
+        .rob_idx_add(add_rob_entry),                                                 // RS    
+        .pd_s_add(add_pd),                                                    // RS
+        .rd_s_add(add_rd),                                                    // RS
         .cdb_add(cdb_add),
-        .rob_idx_mul(),                                                 // RS
-        .pd_s_mul(),                                                    // RS
-        .rd_s_mul(),                                                    // RS
+        .rob_idx_mul(multiply_rob_entry),                                                 // RS
+        .pd_s_mul(multiply_pd),                                                    // RS
+        .rd_s_mul(multiply_rd),                                                    // RS
         .cdb_mul(cdb_mul),
-        .rob_idx_div(),                                                 // RS
-        .pd_s_div(),                                                    // RS
-        .rd_s_div(),                                                    // RS
+        .rob_idx_div(divide_rob_entry),                                                 // RS
+        .pd_s_div(divide_pd),                                                    // RS
+        .rd_s_div(divide_rd),                                                    // RS
         .cdb_div(cdb_div)
     );
+
+    reservation_station reservation_stations_i
+    (
+        .clk(clk),
+        .rst(rst),
+        .dispatch_valid(),
+        .rs_select(rs_signal),
+        .dispatch_ps_ready1(ps1_valid),
+        .dispatch_ps_ready2(ps2_valid),
+        .ps1(ps1),
+        .ps2(ps2),
+        .rd(rd_dispatch),
+        .pd(pd_dispatch),
+        .rob_entry(rob_num),
+        .cdb_ps_id(),
+        .decode_info_in(decode_info),
+        
+        .add_fu_busy(~cdb_add.valid),
+        .multiply_fu_busy(~cdb_mul.valid),
+        .divide_fu_busy(~cdb_div.valid),
+
+        .add_regf_we(),
+        .multiply_regf_we(),
+        .divide_regf_we(),
+
+        .add_fu_ready(),
+        .divide_fu_ready(),
+        .multiply_fu_ready,
+        
+        .add_rob_entry(),
+        .multiply_rob_entry(),
+        .divide_rob_entry(),
+
+        .add_pd(),
+        .multiply_pd(), 
+        .divide_pd(),
+
+        .add_rd(),
+        .multiply_rd(),
+        .divide_rd(),
+
+        .add_full(rs_add_full),
+        .multiply_full(   rs_mul_full   )
+        ,.divide_full(rs_div_full),
+
+        .add_decode_info_out(add_decode_info),
+        .multiply_decode_info_out(multiply_decode_info),
+        .divide_decode_info_out(divide_decode_info)
+    )
 
 endmodule : cpu
