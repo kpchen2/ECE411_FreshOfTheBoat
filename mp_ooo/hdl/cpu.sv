@@ -57,7 +57,7 @@ import rv32i_types::*;
     logic   [5:0]   old_pd;
     logic           enqueue;
     logic   [5:0]   phys_reg;
-    logic           dequeue_freelist;
+    logic           dequeue;
     logic           is_free_list_empty;
 
     cdb_t           cdb_add, cdb_mul, cdb_div;
@@ -150,7 +150,7 @@ import rv32i_types::*;
         .wdata_in(ufp_rdata),
         .enqueue_in(ufp_resp),
         .rdata_out(inst),
-        .dequeue_in('1),
+        .dequeue_in(dequeue),
         .full_out(full_stall),
         .empty_out(iqueue_empty)
     );
@@ -162,7 +162,7 @@ import rv32i_types::*;
         .is_iqueue_empty(iqueue_empty),
         .phys_reg(phys_reg),
         .is_free_list_empty(is_free_list_empty),
-        .dequeue(dequeue_freelist),
+        .dequeue(dequeue),
         .rd(rd_dispatch),
         .rs1(rs1),
         .rs2(rs2),
