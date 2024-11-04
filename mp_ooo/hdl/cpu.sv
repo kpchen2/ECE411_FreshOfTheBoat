@@ -249,6 +249,16 @@ import rv32i_types::*;
         .old_pd(old_pd)
     );
 
+    free_list free_list_i (
+        .clk(clk),
+        .rst(rst),
+        .wdata_in(old_pd),
+        .enqueue_in(enqueue),
+        .rdata_out(phys_reg),
+        .dequeue_in(dequeue),
+        .empty_out(is_free_list_empty)
+    );
+
     phys_regfile phys_regfile_i (
         .clk(clk),
         .rst(rst),
@@ -287,7 +297,7 @@ import rv32i_types::*;
     (
         .clk(clk),
         .rst(rst),
-        .dispatch_valid(),
+        .dispatch_valid(regf_we_dispatch),
         .rs_select(rs_signal),
         .dispatch_ps_ready1(ps1_valid),
         .dispatch_ps_ready2(ps2_valid),
@@ -296,9 +306,9 @@ import rv32i_types::*;
         .rd(rd_dispatch),
         .pd(pd_dispatch),
         .rob_entry(rob_num),
-        .cdb_ps_id_add(),       // FILL
-        .cdb_ps_id_multiply(),
-        .cdb_ps_id_divide(),
+        .cdb_ps_id_add(cdb_add.pd_s),
+        .cdb_ps_id_multiply(cdb_mul.pd_s),
+        .cdb_ps_id_divide(cdb_div.pd_s),
         .decode_info_in(decode_info),
         
         .add_fu_busy(~cdb_add.valid),
@@ -331,7 +341,7 @@ import rv32i_types::*;
 
         .add_decode_info_out(add_decode_info),
         .multiply_decode_info_out(multiply_decode_info),
-        .divide_decode_info_out(divide_decode_info)
+        .divide_decode_info_out(divide_decode_info),
 
         .add_ps1(add_ps1),
         .add_ps2(add_ps2),
