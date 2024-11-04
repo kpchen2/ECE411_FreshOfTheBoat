@@ -1,11 +1,13 @@
 package rv32i_types;
 
-
     parameter NUM_ADD_REGISTERS = 4;
     parameter NUM_MULTIPLY_REGISTERS = 4;
     parameter NUM_DIVIDE_REGISTERS = 4;
     parameter MAX_ISSUES = 4; // num instructions to issue
-    
+    parameter DATA_WIDTH = 6;
+
+    typedef logic [DATA_WIDTH:0] physicalIndexing;
+
     typedef struct packed {
         logic   [2:0]   funct3;
         logic   [6:0]   funct7;
@@ -22,7 +24,6 @@ package rv32i_types;
     } decode_info_t;
 
     typedef struct packed {
-       
         logic busy;
         logic ps1_v;
         logic [5:0] ps1;
@@ -32,8 +33,8 @@ package rv32i_types;
         logic [4:0] rd;
         logic [5:0] rob_entry;
         decode_info_t decode_info;
-    
     } add_reservation_station_data;
+
     typedef struct packed {
         logic busy;
         logic ps1_v;
@@ -45,6 +46,7 @@ package rv32i_types;
         logic [5:0] rob_entry;
         decode_info_t decode_info;
     } multiply_reservation_station_data;
+
     typedef struct packed {
         logic busy;
         logic ps1_v;
@@ -55,7 +57,6 @@ package rv32i_types;
         logic [4:0] rd;
         logic [5:0] rob_entry;
         decode_info_t decode_info;
-    
     } divide_reservation_station_data;
 
     typedef struct packed {
@@ -85,17 +86,12 @@ package rv32i_types;
         logic   [31:0]  wdata;
     } stage_reg_t;
 
-    
-
     typedef struct packed {
         logic   [5:0]   phys_reg;
         logic   [4:0]   arch_reg;
     } rob_out_t;
 
-    // parameter DATA_WIDTH = 32; 
-    // parameter QUEUE_DEPTH = 64;
-    typedef struct packed
-    {
+    typedef struct packed {
         logic           monitor_valid;
         logic   [63:0]  monitor_order;
         logic   [31:0]  monitor_inst;
@@ -115,13 +111,11 @@ package rv32i_types;
         logic   [31:0]  monitor_mem_wdata;
     } rvfi_info;
 
-    typedef struct packed 
-    {
+    typedef struct packed {
         rvfi_info if_id_rvfi;
     } if_id_t;
 
-    typedef struct packed 
-    {
+    typedef struct packed {
         rvfi_info id_ex_rvfi;
         logic [2:0] funct3;
         logic [6:0]funct7;
@@ -132,7 +126,6 @@ package rv32i_types;
         logic [31:0]u_imm;
         logic [31:0]j_imm;
         logic imem_resp;
-
     } id_ex_t;
 
     typedef struct packed {
@@ -142,8 +135,6 @@ package rv32i_types;
         logic [2:0] funct3;
         logic [6:0]opcode;
         logic imem_resp;
-
-        
     } ex_mm_t;
 
     typedef struct packed {
@@ -153,7 +144,6 @@ package rv32i_types;
         logic dmem_resp;
         logic [2:0] funct3;
         logic [6:0]opcode;
-
     } mm_wb_t;
 
     typedef enum logic {
@@ -173,7 +163,6 @@ package rv32i_types;
         // what else?
 
     } id_ex_stage_reg_t;
-
     
     typedef enum logic [6:0] {
         op_b_lui       = 7'b0110111, // load upper immediate (U type)

@@ -47,6 +47,8 @@ import rv32i_types::*;
         rd_v = '0;
         a = '0;
         b = '0;
+        a_final = '0;
+        b_final = '0;
 
         valid = complete_prev ? 1'b0 : complete_inst;
         unique case (decode_info.opcode)

@@ -45,7 +45,7 @@ import rv32i_types::*;
             
             // i = 32, i < 64 and then and queue indexed at i-32 = i
             for (int i = QUEUE_DEPTH; i < 2 * QUEUE_DEPTH; i++) begin
-                mem[i-32] <= i[6:0];
+                mem[i-32] <= physicalIndexing'(i);
             end
 
         end else begin

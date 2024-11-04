@@ -210,6 +210,7 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
         .rd_dispatch(rd_dispatch),
+        .rs1(rs1), .rs2(rs2),
         .rd_add(cdb_add.rd_s), .rd_mul(cdb_mul.rd_s), .rd_div(cdb_div.rd_s),
         .pd_dispatch(pd_dispatch),
         .pd_add(cdb_add.pd_s), .pd_mul(cdb_mul.pd_s), .pd_div(cdb_div.pd_s),
