@@ -228,9 +228,9 @@ import rv32i_types::*;
         multiply_reservation_station_entry_next = multiply_reservation_station[0];
         divide_reservation_station_entry_next = divide_reservation_station[0];
 
-        add_fu_full = 1'd1;
-        multiply_fu_full = 1'd1;
-        divide_fu_full = 1'd1;
+        add_fu_full = 1'd0;
+        multiply_fu_full = 1'd0;
+        divide_fu_full = 1'd0;
         next_free_entry = '0;
 
         /* * * * * * * We selected Add RS * * * * * * */

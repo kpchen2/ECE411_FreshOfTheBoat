@@ -38,6 +38,7 @@ import rv32i_types::*;
         dequeue = 1'b0;
         rs_signal = 2'b00;
         decode_info = '0;
+        regf_we = 1'b0;
 
         ps1_out = ps1;
         ps2_out = ps2;
@@ -73,7 +74,7 @@ import rv32i_types::*;
             rs1 = decode_info.rs1_s;
             rs2 = decode_info.rs2_s;
         end
-        regf_we = 1'b0;
+
         pd = phys_reg;
     end
 

@@ -107,7 +107,7 @@ import rv32i_types::*;
         mul_rob_idx_in_next = mul_rob_idx_in;
         div_rob_idx_in_next = div_rob_idx_in;
 
-        rob_num = tail_reg[5:0];
+        rob_num = tail_reg[5:0] + 1'b1;
         full = '0;
         dequeue_valid = '0;
         
