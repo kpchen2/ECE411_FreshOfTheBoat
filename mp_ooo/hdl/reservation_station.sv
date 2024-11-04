@@ -96,6 +96,7 @@ import rv32i_types::*;
     logic multiply_fu_full;
     // logic multiply_fu_full_reg;      // functional_unit full
     logic divide_fu_full;
+    // logic divide_fu_full_reg;
 
     logic [1:0] rs_select_reg; // reg equivalent of rs_select
     logic [5:0] cdb_ps_id_add_reg;  //reg equivalent of cdb_ps_id_add
