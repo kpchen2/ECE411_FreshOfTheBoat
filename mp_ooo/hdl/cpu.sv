@@ -82,13 +82,16 @@ import rv32i_types::*;
     logic [4:0 ] multiply_rd;
     logic [4:0] divide_rd;
 
-
     logic   [1:0]   rs_signal;
 
     logic           rs_add_full, rs_mul_full, rs_div_full;
 
     logic   [5:0]   ps1_out, ps2_out;
     logic           ps1_valid_out, ps2_valid_out;
+
+    logic   [31:0]  rs1_v_add, rs1_v_mul, rs1_v_div, rs2_v_add, rs2_v_mul, rs2_v_div;
+
+    logic   [5:0]   add_ps1, add_ps2, multiply_ps1, multiply_ps2, divide_ps1, divide_ps2;
 
 
     always_ff @(posedge clk) begin
@@ -179,7 +182,7 @@ import rv32i_types::*;
     rename_dispatch rename_dispatch_i (
         .inst(inst),
         .rob_full(rob_full),
-        .rs_full_add(rs_add_full), .rs_full_mul(rs_mul_full), .rs_full_div(rs_div_full),        // FROM RS
+        .rs_full_add(rs_add_full), .rs_full_mul(rs_mul_full), .rs_full_div(rs_div_full),
         .is_iqueue_empty(iqueue_empty),
         .phys_reg(phys_reg),
         .is_free_list_empty(is_free_list_empty),
@@ -195,7 +198,7 @@ import rv32i_types::*;
         .ps1_out(ps1_out),
         .ps2_out(ps2_out),
         .ps1_valid_out(ps1_valid_out),
-        .ps2_valid_out(ps2_valid_out),  // outputs into RS
+        .ps2_valid_out(ps2_valid_out),
         .regf_we(regf_we_dispatch),
         .rob_num(rob_num),
         .rob_num_out(rob_num_out),
@@ -207,15 +210,15 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
         .rd_dispatch(rd_dispatch),
-        .rd_add(cdb_add.rd_s), .rd_mul(cdb_mul.rd_s), .rd_div(cdb_div.rd_s),         // FROM CDB
+        .rd_add(cdb_add.rd_s), .rd_mul(cdb_mul.rd_s), .rd_div(cdb_div.rd_s),
         .pd_dispatch(pd_dispatch),
-        .pd_add(cdb_add.pd_s), .pd_mul(cdb_mul.pd_s), .pd_div(cdb_div.pd_s),         // FROM CDB
+        .pd_add(cdb_add.pd_s), .pd_mul(cdb_mul.pd_s), .pd_div(cdb_div.pd_s),
         .ps1(ps1),
         .ps2(ps2),
         .ps1_valid(ps1_valid),
         .ps2_valid(ps2_valid),
         .regf_we_dispatch(regf_we_dispatch),
-        .regf_we_add(cdb_add.valid), .regf_we_mul(cdb_mul.valid), .regf_we_div(cdb_div.valid)      // FROM CDB
+        .regf_we_add(cdb_add.valid), .regf_we_mul(cdb_mul.valid), .regf_we_div(cdb_div.valid)
     );
 
     rob rob_i (
@@ -224,12 +227,12 @@ import rv32i_types::*;
         .phys_reg_in(pd_dispatch),
         .arch_reg_in(rd_dispatch),
         .enqueue_valid(regf_we_dispatch),
-        .add_rob_idx_in(),      // FROM CDB
-        .add_cdb_valid(),       // FROM CDB
-        .mul_rob_idx_in(),      // FROM CDB
-        .mul_cdb_valid(),       // FROM CDB
-        .div_rob_idx_in(),      // FROM CDB
-        .div_cdb_valid(),       // FROM CDB
+        .add_rob_idx_in(cdb_add.rob_idx),
+        .add_cdb_valid(cdb_add.valid),
+        .mul_rob_idx_in(cdb_mul.rob_idx),
+        .mul_cdb_valid(cdb_mul.valid),
+        .div_rob_idx_in(cdb_div.rob_idx),
+        .div_cdb_valid(cdb_div.valid),
         .rob_out({pd_rob, rd_rob}),
         .dequeue_valid(rob_valid),
         .rob_num(rob_num),
@@ -246,37 +249,37 @@ import rv32i_types::*;
         .old_pd(old_pd)
     );
 
-    logic   [31:0]  rs1_v_add, rs1_v_mul, rs1_v_div, rs2_v_add, rs2_v_mul, rs2_v_div;
-
     phys_regfile phys_regfile_i (
         .clk(clk),
         .rst(rst),
         .regf_we_add(cdb_add.valid), .regf_we_mul(cdb_mul.valid), .regf_we_div(cdb_div.valid),
         .rd_v_add(cdb_add.rd_v), .rd_v_mul(cdb_mul.rd_v), .rd_v_div(cdb_div.rd_v),
-        .rs1_add(), .rs1_mul(), .rs1_div(),          // RS
-        .rs2_add(), .rs2_mul(), .rs2_div(),          // RS
-        .rd_add(cdb_add.pd_s), .rd_mul(cdb_mul.pd_s), .rd_div(cdb_div.pd_s),           // CDB
+        .rs1_add(add_ps1), .rs1_mul(multiply_ps1), .rs1_div(divide_ps1),          // SHOULD BE PS
+        .rs2_add(add_ps2), .rs2_mul(multiply_ps2), .rs2_div(divide_ps2),          // SHOULD BE PS
+        .rd_add(cdb_add.pd_s), .rd_mul(cdb_mul.pd_s), .rd_div(cdb_div.pd_s),
         .rs1_v_add(rs1_v_add), .rs1_v_mul(rs1_v_mul), .rs1_v_div(rs1_v_div),
         .rs2_v_add(rs2_v_add), .rs2_v_mul(rs2_v_mul), .rs2_v_div(rs2_v_div)
     );
+
+    logic   start_add, start_mul, start_div;
 
     execute execute_i (
         .clk(clk),
         .rst(rst),
         .rs1_v_add(rs1_v_add), .rs2_v_add(rs2_v_add), .rs1_v_mul(rs1_v_mul), .rs2_v_mul(rs2_v_mul), .rs1_v_div(rs1_v_div), .rs2_v_div(rs2_v_div),
-        .decode_info_add(), .decode_info_mul(), .decode_info_div(),     // RS
-        .start_add(), .start_mul(), .start_div(),                       // RS
-        .rob_idx_add(),                                                 // RS    
-        .pd_s_add(),                                                    // RS
-        .rd_s_add(),                                                    // RS
+        .decode_info_add(add_decode_info), .decode_info_mul(multiply_decode_info), .decode_info_div(divide_decode_info),
+        .start_add(start_add), .start_mul(start_mul), .start_div(start_div),
+        .rob_idx_add(add_rob_entry),
+        .pd_s_add(add_pd),
+        .rd_s_add(add_rd),
         .cdb_add(cdb_add),
-        .rob_idx_mul(),                                                 // RS
-        .pd_s_mul(),                                                    // RS
-        .rd_s_mul(),                                                    // RS
+        .rob_idx_mul(multiply_rob_entry),
+        .pd_s_mul(multiply_pd),
+        .rd_s_mul(multiply_rd),
         .cdb_mul(cdb_mul),
-        .rob_idx_div(),                                                 // RS
-        .pd_s_div(),                                                    // RS
-        .rd_s_div(),                                                    // RS
+        .rob_idx_div(divide_rob_entry),
+        .pd_s_div(divide_pd),
+        .rd_s_div(divide_rd),
         .cdb_div(cdb_div)
     );
 
@@ -293,40 +296,47 @@ import rv32i_types::*;
         .rd(rd_dispatch),
         .pd(pd_dispatch),
         .rob_entry(rob_num),
-        .cdb_ps_id(),
+        .cdb_ps_id(),       // FILL
         .decode_info_in(decode_info),
         
         .add_fu_busy(~cdb_add.valid),
         .multiply_fu_busy(~cdb_mul.valid),
         .divide_fu_busy(~cdb_div.valid),
 
-        .add_regf_we(),
-        .multiply_regf_we(),
-        .divide_regf_we(),
+        // .add_regf_we(),
+        // .multiply_regf_we(),
+        // .divide_regf_we(),
 
-        .add_fu_ready(),
-        .divide_fu_ready(),
-        .multiply_fu_ready,
+        .add_fu_ready(start_add),
+        .multiply_fu_ready(start_mul),
+        .divide_fu_ready(start_div),
         
-        .add_rob_entry(),
-        .multiply_rob_entry(),
-        .divide_rob_entry(),
+        .add_rob_entry(add_rob_entry),
+        .multiply_rob_entry(multiply_rob_entry),
+        .divide_rob_entry(divide_rob_entry),
 
-        .add_pd(),
-        .multiply_pd(), 
-        .divide_pd(),
+        .add_pd(add_pd),
+        .multiply_pd(multiply_pd), 
+        .divide_pd(divide_pd),
 
-        .add_rd(),
-        .multiply_rd(),
-        .divide_rd(),
+        .add_rd(add_rd),
+        .multiply_rd(multiply_rd),
+        .divide_rd(divide_rd),
 
         .add_full(rs_add_full),
-        .multiply_full(   rs_mul_full   )
-        ,.divide_full(rs_div_full),
+        .multiply_full(rs_mul_full),
+        .divide_full(rs_div_full),
 
         .add_decode_info_out(add_decode_info),
         .multiply_decode_info_out(multiply_decode_info),
         .divide_decode_info_out(divide_decode_info)
+
+        .add_ps1(add_ps1),
+        .add_ps2(add_ps2),
+        .multiply_ps1(multiply_ps1),
+        .multiply_ps2(multiply_ps2),
+        .divide_ps1(divide_ps1),
+        .divide_ps2(divide_ps2)
     );
 
 endmodule : cpu

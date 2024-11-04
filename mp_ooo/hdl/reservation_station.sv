@@ -25,9 +25,9 @@ import rv32i_types::*;
         input logic divide_fu_busy,
         
         
-        output logic add_regf_we,           //set based on if we are ready to issue from rs, not sure if we feed to regf or FU
-        output logic multiply_regf_we,
-        output logic divide_regf_we,
+        // output logic add_regf_we,           //set based on if we are ready to issue from rs, not sure if we feed to regf or FU
+        // output logic multiply_regf_we,
+        // output logic divide_regf_we,
         
         output logic add_fu_ready,           // tell FU if we are ready to feed it inputs
         output logic divide_fu_ready,
