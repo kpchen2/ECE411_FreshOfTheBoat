@@ -219,7 +219,8 @@ import rv32i_types::*;
         .ps1_valid(ps1_valid),
         .ps2_valid(ps2_valid),
         .regf_we_dispatch(regf_we_dispatch),
-        .regf_we_add(cdb_add.valid), .regf_we_mul(cdb_mul.valid), .regf_we_div(cdb_div.valid)
+        .regf_we_add(cdb_add.valid), .regf_we_mul(cdb_mul.valid), .regf_we_div(cdb_div.valid),
+        .decode_info(decode_info)
     );
 
     rob rob_i (

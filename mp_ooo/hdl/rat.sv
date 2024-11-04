@@ -12,7 +12,8 @@ import rv32i_types::*;
     output  logic   ps1_valid, ps2_valid,
 
     input   logic   regf_we_dispatch,
-    input   logic   regf_we_add, regf_we_mul, regf_we_div
+    input   logic   regf_we_add, regf_we_mul, regf_we_div,
+    input   decode_info_t   decode_info
 );
 
     logic [PHYS_REG_BITS-1:0] rat[32]; // holds mapping from arch register to phys register
@@ -46,9 +47,9 @@ import rv32i_types::*;
 
         // Map arch sources to phys sources
         ps1 = rat[rs1];
-        ps2 = rat[rs2];
+        ps2 = (decode_info.opcode == op_b_imm) ? rat[rs1] : rat[rs2];
         ps1_valid = valid[rs1];
-        ps2_valid = valid[rs2];
+        ps2_valid = (decode_info.opcode == op_b_imm) ? valid[rs1] : valid[rs2];
 
         // CDB: set entry rd to valid if it still maps to pd
         if (regf_we_add && pd_add == rat[rd_add]) begin
