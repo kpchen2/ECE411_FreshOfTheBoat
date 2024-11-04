@@ -226,8 +226,12 @@ import rv32i_types::*;
         .phys_reg_in(pd_dispatch),
         .arch_reg_in(rd_dispatch),
         .enqueue_valid(regf_we_dispatch),
-        .rob_idx_in(),      // FROM CDB
-        .cdb_valid(),       // FROM CDB
+        .add_rob_idx_in(),      // FROM CDB
+        .add_cdb_valid(),       // FROM CDB
+        .mul_rob_idx_in(),      // FROM CDB
+        .mul_cdb_valid(),       // FROM CDB
+        .div_rob_idx_in(),      // FROM CDB
+        .div_cdb_valid(),       // FROM CDB
         .rob_out({pd_rob, rd_rob}),
         .dequeue_valid(rob_valid),
         .rob_num(rob_num),
@@ -240,8 +244,25 @@ import rv32i_types::*;
         .rd(rd_rob),
         .pd(pd_rob),
         .regf_we(rob_valid),
-        .enqueue(enqueue),  // FREE LIST
-        .old_pd(old_pd)     // FREE LIST
+        .enqueue(enqueue),
+        .old_pd(old_pd)
+    );
+
+    reservation_station reservation_station_i (
+        .clk(clk),
+        .rst(rst),
+        .rs_select(),
+        .dispatch_ps_ready1(),
+        .dispatch_ps_ready2(),
+        .ps1(),
+        .ps2(),
+        .rd(),
+        .pd(),
+        .rob_entry(),
+        .cdb_ps_id(),
+        .fu_busy(),
+        .regf_we(),
+        .fu_ready()
     );
 
     phys_regfile phys_regfile_i (
