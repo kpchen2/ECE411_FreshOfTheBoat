@@ -66,6 +66,9 @@ import rv32i_types::*;
 
     logic           rs_add_full, rs_mul_full, rs_div_full;
 
+    logic   [5:0]   ps1_out, ps2_out;
+    logic           ps1_valid_out, ps2_valid_out;
+
 
     always_ff @(posedge clk) begin
         bmem_raddr_dummy <= bmem_raddr; // useless
@@ -153,8 +156,6 @@ import rv32i_types::*;
     );
 
     rename_dispatch rename_dispatch_i (
-        .clk(clk),
-        .rst(rst),
         .inst(inst),
         .rob_full(rob_full),
         .rs_full_add(rs_add_full), .rs_full_mul(rs_mul_full), .rs_full_div(rs_div_full),        // FROM RS
@@ -170,6 +171,10 @@ import rv32i_types::*;
         .ps2(ps2),
         .ps1_valid(ps1_valid),
         .ps2_valid(ps2_valid),
+        .ps1_out(ps1_out),
+        .ps2_out(ps2_out),
+        .ps1_valid(ps1_valid_out),
+        .ps2_valid(ps2_valid_out),  // outputs into RS
         .regf_we(regf_we_dispatch),
         .rob_num(rob_num),
         .decode_info(decode_info),
@@ -221,125 +226,12 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
         .regf_we_add(cdb_add.valid), .regf_we_mul(cdb_mul.valid), .regf_we_div(cdb_div.valid),
-        .rd_v(cdb_add.rd_v), .rd_v_mul(cdb_mul.rd_v), .rd_v_div(cdb_div.rd_v),
+        .rd_v_add(cdb_add.rd_v), .rd_v_mul(cdb_mul.rd_v), .rd_v_div(cdb_div.rd_v),
         .rs1_s(),           // RS
         .rs2_s(),           // RS
         .rd_add(cdb_add.pd_s), .rd_mul(cdb_mul.pd_s), .rd_div(cdb_div.pd_s),           // CDB
         .rs1_v(reg_rs1_v),
         .rs2_v(reg_rs2_v)
-    );
-
-    // fu_add fu_add_i (
-    //     .clk(clk),
-    //     .rst(rst),
-    //     .rs1_v(reg_rs1_v),
-    //     .rs2_v(reg_rs2_v),
-    //     .decode_info(),     // PHYS REGFILE
-    //     .rd_v(cdb_rd_v),
-    //     .rs1_s(),           // FROM RS
-    //     .rs2_s(),      // import rv32i_types::*;
-
-
-module top_tb;
-
-timeunit 1ps;
-timeprecision 1ps;
-// int clock_half_period_ps = getenv("ECE411_CLOCK_PERIOD_PS").atoi() / 2;
-
-import rv32i_types::*;
-
-bit clk;
-always #1ns clk = ~clk;
-
-bit rst;
-
-
-initial begin
-    $fsdbDumpfile("dump.fsdb");
-    $fsdbDumpvars(0, "+all");
-    rst = 1'b1;
-    repeat (2) @(posedge clk);
-    rst <= 1'b0;
-end
-
-    logic           clk;
-    logic           rst;
-    logic   [31:0]  reg_rs1_v, reg_rs2_v;
-    decode_info_t   decode_info;
-    logic   [31:0]  cdb_rd_v;
-    logic           start_add, start_mul, start_div;
-
-    // ADD PORTS
-    logic   [5:0]   rob_idx_add;
-    logic   [5:0]   pd_s_add;
-    logic   [4:0]   rd_s_add;
-    cdb_t           cdb_add;
-
-    // MULT PORTS
-    logic   [5:0]   rob_idx_mul;
-    logic   [5:0]   pd_s_mul;
-    logic   [4:0]   rd_s_mul;
-    cdb_t           cdb_mul;
-
-    // DIV PORTS
-    logic   [5:0]   rob_idx_div;
-    logic   [5:0]   pd_s_div;
-    logic   [4:0]   rd_s_div;
-    cdb_t           cdb_div;
-
-
-task generate_reset;
-    begin
-        rst = 1'b1;
-        repeat (2) @ (posedge clk);
-        rst <= 1'b0;
-    end
-endtask;
-
-execute #(.PHYS_REG_BITS(6)) dut(
-    .*
-);
-
-task exec_test;
-    begin
-        reg_rs1_v <= 32'h00000004;
-        reg_rs2_v <= 32'h00000005;
-        start_add <= 1'b1;
-        decode_info.opcode = op_b_reg;
-        decode_info.funct3 = arith_f3_add;
-    end
-endtask
-
-initial
-begin
-    generate_reset;
-    exec_test;
-    #100000;
-    $finish;
-end
-
-endmodule     // FROM RS
-    //     .rob_idx(),         // FROM RS
-    //     .rs1_cdb(),           // CDB
-    //     .rs2_cdb(),           // CDB
-    //     .rob_cdb(),         // CDB
-    //     .valid()
-    // );
-
-    // execute execute_i (
-
-    // );
-
-    free_list free_list_i (
-        .clk(clk),
-        .rst(rst),
-        .wdata_in(old_pd),
-        .enqueue_in(enqueue),
-
-        .rdata_out(phys_reg),
-        .dequeue_in(dequeue_freelist),
-
-        .empty_out(is_free_list_empty)
     );
 
 endmodule : cpu
