@@ -6,7 +6,7 @@ import rv32i_types::*;
 (
     input   logic           clk,
     input   logic           rst,
-    input   logic   [31:0]  reg_rs1_v, reg_rs2_v,
+    input   logic   [31:0]  rs1_v_add, rs2_v_add, rs1_v_mul, rs2_v_mul, rs1_v_div, rs2_v_div,
     input   decode_info_t   decode_info_add, decode_info_mul, decode_info_div,
     input   logic           start_add, start_mul, start_div,
 
@@ -65,10 +65,8 @@ import rv32i_types::*;
     end
 
     fu_add fu_add_i (
-        .clk(clk),
-        .rst(rst),
-        .rs1_v(reg_rs1_v),
-        .rs2_v(reg_rs2_v),
+        .rs1_v(rs1_v_add),
+        .rs2_v(rs2_v_add),
         .decode_info(decode_info_add),     // PHYS REGFILE
         .rd_v(rd_v_add),
         .start(start_add),
@@ -78,8 +76,8 @@ import rv32i_types::*;
     fu_mult fu_mul_i (
         .clk(clk),
         .rst(rst),
-        .rs1_v(reg_rs1_v),
-        .rs2_v(reg_rs2_v),
+        .rs1_v(rs1_v_mul),
+        .rs2_v(rs2_v_mul),
         .decode_info(decode_info_mul),     // PHYS REGFILE
         .rd_v(rd_v_mul),
         .start(start_mul),
@@ -89,8 +87,8 @@ import rv32i_types::*;
     fu_div_rem fu_div_i (
         .clk(clk),
         .rst(rst),
-        .rs1_v(reg_rs1_v),
-        .rs2_v(reg_rs2_v),
+        .rs1_v(rs1_v_div),
+        .rs2_v(rs2_v_div),
         .decode_info(decode_info_div),     // PHYS REGFILE
         .rd_v(rd_v_div),
         .start(start_div),
