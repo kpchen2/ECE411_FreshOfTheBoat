@@ -228,88 +228,80 @@ import rv32i_types::*;
         multiply_reservation_station_entry_next = multiply_reservation_station[0];
         divide_reservation_station_entry_next = divide_reservation_station[0];
 
-        add_fu_full = 1'd1;
-        multiply_fu_full = 1'd1;
-        divide_fu_full = 1'd1;
         next_free_entry = '0;
 
         /* * * * * * * We selected Add RS * * * * * * */
-
-        if (rs_select == 2'd0 && dispatch_valid) 
+        if (dispatch_valid)
         begin
-            insert_add = 1'b1;
-            add_reservation_station_entry_next.busy = 1'b1; // mark as busy
-            add_reservation_station_entry_next.ps1_v = dispatch_ps_ready1;
-            add_reservation_station_entry_next.ps2_v = dispatch_ps_ready2;
-            add_reservation_station_entry_next.ps1 = ps1;
-            add_reservation_station_entry_next.ps2 = ps2;
-            add_reservation_station_entry_next.pd = pd;
-            add_reservation_station_entry_next.rd = rd;
-            add_reservation_station_entry_next.rob_entry = rob_entry;
-            add_reservation_station_entry_next.decode_info = decode_info_in;
-            for (int i = 0; i < NUM_ADD_REGISTERS; i++)
+            if (rs_select == 2'd0) 
             begin
-                if (~add_reservation_station[i].busy)
+                insert_add = 1'b1;
+                add_reservation_station_entry_next.busy = 1'b1; // mark as busy
+                add_reservation_station_entry_next.ps1_v = dispatch_ps_ready1;
+                add_reservation_station_entry_next.ps2_v = dispatch_ps_ready2;
+                add_reservation_station_entry_next.ps1 = ps1;
+                add_reservation_station_entry_next.ps2 = ps2;
+                add_reservation_station_entry_next.pd = pd;
+                add_reservation_station_entry_next.rd = rd;
+                add_reservation_station_entry_next.rob_entry = rob_entry;
+                add_reservation_station_entry_next.decode_info = decode_info_in;
+                for (int i = 0; i < NUM_ADD_REGISTERS; i++)
                 begin
-                    next_free_entry = i;
-                    add_fu_full = 1'd0;
-                    break;
+                    if (~add_reservation_station[i].busy)
+                    begin
+                        next_free_entry = i;
+                        break;
+                    end
                 end
             end
-
-
-
-        end
 
         /* * * * * * * We selected Multiply RS * * * * * * */
 
-        else if (rs_select == 2'd1 && dispatch_valid) 
-        begin
-            insert_multiply = 1'b1;
-            multiply_reservation_station_entry_next.busy = 1'b1; // mark as busy
-            multiply_reservation_station_entry_next.ps1_v = dispatch_ps_ready1;
-            multiply_reservation_station_entry_next.ps2_v = dispatch_ps_ready2;
-            multiply_reservation_station_entry_next.ps1 = ps1;
-            multiply_reservation_station_entry_next.ps2 = ps2;
-            multiply_reservation_station_entry_next.pd = pd;
-            multiply_reservation_station_entry_next.rd = rd;
-            multiply_reservation_station_entry_next.rob_entry = rob_entry;
-            multiply_reservation_station_entry_next.decode_info = decode_info_in;
-            for (int i = 0; i < NUM_MULTIPLY_REGISTERS; i++)
+            else if (rs_select == 2'd1) 
             begin
-                if (~multiply_reservation_station[i].busy)
+                insert_multiply = 1'b1;
+                multiply_reservation_station_entry_next.busy = 1'b1; // mark as busy
+                multiply_reservation_station_entry_next.ps1_v = dispatch_ps_ready1;
+                multiply_reservation_station_entry_next.ps2_v = dispatch_ps_ready2;
+                multiply_reservation_station_entry_next.ps1 = ps1;
+                multiply_reservation_station_entry_next.ps2 = ps2;
+                multiply_reservation_station_entry_next.pd = pd;
+                multiply_reservation_station_entry_next.rd = rd;
+                multiply_reservation_station_entry_next.rob_entry = rob_entry;
+                multiply_reservation_station_entry_next.decode_info = decode_info_in;
+                for (int i = 0; i < NUM_MULTIPLY_REGISTERS; i++)
                 begin
-                    next_free_entry = i;
-                    multiply_fu_full = 1'd0;
-                    break;
+                    if (~multiply_reservation_station[i].busy)
+                    begin
+                        next_free_entry = i;
+                        break;
+                    end
                 end
             end
-        end
 
-        else if (rs_select == 2'd2 && dispatch_valid) 
-        begin
-            insert_divide = 1'b1;
-            divide_reservation_station_entry_next.busy = 1'b1; // mark as busy
-            divide_reservation_station_entry_next.ps1_v = dispatch_ps_ready1;
-            divide_reservation_station_entry_next.ps2_v = dispatch_ps_ready2;
-            divide_reservation_station_entry_next.ps1 = ps1;
-            divide_reservation_station_entry_next.ps2 = ps2;
-            divide_reservation_station_entry_next.pd = pd;
-            divide_reservation_station_entry_next.rd = rd;
-            divide_reservation_station_entry_next.rob_entry = rob_entry;
-            divide_reservation_station_entry_next.decode_info = decode_info_in;
-            for (int i = 0; i < NUM_DIVIDE_REGISTERS; i++)
+            else if (rs_select == 2'd2) 
             begin
-                if (~divide_reservation_station[i].busy)
+                insert_divide = 1'b1;
+                divide_reservation_station_entry_next.busy = 1'b1; // mark as busy
+                divide_reservation_station_entry_next.ps1_v = dispatch_ps_ready1;
+                divide_reservation_station_entry_next.ps2_v = dispatch_ps_ready2;
+                divide_reservation_station_entry_next.ps1 = ps1;
+                divide_reservation_station_entry_next.ps2 = ps2;
+                divide_reservation_station_entry_next.pd = pd;
+                divide_reservation_station_entry_next.rd = rd;
+                divide_reservation_station_entry_next.rob_entry = rob_entry;
+                divide_reservation_station_entry_next.decode_info = decode_info_in;
+                for (int i = 0; i < NUM_DIVIDE_REGISTERS; i++)
                 begin
-                    next_free_entry = i;
-                    divide_fu_full = 1'd0;
-                    break;
+                    if (~divide_reservation_station[i].busy)
+                    begin
+                        next_free_entry = i;
+                        break;
+                    end
                 end
             end
         end
     end
-
     /* * * * * * * * * Input logic, remove entry * * * * * * */
   
     always_comb
@@ -434,6 +426,40 @@ import rv32i_types::*;
         * Add more as time goes on. WE NEED to output stuff in this logic
         */
     end
+
+
+    /* * * * * * * * * Full Logic * * * * * * * * * */
+
+    always_comb
+    begin
+        add_fu_full = 1'd1;
+        multiply_fu_full = 1'd1;
+        divide_fu_full = 1'd1;
+        for (int i = 0; i < NUM_ADD_REGISTERS; i++)
+        begin
+            if (~add_reservation_station[i].busy)
+            begin
+                add_fu_full = 1'b0;
+                break;
+            end
+        end
+        for (int i = 0; i < NUM_MULTIPLY_REGISTERS; i++)
+        begin
+            if (~multiply_reservation_station[i].busy)
+            begin
+                multiply_fu_full = 1'b0;
+                break;
+            end
+        end
+        for (int i = 0; i < NUM_ADD_REGISTERS; i++)
+        begin
+            if (~divide_reservation_station[i].busy)
+            begin
+                divide_fu_full = 1'b0;
+                break;
+            end
+        end
+    end 
 
     /* * * * * * * * * Output logic * * * * * * * * * */
     assign add_full = add_fu_full;
