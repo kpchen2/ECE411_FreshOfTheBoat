@@ -20,10 +20,11 @@ import rv32i_types::*;
     output  logic   [PHYS_REG_BITS-1:0]     pd,
     input   logic   [PHYS_REG_BITS-1:0]     ps1, ps2,
     input   logic                           ps1_valid, ps2_valid,
-    input   logic   [PHYS_REG_BITS-1:0]     ps1_out, ps2_out,
-    input   logic                           ps1_valid_out, ps2_valid_out,
+    output  logic   [PHYS_REG_BITS-1:0]     ps1_out, ps2_out,
+    output  logic                           ps1_valid_out, ps2_valid_out,
     output  logic                           regf_we,
     input   logic   [PHYS_REG_BITS-1:0]     rob_num,     // USE THIS SOMEWHERE,
+    output  logic   [PHYS_REG_BITS-1:0]     rob_num_out,
     output  decode_info_t                   decode_info,
     output  logic   [1:0]                   rs_signal
 );
@@ -42,6 +43,8 @@ import rv32i_types::*;
         ps2_out = ps2;
         ps1_valid_out = ps1_valid;
         ps2_valid_out = ps2_valid;
+
+        rob_num_out = rob_num;
 
         if (inst[6:0] == op_b_reg && (inst[14:12] == mult_div_f3_mul || inst[14:12] == mult_div_f3_mulh || inst[14:12] == mult_div_f3_mulhsu || inst[14:12] == mult_div_f3_mulhu)) begin
             rs_signal = 2'b01;

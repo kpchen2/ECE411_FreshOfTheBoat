@@ -48,11 +48,10 @@ import rv32i_types::*;
     logic   [5:0]   pd_dispatch, ps1, ps2;
     logic           ps1_valid, ps2_valid;
     logic           regf_we_dispatch;
-    logic   [5:0]   rob_num;
+    logic   [5:0]   rob_num, rob_num_out;
     logic   [4:0]   rd_rob;
     logic   [5:0]   pd_rob;
     logic           rob_valid;
-    logic   [31:0]  reg_rs1_v, reg_rs2_v;
     logic   [31:0]  cdb_rd_v;
     logic   [5:0]   old_pd;
     logic           enqueue;
@@ -173,10 +172,11 @@ import rv32i_types::*;
         .ps2_valid(ps2_valid),
         .ps1_out(ps1_out),
         .ps2_out(ps2_out),
-        .ps1_valid(ps1_valid_out),
-        .ps2_valid(ps2_valid_out),  // outputs into RS
+        .ps1_valid_out(ps1_valid_out),
+        .ps2_valid_out(ps2_valid_out),  // outputs into RS
         .regf_we(regf_we_dispatch),
         .rob_num(rob_num),
+        .rob_num_out(rob_num_out),
         .decode_info(decode_info),
         .rs_signal(rs_signal)
     );
@@ -185,8 +185,6 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
         .rd_dispatch(rd_dispatch),
-        .rs1(rs1),
-        .rs2(rs2),
         .rd_add(cdb_add.rd_s), .rd_mul(cdb_mul.rd_s), .rd_div(cdb_div.rd_s),         // FROM CDB
         .pd_dispatch(pd_dispatch),
         .pd_add(cdb_add.pd_s), .pd_mul(cdb_mul.pd_s), .pd_div(cdb_div.pd_s),         // FROM CDB
@@ -227,17 +225,17 @@ import rv32i_types::*;
         .rst(rst),
         .regf_we_add(cdb_add.valid), .regf_we_mul(cdb_mul.valid), .regf_we_div(cdb_div.valid),
         .rd_v_add(cdb_add.rd_v), .rd_v_mul(cdb_mul.rd_v), .rd_v_div(cdb_div.rd_v),
-        .rs1_s(),           // RS
-        .rs2_s(),           // RS
+        .rs1_add(), .rs1_mul(), .rs1_div(),          // RS
+        .rs2_add(), .rs2_mul(), .rs2_div(),          // RS
         .rd_add(cdb_add.pd_s), .rd_mul(cdb_mul.pd_s), .rd_div(cdb_div.pd_s),           // CDB
-        .rs1_v(reg_rs1_v),
-        .rs2_v(reg_rs2_v)
+        .rs1_v_add(), .rs1_v_mul(), .rs1_v_div(),
+        .rs2_v_add(), .rs2_v_mul(), .rs2_v_div()
     );
 
     execute execute_i (
         .clk(clk),
         .rst(rst),
-        .reg_rs1_v(), .reg_rs2_v(),                                     // RS
+        .rs1_v_add(), .rs2_v_add(), .rs1_v_mul(), .rs2_v_mul(), .rs1_v_div(), .rs2_v_div(),
         .decode_info_add(), .decode_info_mul(), .decode_info_div(),     // RS
         .start_add(), .start_mul(), .start_div(),                       // RS
         .rob_idx_add(),                                                 // RS    

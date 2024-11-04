@@ -8,8 +8,8 @@ import rv32i_types::*;
     input   logic           rst,
     input   logic           regf_we_add, regf_we_mul, regf_we_div,
     input   logic   [31:0]  rd_v_add, rd_v_mul, rd_v_div,
-    input   logic   [PHYS_REG_BITS-1:0]   rs1_s, rs2_s, rd_add, rd_mul, rd_div,
-    output  logic   [31:0]  rs1_v, rs2_v
+    input   logic   [PHYS_REG_BITS-1:0]   rs1_add, rs2_add, rs1_mul, rs2_mul, rs1_div, rs2_div, rd_add, rd_mul, rd_div,
+    output  logic   [31:0]  rs1_v_add, rs2_v_add, rs1_v_mul, rs2_v_mul, rs1_v_div, rs2_v_div
 );
 
             logic   [31:0]  data [2**PHYS_REG_BITS];
@@ -44,8 +44,14 @@ import rv32i_types::*;
     //     end
     // end
     always_comb begin
-        rs1_v = (rs1_s != 0) ? data[rs1_s] : '0;
-        rs2_v = (rs2_s != 0) ? data[rs2_s] : '0;
+        rs1_v_add = (rs1_add != 0) ? data[rs1_add] : '0;
+        rs2_v_add = (rs2_add != 0) ? data[rs2_add] : '0;
+
+        rs1_v_mul = (rs1_mul != 0) ? data[rs1_mul] : '0;
+        rs2_v_mul = (rs2_mul != 0) ? data[rs2_mul] : '0;
+
+        rs1_v_div = (rs1_div != 0) ? data[rs1_div] : '0;
+        rs2_v_div = (rs2_div != 0) ? data[rs2_div] : '0;
     end
 
 endmodule : phys_regfile
