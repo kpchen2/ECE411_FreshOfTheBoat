@@ -234,4 +234,24 @@ import rv32i_types::*;
         .rs2_v(reg_rs2_v)
     );
 
+    execute execute_i (
+        .clk(clk),
+        .rst(rst),
+        .reg_rs1_v(), .reg_rs2_v(),                                     // RS
+        .decode_info_add(), .decode_info_mul(), .decode_info_div(),     // RS
+        .start_add(), .start_mul(), .start_div(),                       // RS
+        .rob_idx_add(),                                                 // RS    
+        .pd_s_add(),                                                    // RS
+        .rd_s_add(),                                                    // RS
+        .cdb_add(cdb_add),
+        .rob_idx_mul(),                                                 // RS
+        .pd_s_mul(),                                                    // RS
+        .rd_s_mul(),                                                    // RS
+        .cdb_mul(cdb_mul),
+        .rob_idx_div(),                                                 // RS
+        .pd_s_div(),                                                    // RS
+        .rd_s_div(),                                                    // RS
+        .cdb_div(cdb_div)
+    );
+
 endmodule : cpu
