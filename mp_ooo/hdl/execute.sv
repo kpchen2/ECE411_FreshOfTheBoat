@@ -15,6 +15,7 @@ import rv32i_types::*;
     input   logic   [5:0]   pd_s_add,
     input   logic   [4:0]   rd_s_add,
     output  cdb_t           cdb_add,
+    output  logic           busy_add,
 
     // MULT PORTS
     input   logic   [5:0]   rob_idx_mul,
@@ -37,6 +38,8 @@ import rv32i_types::*;
     logic   [4:0]   rd_add_reg, rd_mul_reg, rd_div_reg;
 
     logic   [31:0]  rd_v_add, rd_v_mul, rd_v_div;
+
+    // logic           busy_add;
 
     always_ff @(posedge clk) begin
         if (rst) begin
@@ -70,7 +73,8 @@ import rv32i_types::*;
         .decode_info(decode_info_add),     // PHYS REGFILE
         .rd_v(rd_v_add),
         .start(start_add),
-        .valid(valid_add)
+        .valid(valid_add),
+        .busy(busy_add)
     );
 
     fu_mult fu_mul_i (
@@ -96,9 +100,9 @@ import rv32i_types::*;
     );
 
     always_comb begin
-        cdb_add.rob_idx = rob_add_reg;
-        cdb_add.pd_s = pd_add_reg;
-        cdb_add.rd_s = rd_add_reg;
+        cdb_add.rob_idx = rob_idx_add;
+        cdb_add.pd_s = pd_s_add;
+        cdb_add.rd_s = rd_s_add;
         cdb_add.rd_v = rd_v_add;
         cdb_add.valid = valid_add;
 

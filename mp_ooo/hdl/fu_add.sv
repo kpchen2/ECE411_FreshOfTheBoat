@@ -8,7 +8,8 @@ import rv32i_types::*;
     input   decode_info_t   decode_info,
     output  logic   [31:0]  rd_v,
     input   logic           start,
-    output  logic           valid
+    output  logic           valid,
+    output  logic           busy
 );
 
     logic signed   [31:0] as;
@@ -63,8 +64,10 @@ import rv32i_types::*;
         cmpop = '0;
         aluop = '0;
         valid = 1'b0;
+        busy = 1'b0;
         if (start) begin
             valid = 1'b1;
+            busy = 1'b1;
             unique case (decode_info.opcode)
                 op_b_imm : begin
                     a = rs1_v;
