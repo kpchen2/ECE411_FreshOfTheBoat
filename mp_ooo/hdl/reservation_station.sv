@@ -16,7 +16,9 @@ import rv32i_types::*;
         input logic [4:0] rd       ,// the arch dest register, inherited from free list, don't know width
         input logic [5:0] pd       , // the phys dest register, inherited from free list, don't know width
         input logic [5:0] rob_entry , // rob entry, inherited from rob, don't know width
-        input logic [5:0] cdb_ps_id       ,   // cdb tells us if a busy register can be marked as unbusy
+        input logic [5:0] cdb_ps_id_add       ,   // cdb tells us if a busy register can be marked as unbusy
+        input logic [5:0] cdb_ps_id_multiply,
+        input logic [5:0] cdb_ps_id_divide,
         input decode_info_t decode_info_in,
 
 
@@ -96,7 +98,9 @@ import rv32i_types::*;
     logic divide_fu_full;
 
     logic [1:0] rs_select_reg; // reg equivalent of rs_select
-    logic [5:0] cdb_ps_id_reg;  //reg equivalent of cdb_ps_id
+    logic [5:0] cdb_ps_id_add_reg;  //reg equivalent of cdb_ps_id_add
+    logic [5:0] cdb_ps_id_multiply_reg;
+    logic [5:0] cdb_ps_id_divide_reg;
     
     logic insert_add;
     logic insert_multiply;
@@ -110,7 +114,9 @@ import rv32i_types::*;
     
     always_ff @ (posedge clk)
     begin
-        cdb_ps_id_reg <= cdb_ps_id;
+        cdb_ps_id_add_reg <= cdb_ps_id_add;
+        cdb_ps_id_multiply_reg <= cdb_ps_id_multiply;
+        cdb_ps_id_divide_reg <= cdb_ps_id_divide;
 
         /* * * * * * reset logic * * * * * * */
         if (rst)
@@ -174,11 +180,11 @@ import rv32i_types::*;
 
             for (int i = 0; i < NUM_DIVIDE_REGISTERS; i++)
             begin
-                if (divide_reservation_station[i].ps1 == cdb_ps_id_reg)
+                if (divide_reservation_station[i].ps1 == cdb_ps_id_divide_reg)
                 begin
                     divide_reservation_station[i].ps1_v <= 1'b1;
                 end
-                if (divide_reservation_station[i].ps2 == cdb_ps_id_reg)
+                if (divide_reservation_station[i].ps2 == cdb_ps_id_divide_reg)
                 begin
                     divide_reservation_station[i].ps2_v <= 1'b1;
                 end
@@ -186,11 +192,11 @@ import rv32i_types::*;
 
             for (int i = 0; i < NUM_MULTIPLY_REGISTERS; i++)
             begin
-                if (multiply_reservation_station[i].ps1 == cdb_ps_id_reg)
+                if (multiply_reservation_station[i].ps1 == cdb_ps_id_multiply_reg)
                 begin
                     multiply_reservation_station[i].ps1_v <= 1'b1;
                 end
-                if (multiply_reservation_station[i].ps2 == cdb_ps_id_reg)
+                if (multiply_reservation_station[i].ps2 == cdb_ps_id_multiply_reg)
                 begin
                     multiply_reservation_station[i].ps2_v <= 1'b1;
                 end
@@ -198,11 +204,11 @@ import rv32i_types::*;
 
             for (int i = 0 ; i < NUM_ADD_REGISTERS; i++)
             begin
-                if (add_reservation_station[i].ps1 == cdb_ps_id_reg)
+                if (add_reservation_station[i].ps1 == cdb_ps_id_add_reg)
                 begin
                     add_reservation_station[i].ps1_v <= 1'b1;
                 end
-                if (add_reservation_station[i].ps2 == cdb_ps_id_reg)
+                if (add_reservation_station[i].ps2 == cdb_ps_id_add_reg)
                 begin
                     add_reservation_station[i].ps2_v <= 1'b1;
                 end
