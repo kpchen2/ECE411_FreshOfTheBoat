@@ -275,7 +275,7 @@ import rv32i_types::*;
 
     logic   start_add, start_mul, start_div;
 
-    logic   busy_add;
+    logic   busy_add, busy_mul;
 
     execute execute_i (
         .clk(clk),
@@ -283,7 +283,7 @@ import rv32i_types::*;
         .rs1_v_add(rs1_v_add), .rs2_v_add(rs2_v_add), .rs1_v_mul(rs1_v_mul), .rs2_v_mul(rs2_v_mul), .rs1_v_div(rs1_v_div), .rs2_v_div(rs2_v_div),
         .decode_info_add(add_decode_info), .decode_info_mul(multiply_decode_info), .decode_info_div(divide_decode_info),
         .start_add(start_add), .start_mul(start_mul), .start_div(start_div),
-        .busy_add(busy_add),
+        .busy_add(busy_add), .busy_mul(busy_mul),
         .rob_idx_add(add_rob_entry),
         .pd_s_add(add_pd),
         .rd_s_add(add_rd),
@@ -317,7 +317,7 @@ import rv32i_types::*;
         .decode_info_in(decode_info),
         
         .add_fu_busy('0),     // WAS SET TO BUSY_ADD
-        .multiply_fu_busy(~cdb_mul.valid),
+        .multiply_fu_busy(busy_mul),
         .divide_fu_busy(~cdb_div.valid),
 
         // .add_regf_we(),

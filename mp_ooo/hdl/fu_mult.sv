@@ -10,7 +10,8 @@ import rv32i_types::*;
     input   decode_info_t   decode_info,
     output  logic   [31:0]  rd_v,
     input   logic           start,
-    output  logic           valid
+    output  logic           valid,
+    input   logic           hold
 );
 
     logic   [31:0]  a;
@@ -21,6 +22,8 @@ import rv32i_types::*;
 
     logic   [32:0]  a_sext, a_zext, b_sext, b_zext;
     logic   [32:0]  a_final, b_final;
+
+    decode_info_t decode_info_reg;
 
     assign  a_sext  =   {a[31], a};
     assign  a_zext  =   {1'b0, a};
@@ -40,63 +43,87 @@ import rv32i_types::*;
     always_ff @(posedge clk) begin
         if (rst) begin
             complete_prev <= 1'b0;
+            decode_info_reg <= '0;
+        end else if (hold) begin
+            complete_prev <= complete_inst;
+            decode_info_reg <= decode_info_reg;
         end else begin
             complete_prev <= complete_inst;
+            decode_info_reg <= decode_info;
         end
     end
 
     always_comb begin
         rd_v = '0;
-        a = '0;
-        b = '0;
         a_final = '0;
         b_final = '0;
 
+        a = rs1_v;
+        b = rs2_v;
+
         valid = complete_prev ? 1'b0 : complete_inst;
-        unique case (decode_info.opcode)
-            op_b_reg : begin
-                a = rs1_v;
-                b = rs2_v;
-                unique case (decode_info.funct3)
-                    mult_div_f3_mul : begin
-                        rd_v = product_inst[31:0];
-                        a_final = a_sext;
-                        b_final = b_sext;
-                    end
-                    mult_div_f3_mulh : begin
-                        rd_v = product_inst[63:32];
-                        a_final = a_sext;
-                        b_final = b_sext;
-                    end
-                    mult_div_f3_mulhsu : begin
-                        rd_v = product_inst[63:32];
-                        a_final = a_sext;
-                        b_final = b_zext;
-                    end
-                    mult_div_f3_mulhu : begin
-                        rd_v = product_inst[63:32];
-                        a_final = a_zext;
-                        b_final = b_zext;
-                    end
-                    mult_div_f3_div : begin
 
-                    end
-                    mult_div_f3_divu : begin
+        unique case (decode_info.funct3)
+            mult_div_f3_mul : begin
+                a_final = a_sext;
+                b_final = b_sext;
+            end
+            mult_div_f3_mulh : begin
+                a_final = a_sext;
+                b_final = b_sext;
+            end
+            mult_div_f3_mulhsu : begin
+                a_final = a_sext;
+                b_final = b_zext;
+            end
+            mult_div_f3_mulhu : begin
+                a_final = a_zext;
+                b_final = b_zext;
+            end
+            mult_div_f3_div : begin
 
-                    end
-                    mult_div_f3_rem : begin
+            end
+            mult_div_f3_divu : begin
 
-                    end
-                    mult_div_f3_remu : begin
+            end
+            mult_div_f3_rem : begin
 
-                    end
-                    default : begin
-                        
-                    end
-                endcase
+            end
+            mult_div_f3_remu : begin
+
             end
             default : begin
-                // do nothing
+                
+            end
+        endcase
+
+        unique case (decode_info_reg.funct3)
+            mult_div_f3_mul : begin
+                rd_v = product_inst[31:0];
+            end
+            mult_div_f3_mulh : begin
+                rd_v = product_inst[63:32];
+            end
+            mult_div_f3_mulhsu : begin
+                rd_v = product_inst[63:32];
+            end
+            mult_div_f3_mulhu : begin
+                rd_v = product_inst[63:32];
+            end
+            mult_div_f3_div : begin
+
+            end
+            mult_div_f3_divu : begin
+
+            end
+            mult_div_f3_rem : begin
+
+            end
+            mult_div_f3_remu : begin
+
+            end
+            default : begin
+                
             end
         endcase
     end

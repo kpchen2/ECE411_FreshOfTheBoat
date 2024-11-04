@@ -22,12 +22,14 @@ import rv32i_types::*;
     input   logic   [5:0]   pd_s_mul,
     input   logic   [4:0]   rd_s_mul,
     output  cdb_t           cdb_mul,
+    output  logic           busy_mul,
 
     // DIV PORTS
     input   logic   [5:0]   rob_idx_div,
     input   logic   [5:0]   pd_s_div,
     input   logic   [4:0]   rd_s_div,
-    output  cdb_t           cdb_div
+    output  cdb_t           cdb_div,
+    output  logic           busy_div
 );
 
     logic   valid_add, valid_mul, valid_div;
@@ -38,6 +40,9 @@ import rv32i_types::*;
     logic   [4:0]   rd_add_reg, rd_mul_reg, rd_div_reg;
 
     logic   [31:0]  rd_v_add, rd_v_mul, rd_v_div;
+
+    logic           mul_1, mul_2, mul_3, mul_4;
+    logic           div_1, div_2, div_3, div_4;
 
     // logic           busy_add;
 
@@ -67,6 +72,30 @@ import rv32i_types::*;
         end
     end
 
+    always_ff @(posedge clk) begin
+        if (rst) begin
+            mul_1 <= 1'b0;
+            mul_2 <= 1'b0;
+            mul_3 <= 1'b0;
+            mul_4 <= 1'b0;
+
+            div_1 <= 1'b0;
+            div_2 <= 1'b0;
+            div_3 <= 1'b0;
+            div_4 <= 1'b0;
+        end else begin
+            mul_1 <= start_mul;
+            mul_2 <= mul_1;
+            mul_3 <= mul_2;
+            mul_4 <= mul_3;
+
+            div_1 <= start_div;
+            div_2 <= div_1;
+            div_3 <= div_2;
+            div_4 <= div_3;
+        end
+    end
+
     fu_add fu_add_i (
         .rs1_v(rs1_v_add),
         .rs2_v(rs2_v_add),
@@ -85,7 +114,8 @@ import rv32i_types::*;
         .decode_info(decode_info_mul),     // PHYS REGFILE
         .rd_v(rd_v_mul),
         .start(start_mul),
-        .valid(valid_mul)
+        .valid(valid_mul),
+        .hold(mul_1 || mul_2 || mul_3 || mul_4)
     );
 
     fu_div_rem fu_div_i (
@@ -96,10 +126,14 @@ import rv32i_types::*;
         .decode_info(decode_info_div),     // PHYS REGFILE
         .rd_v(rd_v_div),
         .start(start_div),
-        .valid(valid_div)
+        .valid(valid_div),
+        .hold(div_1 || div_2 || div_3 || div_4)
     );
 
     always_comb begin
+        busy_mul = mul_1 || mul_2 || mul_3 || mul_4;
+        busy_div = div_1 || div_2 || div_3 || div_4;
+
         cdb_add.rob_idx = rob_idx_add;
         cdb_add.pd_s = pd_s_add;
         cdb_add.rd_s = rd_s_add;

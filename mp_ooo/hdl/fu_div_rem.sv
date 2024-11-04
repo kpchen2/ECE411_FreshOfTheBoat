@@ -10,7 +10,8 @@ import rv32i_types::*;
     input   decode_info_t   decode_info,
     output  logic   [31:0]  rd_v,
     input   logic           start,
-    output  logic           valid
+    output  logic           valid,
+    input   logic           hold
 );
 
     logic   [31:0]  a;
@@ -21,11 +22,18 @@ import rv32i_types::*;
     logic           complete_inst, complete_prev;
     logic   [32:0]  quotient_inst, remainder_inst;
 
+    decode_info_t decode_info_reg;
+
     always_ff @(posedge clk) begin
         if (rst) begin
             complete_prev <= 1'b0;
+            decode_info_reg <= '0;
+        end else if (hold) begin
+            complete_prev <= complete_inst;
+            decode_info_reg <= decode_info_reg;
         end else begin
             complete_prev <= complete_inst;
+            decode_info_reg <= decode_info;
         end
     end
 
@@ -51,50 +59,69 @@ import rv32i_types::*;
         b_final = '0;
 
         valid = complete_prev ? 1'b0 : complete_inst;
-        unique case (decode_info.opcode)
-            op_b_reg : begin
-                a = rs1_v;
-                b = rs2_v;
-                unique case (decode_info.funct3)
-                    mult_div_f3_mul : begin
-                        
-                    end
-                    mult_div_f3_mulh : begin
+        a = rs1_v;
+        b = rs2_v;
+        unique case (decode_info.funct3)
+            mult_div_f3_mul : begin
+                
+            end
+            mult_div_f3_mulh : begin
 
-                    end
-                    mult_div_f3_mulhsu : begin
+            end
+            mult_div_f3_mulhsu : begin
 
-                    end
-                    mult_div_f3_mulhu : begin
+            end
+            mult_div_f3_mulhu : begin
 
-                    end
-                    mult_div_f3_div : begin
-                        rd_v = quotient_inst[31:0];
-                        a_final = {a[31], a};
-                        b_final = {b[31], b};
-                    end
-                    mult_div_f3_divu : begin
-                        rd_v = quotient_inst[31:0];
-                        a_final = {1'b0, a};
-                        b_final = {1'b0, b};
-                    end
-                    mult_div_f3_rem : begin
-                        rd_v = remainder_inst[31:0];
-                        a_final = {a[31], a};
-                        b_final = {b[31], b};
-                    end
-                    mult_div_f3_remu : begin
-                        rd_v = remainder_inst[31:0];
-                        a_final = {1'b0, a};
-                        b_final = {1'b0, b};
-                    end
-                    default : begin
-                        
-                    end
-                endcase
+            end
+            mult_div_f3_div : begin
+                a_final = {a[31], a};
+                b_final = {b[31], b};
+            end
+            mult_div_f3_divu : begin
+                a_final = {1'b0, a};
+                b_final = {1'b0, b};
+            end
+            mult_div_f3_rem : begin
+                a_final = {a[31], a};
+                b_final = {b[31], b};
+            end
+            mult_div_f3_remu : begin
+                a_final = {1'b0, a};
+                b_final = {1'b0, b};
             end
             default : begin
-                // do nothing
+                
+            end
+        endcase
+
+        unique case (decode_info_reg.funct3)
+            mult_div_f3_mul : begin
+                
+            end
+            mult_div_f3_mulh : begin
+
+            end
+            mult_div_f3_mulhsu : begin
+
+            end
+            mult_div_f3_mulhu : begin
+
+            end
+            mult_div_f3_div : begin
+                rd_v = quotient_inst[31:0];
+            end
+            mult_div_f3_divu : begin
+                rd_v = quotient_inst[31:0];
+            end
+            mult_div_f3_rem : begin
+                rd_v = remainder_inst[31:0];
+            end
+            mult_div_f3_remu : begin
+                rd_v = remainder_inst[31:0];
+            end
+            default : begin
+                
             end
         endcase
     end
