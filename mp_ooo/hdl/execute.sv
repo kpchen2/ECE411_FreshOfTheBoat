@@ -57,15 +57,11 @@ import rv32i_types::*;
             rob_div_reg <= '0;
             pd_div_reg <= '0;
             rd_div_reg <= '0;
-        end else if (valid_add) begin
-            rob_add_reg <= rob_idx_add;
-            pd_add_reg <= pd_s_add;
-            rd_add_reg <= rd_s_add;
-        end else if (valid_mul) begin
+        end else if (start_mul) begin
             rob_mul_reg <= rob_idx_mul;
             pd_mul_reg <= pd_s_mul;
             rd_mul_reg <= rd_s_mul;
-        end else if (valid_div) begin
+        end else if (start_div) begin
             rob_div_reg <= rob_idx_div;
             pd_div_reg <= pd_s_div;
             rd_div_reg <= rd_s_div;

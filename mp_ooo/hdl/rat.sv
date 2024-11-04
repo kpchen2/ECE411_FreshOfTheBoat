@@ -46,10 +46,17 @@ import rv32i_types::*;
         end
 
         // Map arch sources to phys sources
-        ps1 = rat[rs1];
-        ps2 = (decode_info.opcode == op_b_imm) ? rat[rs1] : rat[rs2];
-        ps1_valid = valid[rs1];
-        ps2_valid = (decode_info.opcode == op_b_imm) ? valid[rs1] : valid[rs2];
+        if (decode_info.inst == 32'h13) begin
+            ps1 = '0;
+            ps2 = '0;
+            ps1_valid = '1;
+            ps2_valid = '1;
+        end else begin
+            ps1 = rat[rs1];
+            ps2 = (decode_info.opcode == op_b_imm) ? rat[rs1] : rat[rs2];
+            ps1_valid = valid[rs1];
+            ps2_valid = (decode_info.opcode == op_b_imm) ? valid[rs1] : valid[rs2];
+        end
 
         // CDB: set entry rd to valid if it still maps to pd
         if (regf_we_add && pd_add == rat[rd_add]) begin
