@@ -296,7 +296,9 @@ import rv32i_types::*;
         .rd(rd_dispatch),
         .pd(pd_dispatch),
         .rob_entry(rob_num),
-        .cdb_ps_id(),       // FILL
+        .cdb_ps_id_add(),       // FILL
+        .cdb_ps_id_multiply(),
+        .cdb_ps_id_divide(),
         .decode_info_in(decode_info),
         
         .add_fu_busy(~cdb_add.valid),
