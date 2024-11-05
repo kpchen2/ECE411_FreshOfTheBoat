@@ -25,10 +25,13 @@ import rv32i_types::*;
     // cdb inputs
     input   logic   [$clog2(QUEUE_DEPTH)-1:0]   add_rob_idx_in,
     input   logic                               add_cdb_valid,
+    input   logic   [31:0]                      add_inst,
     input   logic   [$clog2(QUEUE_DEPTH)-1:0]   mul_rob_idx_in,
     input   logic                               mul_cdb_valid,
+    input   logic   [31:0]                      mul_inst,
     input   logic   [$clog2(QUEUE_DEPTH)-1:0]   div_rob_idx_in,
     input   logic                               div_cdb_valid,
+    input   logic   [31:0]                      div_inst,
 
     input   logic  [31:0]                       add_rs1_rdata,
     input   logic  [31:0]                       add_rs2_rdata,
@@ -106,7 +109,7 @@ import rv32i_types::*;
                 mem[add_rob_idx_in_next].commit <= '1;
                 mem[add_rob_idx_in_next].rvfi.monitor_rs1_rdata <= add_rs1_rdata;
                 mem[add_rob_idx_in_next].rvfi.monitor_rs2_rdata <= add_rs2_rdata;
-                mem[add_rob_idx_in_next].rvfi.monitor_rd_wdata <= add_rd_wdata;
+                mem[add_rob_idx_in_next].rvfi.monitor_rd_wdata <= (add_inst == 32'h13) ? '0 : add_rd_wdata;
                 mem[add_rob_idx_in_next].rvfi.monitor_mem_addr <= monitor_mem_addr;
                 mem[add_rob_idx_in_next].rvfi.monitor_mem_rmask <= monitor_mem_rmask;
                 mem[add_rob_idx_in_next].rvfi.monitor_mem_wmask <= monitor_mem_wmask;
@@ -118,7 +121,7 @@ import rv32i_types::*;
                 mem[mul_rob_idx_in_next].commit <= '1;
                 mem[mul_rob_idx_in_next].rvfi.monitor_rs1_rdata <= multiply_rs1_rdata;
                 mem[mul_rob_idx_in_next].rvfi.monitor_rs2_rdata <= multiply_rs2_rdata;
-                mem[mul_rob_idx_in_next].rvfi.monitor_rd_wdata <= multiply_rd_wdata;
+                mem[mul_rob_idx_in_next].rvfi.monitor_rd_wdata <= (mul_inst == 32'h13) ? '0 : multiply_rd_wdata;
                 mem[mul_rob_idx_in_next].rvfi.monitor_mem_addr <= monitor_mem_addr;
                 mem[mul_rob_idx_in_next].rvfi.monitor_mem_rmask <= monitor_mem_rmask;
                 mem[mul_rob_idx_in_next].rvfi.monitor_mem_wmask <= monitor_mem_wmask;
@@ -130,7 +133,7 @@ import rv32i_types::*;
                 mem[div_rob_idx_in_next].commit <= '1;
                 mem[div_rob_idx_in_next].rvfi.monitor_rs1_rdata <= divide_rs1_rdata;
                 mem[div_rob_idx_in_next].rvfi.monitor_rs2_rdata <= divide_rs2_rdata;
-                mem[div_rob_idx_in_next].rvfi.monitor_rd_wdata <= divide_rd_wdata;
+                mem[div_rob_idx_in_next].rvfi.monitor_rd_wdata <= (div_inst == 32'h13) ? '0 : divide_rd_wdata;
                 mem[div_rob_idx_in_next].rvfi.monitor_mem_addr <= monitor_mem_addr;
                 mem[div_rob_idx_in_next].rvfi.monitor_mem_rmask <= monitor_mem_rmask;
                 mem[div_rob_idx_in_next].rvfi.monitor_mem_wmask <= monitor_mem_wmask;
@@ -189,8 +192,8 @@ import rv32i_types::*;
                     enqueue_mem_next.rvfi.monitor_pc_rdata = pc_rdata;
                     enqueue_mem_next.rvfi.monitor_pc_wdata = pc_wdata;
                     enqueue_mem_next.rvfi.monitor_order = order;
-                    enqueue_mem_next.rvfi.monitor_rs1_addr = rs1_s;
-                    enqueue_mem_next.rvfi.monitor_rs2_addr = rs2_s;
+                    enqueue_mem_next.rvfi.monitor_rs1_addr = (inst[6:0] == op_b_imm) ? '0 : rs1_s;
+                    enqueue_mem_next.rvfi.monitor_rs2_addr = (inst[6:0] == op_b_imm) ? '0 : rs2_s;
                     enqueue_mem_next.rvfi.monitor_inst = inst;
                     enqueue_mem_next.rvfi.monitor_regf_we = regf_we;            
                     

@@ -279,10 +279,13 @@ import rv32i_types::*;
         .regf_we(dispatch_regf_we),
         .add_rob_idx_in(cdb_add.rob_idx),
         .add_cdb_valid(cdb_add.valid),
+        .add_inst(cdb_add.inst),
         .mul_rob_idx_in(cdb_mul.rob_idx),
         .mul_cdb_valid(cdb_mul.valid),
+        .mul_inst(cdb_mul.inst),
         .div_rob_idx_in(cdb_div.rob_idx),
         .div_cdb_valid(cdb_div.valid),
+        .div_inst(cdb_div.inst),
 
 
         .add_rs1_rdata(rs1_v_add),

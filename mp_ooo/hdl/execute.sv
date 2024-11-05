@@ -135,18 +135,21 @@ import rv32i_types::*;
         cdb_add.rd_s = rd_s_add;
         cdb_add.rd_v = rd_v_add;
         cdb_add.valid = valid_add;
+        cdb_add.inst = decode_info_add.inst;
 
         cdb_mul.rob_idx = rob_mul_reg;
         cdb_mul.pd_s = pd_mul_reg;
         cdb_mul.rd_s = rd_mul_reg;
         cdb_mul.rd_v = rd_v_mul;
         cdb_mul.valid = valid_mul;
+        cdb_mul.inst = decode_info_mul.inst;
 
         cdb_div.rob_idx = rob_div_reg;
         cdb_div.pd_s = pd_div_reg;
         cdb_div.rd_s = rd_div_reg;
         cdb_div.rd_v = rd_v_div;
         cdb_div.valid = valid_div;
+        cdb_div.inst = decode_info_div.inst;
     end
 
 endmodule : execute

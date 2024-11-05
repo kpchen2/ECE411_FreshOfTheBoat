@@ -6,6 +6,7 @@ import rv32i_types::*;
         input logic  clk,
         input logic  rst,
         // input logic [31:0] instruction,
+        
         input logic dispatch_valid,
         input logic [1:0] rs_select  , // select rs, inherit from dispatch, 
         input logic dispatch_ps_ready1   , // if the ps is ready
@@ -30,7 +31,6 @@ import rv32i_types::*;
         // output logic multiply_regf_we,
         // output logic divide_regf_we,
         
-
         output logic add_fu_ready,           // tell FU if we are ready to feed it inputs
         output logic divide_fu_ready,
         output logic multiply_fu_ready,
@@ -117,7 +117,6 @@ import rv32i_types::*;
 
     // logic busy_reg_dummy; //for testing purposes
     
-
     always_ff @ (posedge clk)
     begin
         cdb_ps_id_add_reg <= cdb_ps_id_add;
