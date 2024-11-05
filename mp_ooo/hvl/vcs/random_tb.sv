@@ -83,6 +83,8 @@ module random_tb
                     four_bursts[223:192] <= gen6.instr.word;
                     four_bursts[255:224] <= gen7.instr.word;
                 // end
+
+                    @ (posedge itf.clk)
                     itf.rdata <= four_bursts[63:0];
                     itf.rvalid <= 1'b1;
                     itf.raddr <= itf.addr;
