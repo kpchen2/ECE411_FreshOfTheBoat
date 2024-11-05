@@ -11,6 +11,16 @@ import rv32i_types::*;
     input   logic   [5:0]                       phys_reg_in,
     input   logic   [4:0]                       arch_reg_in,
     input   logic                               enqueue_valid,
+    input   logic   [31:0]                      pc_rdata,
+    input   logic   [31:0]                      pc_wdata,
+    input   logic   [63:0]                      order,
+    input   logic   [4:0]                       rs1_s,
+    input   logic   [4:0]                       rs2_s,
+    input   logic   [31:0]                      inst,
+    input   logic                               regf_we,
+
+
+
     
     // cdb inputs
     input   logic   [$clog2(QUEUE_DEPTH)-1:0]   add_rob_idx_in,
@@ -20,8 +30,26 @@ import rv32i_types::*;
     input   logic   [$clog2(QUEUE_DEPTH)-1:0]   div_rob_idx_in,
     input   logic                               div_cdb_valid,
 
+    input   logic  [31:0]                       add_rs1_rdata,
+    input   logic  [31:0]                       add_rs2_rdata,
+    input   logic  [31:0]                       add_rd_wdata,
+
+    input   logic  [31:0]                       multiply_rs1_rdata,
+    input   logic  [31:0]                       multiply_rs2_rdata,
+    input   logic  [31:0]                       multiply_rd_wdata,
+
+    input   logic  [31:0]                       divide_rs1_rdata,
+    input   logic  [31:0]                       divide_rs2_rdata,
+    input   logic  [31:0]                       divide_rd_wdata,
+    
+    input   logic  [31:0]                       monitor_mem_addr,
+    input   logic  [3:0]                        monitor_mem_rmask,
+    input   logic  [3:0]                        monitor_mem_wmask,
+    input   logic  [31:0]                       monitor_mem_rdata,
+    input   logic  [31:0]                       monitor_mem_wdata,
+
     // rrf outputs
-    output  rob_out_t                           rob_out,
+    output  rob_entry_t                         rob_out,
     output  logic                               dequeue_valid,
 
     // other output
@@ -38,9 +66,9 @@ import rv32i_types::*;
     logic   [ADDR_WIDTH:0]      tail_next;             // combinational
     logic   [ADDR_WIDTH:0]      head_next;             // combinational
 
-    logic   [DATA_WIDTH:0]      mem [QUEUE_DEPTH];     // extra bit for validity | QUEUE_DEPTH entries with each entry begin DATA_WIDTH+1 size
-    logic   [DATA_WIDTH:0]      enqueue_mem_next;
-    logic   [DATA_WIDTH:0]      dequeue_mem_next;
+    rob_entry_t     mem [QUEUE_DEPTH];     // extra bit for validity | QUEUE_DEPTH entries with each entry begin DATA_WIDTH+1 size
+    rob_entry_t     enqueue_mem_next;
+    rob_entry_t     dequeue_mem_next;
 
     logic                       enqueue_reg, enqueue_next;
     logic                       dequeue_reg;
@@ -75,16 +103,42 @@ import rv32i_types::*;
             end
             // add instruction done
             if (add_cdb_valid_next) begin
-                mem[add_rob_idx_in_next][DATA_WIDTH - 1] <= '1;
+                mem[add_rob_idx_in_next].rvfi.monitor_valid <= '1;
+                mem[add_rob_idx_in_next].rvfi.monitor_rs1_rdata <= add_rs1_rdata;
+                mem[add_rob_idx_in_next].rvfi.monitor_rs2_rdata <= add_rs2_rdata;
+                mem[add_rob_idx_in_next].rvfi.monitor_rd_wdata <= add_rd_wdata;
+                mem[add_rob_idx_in_next].rvfi.monitor_mem_addr <= monitor_mem_addr;
+                mem[add_rob_idx_in_next].rvfi.monitor_mem_rmask <= monitor_mem_rmask;
+                mem[add_rob_idx_in_next].rvfi.monitor_mem_wmask <= monitor_mem_wmask;
+                mem[add_rob_idx_in_next].rvfi.monitor_mem_rdata <= monitor_mem_rdata;
+                mem[add_rob_idx_in_next].rvfi.monitor_mem_wdata <= monitor_mem_wdata;
             end
             // mul instruction done
             if (mul_cdb_valid_next) begin
-                mem[mul_rob_idx_in_next][DATA_WIDTH - 1] <= '1;
+                mem[mul_rob_idx_in_next].rvfi.monitor_valid <= '1;
+                mem[mul_rob_idx_in_next].rvfi.monitor_rs1_rdata <= multiply_rs1_rdata;
+                mem[mul_rob_idx_in_next].rvfi.monitor_rs2_rdata <= multiply_rs2_rdata;
+                mem[mul_rob_idx_in_next].rvfi.monitor_rd_wdata <= multiply_rd_wdata;
+                mem[mul_rob_idx_in_next].rvfi.monitor_mem_addr <= monitor_mem_addr;
+                mem[mul_rob_idx_in_next].rvfi.monitor_mem_rmask <= monitor_mem_rmask;
+                mem[mul_rob_idx_in_next].rvfi.monitor_mem_wmask <= monitor_mem_wmask;
+                mem[mul_rob_idx_in_next].rvfi.monitor_mem_rdata <= monitor_mem_rdata;
+                mem[mul_rob_idx_in_next].rvfi.monitor_mem_wdata <= monitor_mem_wdata;
             end
             // div instruction done
             if (div_cdb_valid_next) begin
-                mem[div_rob_idx_in_next][DATA_WIDTH - 1] <= '1;
+                mem[div_rob_idx_in_next].rvfi.monitor_valid <= '1;
+                mem[div_rob_idx_in_next].rvfi.monitor_rs1_rdata <= divide_rs1_rdata;
+                mem[div_rob_idx_in_next].rvfi.monitor_rs2_rdata <= divide_rs2_rdata;
+                mem[div_rob_idx_in_next].rvfi.monitor_rd_wdata <= divide_rd_wdata;
+                mem[div_rob_idx_in_next].rvfi.monitor_mem_addr <= monitor_mem_addr;
+                mem[div_rob_idx_in_next].rvfi.monitor_mem_rmask <= monitor_mem_rmask;
+                mem[div_rob_idx_in_next].rvfi.monitor_mem_wmask <= monitor_mem_wmask;
+                mem[div_rob_idx_in_next].rvfi.monitor_mem_rdata <= monitor_mem_rdata;
+                mem[div_rob_idx_in_next].rvfi.monitor_mem_wdata <= monitor_mem_wdata;
             end
+  
+                    
 
             tail_reg <= tail_next;
             head_reg <= head_next;
@@ -113,27 +167,39 @@ import rv32i_types::*;
         
         if (!rst) begin
             full = (tail_reg[ADDR_WIDTH - 1:0] == head_reg[ADDR_WIDTH - 1:0]) && (tail_reg[ADDR_WIDTH] != head_reg[ADDR_WIDTH]);    // logic if queue full
-            dequeue_valid = (mem[head_reg[5:0]+1'b1][DATA_WIDTH:DATA_WIDTH - 1] == 2'b11);  // dequeue if tail's inst is valid and ready to commit
+            dequeue_valid = (mem[head_reg[5:0]+1'b1].valid == 1'b1 && mem[head_reg[5:0]+1'b1].rvfi.monitor_valid == 1'b1);  // dequeue if tail's inst is valid and ready to commit
 
             // send dequeue inst same cycle; update queue next cycle
             if (dequeue_valid) begin
                 head_next = head_reg + 1'd1;
                 dequeue_mem_next = mem[head_reg[ADDR_WIDTH - 1:0]+1'b1];     // get current data out of the queue 
-                dequeue_mem_next[DATA_WIDTH] = 1'b0;                    // not valid anymore
+                dequeue_mem_next.valid = 1'b0;                    // not valid anymore
                 
-                rob_out = dequeue_mem_next[DATA_WIDTH - 2:0];
+                rob_out = dequeue_mem_next;
             end
             
             if (enqueue_valid) begin
                 if (~full || dequeue_valid || (add_cdb_valid && add_rob_idx_in == head_reg[5:0]) || (mul_cdb_valid && mul_rob_idx_in == head_reg[5:0]) || (div_cdb_valid && div_rob_idx_in == head_reg[5:0])) begin
                     tail_next = tail_reg + 1'b1;
                     head_next = (head_next == head_reg) ? head_reg : head_reg + 1'd1;   // don't change what dequeue set head_next to
-                    enqueue_mem_next = {2'b10, phys_reg_in, arch_reg_in};               // 1 bit for valid, 1 bit for commit, 6 bits for phys reg, 5 bits for arch reg
+                    enqueue_mem_next.valid = 1'b1;
+                    enqueue_mem_next.pd = phys_reg_in;
+                    enqueue_mem_next.rvfi_info.monitor_rd_addr = arch_reg_in;
+                    enqueue_mem_next.rvfi_info.monitor_pc_rdata = pc_rdata;
+                    enqueue_mem_next.rvfi_info.monitor_pc_wdata = pc_wdata;
+                    enqueue_mem_next.rvfi_info.monitor_order = order;
+                    enqueue_mem_next.rvfi_info.monitor_rs1_addr = rs1_s;
+                    enqueue_mem_next.rvfi_info.monitor_rs2_addr = rs2_s;
+                    enqueue_mem_next.rvfi_info.monitor_inst = inst;
+                    enqueue_mem_next.rvfi_info.monitor_regf_we = regf_we;            
+                    
+                    // SET EVERYTHING LATER {2'b10, phys_reg_in, arch_reg_in};               // 1 bit for valid, 1 bit for commit, 6 bits for phys reg, 5 bits for arch reg
 
                 end else begin
                     tail_next = tail_reg; 
                     head_next = (head_next == head_reg) ? head_reg : head_reg + 1'd1;   // don't change what dequeue set head_next to
                     enqueue_mem_next = mem[tail_reg[ADDR_WIDTH - 1:0]+1'b1];
+                
                 end
             end
         end

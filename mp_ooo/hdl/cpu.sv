@@ -260,18 +260,44 @@ import rv32i_types::*;
         .phys_reg_in(pd_dispatch),
         .arch_reg_in(rd_dispatch),
         .enqueue_valid(regf_we_dispatch),
+        .pc_rdata(),
+        .pc_wdata(),
+        .order(),
+        .rs1_s(),
+        .rs2_s(),
+        .inst(),
+        .regf_we(),
         .add_rob_idx_in(cdb_add.rob_idx),
         .add_cdb_valid(cdb_add.valid),
         .mul_rob_idx_in(cdb_mul.rob_idx),
         .mul_cdb_valid(cdb_mul.valid),
         .div_rob_idx_in(cdb_div.rob_idx),
         .div_cdb_valid(cdb_div.valid),
+
+
+        .add_rs1_rdata(),
+        .add_rs2_rdata(),
+        .add_rd_wdata(),
+
+        .multiply_rs1_rdata(),
+        .multiply_rs2_rdata(),
+        .multiply_rd_wdata(),
+
+        .divide_rs1_rdata(),
+        .divide_rs2_rdata(),
+        .divide_rd_wdata(),
+
+        .monitor_mem_addr('0),
+        .monitor_mem_rmask('0),
+        .monitor_mem_wmask('0),
+        .monitor_mem_rdata('0),
+        .monitor_mem_wdata('0),
         .rob_out({pd_rob, rd_rob}),
         .dequeue_valid(rob_valid),
         .rob_num(rob_num),
         .full(rob_full)
     );
-
+    
     rrat rrat_i (
         .clk(clk),
         .rst(rst),

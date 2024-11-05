@@ -94,6 +94,7 @@ package rv32i_types;
 
     typedef struct packed {
         logic valid;
+        logic [5:0] pd;
         rvfi_info rvfi;
     } rob_entry_t;
     typedef struct packed {
