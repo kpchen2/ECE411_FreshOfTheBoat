@@ -45,6 +45,9 @@
 //     mem_itf_banked mem_itf(.*); 
 //     dram_w_burst_frfcfs_controller banked_memory_i(.itf(mem_itf));
 
+//     mon_itf #(.CHANNELS(8)) mon_itf(.*);
+//     monitor #(.CHANNELS(8)) monitor(.itf(mon_itf));
+
 //     cpu dut(
 //         .clk        (clk),
 //         .rst        (rst),

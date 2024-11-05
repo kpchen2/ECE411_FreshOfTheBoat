@@ -144,7 +144,7 @@ module monitor #(
         always @ (posedge itf.clk iff !itf.rst) begin
             for (int unsigned channel = 0; channel < CHANNELS; channel++) begin
                 if(itf.valid[channel]) begin
-                    if (itf.order[channel] % 1000 == 0) begin
+                    if (itf.order[channel] % 1 == 0) begin
                         $display("dut commit No.%d, rd_s: x%02d, rd: 0x%h", itf.order[channel], itf.rd_addr[channel], |itf.rd_addr[channel] ? itf.rd_wdata[channel] : 32'd0);
                     end
                     if (itf.inst[channel][1:0] == 2'b11) begin

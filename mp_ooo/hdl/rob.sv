@@ -103,7 +103,7 @@ import rv32i_types::*;
             end
             // add instruction done
             if (add_cdb_valid_next) begin
-                mem[add_rob_idx_in_next].rvfi.monitor_valid <= '1;
+                mem[add_rob_idx_in_next].commit <= '1;
                 mem[add_rob_idx_in_next].rvfi.monitor_rs1_rdata <= add_rs1_rdata;
                 mem[add_rob_idx_in_next].rvfi.monitor_rs2_rdata <= add_rs2_rdata;
                 mem[add_rob_idx_in_next].rvfi.monitor_rd_wdata <= add_rd_wdata;
@@ -115,7 +115,7 @@ import rv32i_types::*;
             end
             // mul instruction done
             if (mul_cdb_valid_next) begin
-                mem[mul_rob_idx_in_next].rvfi.monitor_valid <= '1;
+                mem[mul_rob_idx_in_next].commit <= '1;
                 mem[mul_rob_idx_in_next].rvfi.monitor_rs1_rdata <= multiply_rs1_rdata;
                 mem[mul_rob_idx_in_next].rvfi.monitor_rs2_rdata <= multiply_rs2_rdata;
                 mem[mul_rob_idx_in_next].rvfi.monitor_rd_wdata <= multiply_rd_wdata;
@@ -127,7 +127,7 @@ import rv32i_types::*;
             end
             // div instruction done
             if (div_cdb_valid_next) begin
-                mem[div_rob_idx_in_next].rvfi.monitor_valid <= '1;
+                mem[div_rob_idx_in_next].commit <= '1;
                 mem[div_rob_idx_in_next].rvfi.monitor_rs1_rdata <= divide_rs1_rdata;
                 mem[div_rob_idx_in_next].rvfi.monitor_rs2_rdata <= divide_rs2_rdata;
                 mem[div_rob_idx_in_next].rvfi.monitor_rd_wdata <= divide_rd_wdata;
@@ -167,14 +167,14 @@ import rv32i_types::*;
         
         if (!rst) begin
             full = (tail_reg[ADDR_WIDTH - 1:0] == head_reg[ADDR_WIDTH - 1:0]) && (tail_reg[ADDR_WIDTH] != head_reg[ADDR_WIDTH]);    // logic if queue full
-            dequeue_valid = (mem[head_reg[5:0]+1'b1].valid == 1'b1 && mem[head_reg[5:0]+1'b1].rvfi.monitor_valid == 1'b1);  // dequeue if tail's inst is valid and ready to commit
+            dequeue_valid = (mem[head_reg[5:0]+1'b1].valid == 1'b1 && mem[head_reg[5:0]+1'b1].commit == 1'b1);  // dequeue if tail's inst is valid and ready to commit
 
             // send dequeue inst same cycle; update queue next cycle
             if (dequeue_valid) begin
                 head_next = head_reg + 1'd1;
                 dequeue_mem_next = mem[head_reg[ADDR_WIDTH - 1:0]+1'b1];     // get current data out of the queue 
                 dequeue_mem_next.valid = 1'b0;                    // not valid anymore
-                
+                dequeue_mem_next.rvfi.monitor_valid = 1'b1;
                 rob_out = dequeue_mem_next;
             end
             
@@ -183,6 +183,7 @@ import rv32i_types::*;
                     tail_next = tail_reg + 1'b1;
                     head_next = (head_next == head_reg) ? head_reg : head_reg + 1'd1;   // don't change what dequeue set head_next to
                     enqueue_mem_next.valid = 1'b1;
+                    enqueue_mem_next.commit = 1'b0;
                     enqueue_mem_next.pd = phys_reg_in;
                     enqueue_mem_next.rvfi.monitor_rd_addr = arch_reg_in;
                     enqueue_mem_next.rvfi.monitor_pc_rdata = pc_rdata;
