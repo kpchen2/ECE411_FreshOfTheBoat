@@ -28,7 +28,7 @@ import rv32i_types::*;
     always_comb begin
         rrat_next = rrat;
 
-        old_pd = regf_we ? rrat_next[rd] : '0;
+        old_pd = regf_we ? pd : '0;
         rrat_next[rd] = regf_we ? pd : rrat_next[rd];
         enqueue = regf_we;
     end
