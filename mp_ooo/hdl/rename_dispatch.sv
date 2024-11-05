@@ -45,7 +45,7 @@ import rv32i_types::*;
         ps2_out = ps2;
         ps1_valid_out = ps1_valid;
         ps2_valid_out = ps2_valid;
-        order_next = order + 64'd1;
+        order_next = order;
         rob_num_out = rob_num;
 
         if (inst[6:0] == op_b_reg && inst[31:25] == 7'b0000001 && (inst[14:12] inside { mult_div_f3_mul, mult_div_f3_mulh, mult_div_f3_mulhsu, mult_div_f3_mulhu})) begin
@@ -72,13 +72,14 @@ import rv32i_types::*;
             decode_info.rs2_s  = inst[24:20];
             decode_info.inst   = inst;
             regf_we = 1'b1;
-
+            order_next = order + 64'd1;
             rd = decode_info.rd_s;
             rs1 = decode_info.rs1_s;
             rs2 = decode_info.rs2_s;
 
             rename_dispatch_rvfi.monitor_inst = inst;
             rename_dispatch_rvfi.monitor_pc_rdata = prog;
+            rename_dispatch_rvfi.monitor_order = order;
             rename_dispatch_rvfi.monitor_pc_wdata = prog + 32'd4;
             rename_dispatch_rvfi.monitor_valid = 1'b1;
             rename_dispatch_rvfi.monitor_rs1_addr = inst[19:15];
