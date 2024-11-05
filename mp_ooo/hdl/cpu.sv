@@ -92,19 +92,24 @@ import rv32i_types::*;
     logic   [31:0]  rs1_v_add, rs1_v_mul, rs1_v_div, rs2_v_add, rs2_v_mul, rs2_v_div;
 
     logic   [5:0]   add_ps1, add_ps2, multiply_ps1, multiply_ps2, divide_ps1, divide_ps2;
-    rvfi_info fetch_rvfi;
-    rvfi_info rename_dispatch_rvfi;
-    rvfi_info reservation_station_rvfi;
-    rvfi_info physical_regf_rvfi;
-    rvfi_info fu_rvfi;
-    rvfi_info rat_rvfi;
-    rvfi_info rob_rvfi;
+    
+    rob_entry_t rob_entry;
+
     logic [63:0] order;
     logic [63:0] order_next;
 
     logic full_garbage;
     logic empty_garbage;
     logic [31:0] prog;
+
+    logic  [31:0]                    dispatch_pc_rdata;
+    logic  [31:0]                    dispatch_pc_wdata;
+    logic  [63:0]                    dispatch_order;
+    logic  [4:0]                     dispatch_rs1_s;
+    logic  [4:0]                     dispatch_rs2_s;
+    logic  [31:0]                    dispatch_inst;
+    logic                            dispatch_regf_we;
+
 
     always_ff @(posedge clk) begin
 
@@ -138,9 +143,7 @@ import rv32i_types::*;
             if ((initial_flag_reg || ufp_resp) && !full_stall && bmem_ready) begin
                 pc_next = pc + 4;
                 initial_flag = '0;
-                ufp_rmask = '1;
-                fetch_rvfi.monitor_pc_rdata = pc;
-                fetch_rvfi.monitor_pc_wdata = pc_next;              
+                ufp_rmask = '1;             
             end else begin
                 if (full_stall || !bmem_ready) begin
                     pc_next = pc;
@@ -234,7 +237,14 @@ import rv32i_types::*;
         .rob_num(rob_num),
         .rob_num_out(rob_num_out),
         .decode_info(decode_info),
-        .rs_signal(rs_signal)
+        .rs_signal(rs_signal),
+        .dispatch_pc_rdata(dispatch_pc_rdata),
+        .dispatch_pc_wdata(dispatch_pc_wdata),
+        .dispatch_order(dispatch_order),
+        .dispatch_rs1_s(dispatch_rs1_s),
+        .dispatch_rs2_s(dispatch_rs2_s),
+        .dispatch_inst(dispatch_inst),
+        .dispatch_regf_we(dispatch_regf_we)
     );
 
     rat rat_i (
@@ -260,13 +270,13 @@ import rv32i_types::*;
         .phys_reg_in(pd_dispatch),
         .arch_reg_in(rd_dispatch),
         .enqueue_valid(regf_we_dispatch),
-        .pc_rdata(),
-        .pc_wdata(),
-        .order(),
-        .rs1_s(),
-        .rs2_s(),
-        .inst(),
-        .regf_we(),
+        .pc_rdata(dispatch_pc_rdata),
+        .pc_wdata(dispatch_pc_wdata),
+        .order(dispatch_order),
+        .rs1_s(dispatch_rs1_s),
+        .rs2_s(dispatch_rs2_s),
+        .inst(dispatch_inst),
+        .regf_we(dispatch_regf_we),
         .add_rob_idx_in(cdb_add.rob_idx),
         .add_cdb_valid(cdb_add.valid),
         .mul_rob_idx_in(cdb_mul.rob_idx),
@@ -275,24 +285,24 @@ import rv32i_types::*;
         .div_cdb_valid(cdb_div.valid),
 
 
-        .add_rs1_rdata(),
-        .add_rs2_rdata(),
-        .add_rd_wdata(),
+        .add_rs1_rdata(rs1_v_add),
+        .add_rs2_rdata(rs2_v_add),
+        .add_rd_wdata(cdb_add.rd_v),
 
-        .multiply_rs1_rdata(),
-        .multiply_rs2_rdata(),
-        .multiply_rd_wdata(),
+        .multiply_rs1_rdata(rs1_v_mul),
+        .multiply_rs2_rdata(rs2_v_mul),
+        .multiply_rd_wdata(cdb_mul.rd_v),
 
-        .divide_rs1_rdata(),
-        .divide_rs2_rdata(),
-        .divide_rd_wdata(),
+        .divide_rs1_rdata(rs1_v_div),
+        .divide_rs2_rdata(rs2_v_div),
+        .divide_rd_wdata(cdb_div.rd_v),
 
         .monitor_mem_addr('0),
         .monitor_mem_rmask('0),
         .monitor_mem_wmask('0),
         .monitor_mem_rdata('0),
         .monitor_mem_wdata('0),
-        .rob_out({pd_rob, rd_rob}),
+        .rob_out(rob_entry),
         .dequeue_valid(rob_valid),
         .rob_num(rob_num),
         .full(rob_full)
@@ -301,8 +311,8 @@ import rv32i_types::*;
     rrat rrat_i (
         .clk(clk),
         .rst(rst),
-        .rd(rd_rob),
-        .pd(pd_rob),
+        .rd(rob_entry.rvfi.monitor_rd_addr),
+        .pd(rob_entry.pd),
         .regf_we(rob_valid),
         .enqueue(enqueue),
         .old_pd(old_pd)
@@ -359,7 +369,6 @@ import rv32i_types::*;
     (
         .clk(clk),
         .rst(rst),
-        .rename_dispatch_rvfi(rename_dispatch_rvfi),
         .dispatch_valid(regf_we_dispatch),
         .rs_select(rs_signal),
         .dispatch_ps_ready1(ps1_valid),
@@ -382,7 +391,6 @@ import rv32i_types::*;
         // .multiply_regf_we(),
         // .divide_regf_we(),
 
-        .reservation_station_rvfi(reservation_station_rvfi),
 
         .add_fu_ready(start_add),
         .multiply_fu_ready(start_mul),

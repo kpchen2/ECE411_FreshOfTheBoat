@@ -184,14 +184,14 @@ import rv32i_types::*;
                     head_next = (head_next == head_reg) ? head_reg : head_reg + 1'd1;   // don't change what dequeue set head_next to
                     enqueue_mem_next.valid = 1'b1;
                     enqueue_mem_next.pd = phys_reg_in;
-                    enqueue_mem_next.rvfi_info.monitor_rd_addr = arch_reg_in;
-                    enqueue_mem_next.rvfi_info.monitor_pc_rdata = pc_rdata;
-                    enqueue_mem_next.rvfi_info.monitor_pc_wdata = pc_wdata;
-                    enqueue_mem_next.rvfi_info.monitor_order = order;
-                    enqueue_mem_next.rvfi_info.monitor_rs1_addr = rs1_s;
-                    enqueue_mem_next.rvfi_info.monitor_rs2_addr = rs2_s;
-                    enqueue_mem_next.rvfi_info.monitor_inst = inst;
-                    enqueue_mem_next.rvfi_info.monitor_regf_we = regf_we;            
+                    enqueue_mem_next.rvfi.monitor_rd_addr = arch_reg_in;
+                    enqueue_mem_next.rvfi.monitor_pc_rdata = pc_rdata;
+                    enqueue_mem_next.rvfi.monitor_pc_wdata = pc_wdata;
+                    enqueue_mem_next.rvfi.monitor_order = order;
+                    enqueue_mem_next.rvfi.monitor_rs1_addr = rs1_s;
+                    enqueue_mem_next.rvfi.monitor_rs2_addr = rs2_s;
+                    enqueue_mem_next.rvfi.monitor_inst = inst;
+                    enqueue_mem_next.rvfi.monitor_regf_we = regf_we;            
                     
                     // SET EVERYTHING LATER {2'b10, phys_reg_in, arch_reg_in};               // 1 bit for valid, 1 bit for commit, 6 bits for phys reg, 5 bits for arch reg
 
