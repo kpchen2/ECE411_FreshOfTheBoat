@@ -101,11 +101,11 @@ import rv32i_types::*;
         rs1_v_add = (rs1_add != 0) ? data[rs1_add] : '0;
         rs2_v_add = (rs2_add != 0) ? data[rs2_add] : '0;
 
-        rs1_v_mul = data[rs1_mul_f1];
-        rs2_v_mul = data[rs2_mul_f2];
+        rs1_v_mul = (rs1_mul_f1 > 0) ? data[rs1_mul_f1] : '0;
+        rs2_v_mul = (rs1_mul_f1 > 0) ? data[rs2_mul_f2] : '0;
 
-        rs1_v_div = data[rs1_div_f1];
-        rs2_v_div = data[rs2_div_f2];
+        rs1_v_div = (rs1_div_f1 > 0) ? data[rs1_div_f1] : '0;
+        rs2_v_div = (rs1_div_f1 > 0) ? data[rs2_div_f2] : '0;
     end
 
 endmodule : phys_regfile
