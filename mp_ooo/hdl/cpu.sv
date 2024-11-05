@@ -353,7 +353,11 @@ import rv32i_types::*;
         .multiply_ps1(multiply_ps1),
         .multiply_ps2(multiply_ps2),
         .divide_ps1(divide_ps1),
-        .divide_ps2(divide_ps2)
+        .divide_ps2(divide_ps2),
+
+        .regf_we_add(cdb_add.valid),
+        .regf_we_mul(cdb_mul.valid),
+        .regf_we_div(cdb_div.valid)
     );
 
 endmodule : cpu
