@@ -211,6 +211,8 @@ import rv32i_types::*;
     );
 
     rename_dispatch rename_dispatch_i (
+        .clk(clk),
+        .rst(rst),
         .inst(inst),
         .prog(prog),
         .rob_full(rob_full),

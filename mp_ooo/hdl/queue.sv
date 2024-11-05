@@ -36,7 +36,7 @@ import rv32i_types::*;
     logic   dequeue_reg, dequeue_next;
 
     assign  full_out = full;
-    assign  empty_out = empty;
+    // assign  empty_out = empty;
 
     always_ff @ (posedge clk) begin
         enqueue_reg <= enqueue_next;
@@ -105,7 +105,7 @@ import rv32i_types::*;
         end
 
         full = (tail_next[ADDR_WIDTH - 1:0] == head_next[ADDR_WIDTH - 1:0]) && (tail_next[ADDR_WIDTH] != head_next[ADDR_WIDTH]);    // logic if queue full
-        // empty = (tail_next[ADDR_WIDTH - 1:0] == head_next[ADDR_WIDTH - 1:0]) && (tail_next[ADDR_WIDTH] == head_next[ADDR_WIDTH]);   // logic if queue empty
+        empty_out = (tail_next[ADDR_WIDTH - 1:0] == head_next[ADDR_WIDTH - 1:0]) && (tail_next[ADDR_WIDTH] == head_next[ADDR_WIDTH]);   // logic if queue empty
     end
 
 endmodule : queue
