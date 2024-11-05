@@ -92,9 +92,22 @@ import rv32i_types::*;
     logic   [31:0]  rs1_v_add, rs1_v_mul, rs1_v_div, rs2_v_add, rs2_v_mul, rs2_v_div;
 
     logic   [5:0]   add_ps1, add_ps2, multiply_ps1, multiply_ps2, divide_ps1, divide_ps2;
+    rvfi_info fetch_rvfi;
+    rvfi_info rename_dispatch_rvfi;
+    rvfi_info reservation_station_rvfi;
+    rvfi_info physical_regf_rvfi;
+    rvfi_info fu_rvfi;
+    rvfi_info rat_rvfi;
+    rvfi_info rob_rvfi;
+    logic [63:0] order;
+    logic [63:0] order_next;
 
+    logic full_garbage;
+    logic empty_garbage;
+    logic [31:0] prog;
 
     always_ff @(posedge clk) begin
+
         bmem_raddr_dummy <= bmem_raddr; // useless
         bmem_wdata <= '0;               // useless
 
@@ -102,11 +115,12 @@ import rv32i_types::*;
             pc <= 32'h1eceb000;
             initial_flag_reg <= '1;
             dfp_read_reg <= '0;
-
+            order  <= '0;
         end else begin
             pc <= pc_next;
             initial_flag_reg <= initial_flag;
             dfp_read_reg <= dfp_read;
+            order <= order_next;
         end
     end
 
@@ -116,6 +130,7 @@ import rv32i_types::*;
             initial_flag = '1;
             ufp_rmask = '0;
             bmem_read = '0;
+            
 
         end else begin
             bmem_read = (!dfp_read_reg && dfp_read) ? '1 : '0;          // bmem_read high on rising dfp_read edge (DOESN'T MATCH TIMING DIAGRAM)
@@ -124,7 +139,8 @@ import rv32i_types::*;
                 pc_next = pc + 4;
                 initial_flag = '0;
                 ufp_rmask = '1;
-
+                fetch_rvfi.monitor_pc_rdata = pc;
+                fetch_rvfi.monitor_pc_wdata = pc_next;              
             end else begin
                 if (full_stall || !bmem_ready) begin
                     pc_next = pc;
@@ -138,7 +154,7 @@ import rv32i_types::*;
             end
         end
     end
-
+    
     cache cache_i (
         .clk(clk),
         .rst(rst),
@@ -179,14 +195,29 @@ import rv32i_types::*;
         .empty_out(iqueue_empty)
     );
 
+    queue #(.DATA_WIDTH(32), .QUEUE_DEPTH(64)) queue_pc
+    (
+        .clk(clk),
+        .rst(rst),
+        .wdata_in(pc),
+        .enqueue_in(ufp_resp),
+        .rdata_out(prog),
+        .dequeue_in(dequeue),
+        .full_out(full_garbage),
+        .empty_out(empty_garbage)
+    );
+
     rename_dispatch rename_dispatch_i (
         .inst(inst),
+        .prog(prog),
         .rob_full(rob_full),
         .rs_full_add(rs_add_full), .rs_full_mul(rs_mul_full), .rs_full_div(rs_div_full),
         .is_iqueue_empty(iqueue_empty),
         .phys_reg(phys_reg),
         .is_free_list_empty(is_free_list_empty),
+        .order(order),
         .dequeue(dequeue),
+        .order_next(order_next),
         .rd(rd_dispatch),
         .rs1(rs1),
         .rs2(rs2),

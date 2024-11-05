@@ -5,16 +5,17 @@ import rv32i_types::*;
 )
 (
     input   logic   [31:0]  inst,
-
+    input   logic   [31:0]  prog,
     input   logic           rob_full, rs_full_add, rs_full_mul, rs_full_div, // May need to make multiple RS_full flags due to there being multiple stations
 
     input   logic           is_iqueue_empty,
-
+    output  rvfi_info       rename_dispatch_rvfi,
     // to and from free list
     input   logic   [5:0]   phys_reg,
     input   logic           is_free_list_empty,
+    input logic [63:0] order,
     output  logic           dequeue,
-
+    output logic [63:0] order_next,
     // to and from RAT
     output  logic   [4:0]                   rd, rs1, rs2,
     output  logic   [PHYS_REG_BITS-1:0]     pd,
@@ -39,12 +40,12 @@ import rv32i_types::*;
         rs_signal = 2'b00;
         decode_info = '0;
         regf_we = 1'b0;
-
+        rename_dispatch_rvfi = '0;
         ps1_out = ps1;
         ps2_out = ps2;
         ps1_valid_out = ps1_valid;
         ps2_valid_out = ps2_valid;
-
+        order_next = order + 64'd1;
         rob_num_out = rob_num;
 
         if (inst[6:0] == op_b_reg && inst[31:25] == 7'b0000001 && (inst[14:12] inside { mult_div_f3_mul, mult_div_f3_mulh, mult_div_f3_mulhsu, mult_div_f3_mulhu})) begin
@@ -75,6 +76,15 @@ import rv32i_types::*;
             rd = decode_info.rd_s;
             rs1 = decode_info.rs1_s;
             rs2 = decode_info.rs2_s;
+
+            rename_dispatch_rvfi.monitor_inst = inst;
+            rename_dispatch_rvfi.monitor_pc_rdata = prog;
+            rename_dispatch_rvfi.monitor_pc_wdata = prog + 32'd4;
+            rename_dispatch_rvfi.monitor_valid = 1'b1;
+            rename_dispatch_rvfi.monitor_rs1_addr = inst[19:15];
+            rename_dispatch_rvfi.monitor_rs2_addr = inst[24:20];
+            rename_dispatch_rvfi.monitor_rd_addr = inst[11:7];
+
         end
 
         pd = phys_reg;
