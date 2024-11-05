@@ -7,7 +7,26 @@ package rv32i_types;
     // parameter DATA_WIDTH = 6;
 
     typedef logic [6:0] physicalIndexing;
-
+    typedef struct packed {
+        logic           monitor_valid;
+        logic   [63:0]  monitor_order;
+        logic   [31:0]  monitor_inst;
+        logic   [4:0]   monitor_rs1_addr;
+        logic   [4:0]   monitor_rs2_addr;
+        logic   [31:0]  monitor_rs1_rdata;
+        logic   [31:0]  monitor_rs2_rdata;
+        logic           monitor_regf_we;
+        logic   [4:0]   monitor_rd_addr;
+        logic   [31:0]  monitor_rd_wdata;
+        logic   [31:0]  monitor_pc_rdata;
+        logic   [31:0]  monitor_pc_wdata;
+        logic   [31:0]  monitor_mem_addr;
+        logic   [3:0]   monitor_mem_rmask;
+        logic   [3:0]   monitor_mem_wmask;
+        logic   [31:0]  monitor_mem_rdata;
+        logic   [31:0]  monitor_mem_wdata;
+    } rvfi_info;
+    
     typedef struct packed {
         logic   [2:0]   funct3;
         logic   [6:0]   funct7;
@@ -97,25 +116,7 @@ package rv32i_types;
         logic [5:0] pd;
         rvfi_info rvfi;
     } rob_entry_t;
-    typedef struct packed {
-        logic           monitor_valid;
-        logic   [63:0]  monitor_order;
-        logic   [31:0]  monitor_inst;
-        logic   [4:0]   monitor_rs1_addr;
-        logic   [4:0]   monitor_rs2_addr;
-        logic   [31:0]  monitor_rs1_rdata;
-        logic   [31:0]  monitor_rs2_rdata;
-        logic           monitor_regf_we;
-        logic   [4:0]   monitor_rd_addr;
-        logic   [31:0]  monitor_rd_wdata;
-        logic   [31:0]  monitor_pc_rdata;
-        logic   [31:0]  monitor_pc_wdata;
-        logic   [31:0]  monitor_mem_addr;
-        logic   [3:0]   monitor_mem_rmask;
-        logic   [3:0]   monitor_mem_wmask;
-        logic   [31:0]  monitor_mem_rdata;
-        logic   [31:0]  monitor_mem_wdata;
-    } rvfi_info;
+    
 
     typedef struct packed {
         rvfi_info if_id_rvfi;
