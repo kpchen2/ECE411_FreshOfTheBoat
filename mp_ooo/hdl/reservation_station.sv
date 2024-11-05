@@ -250,7 +250,7 @@ import rv32i_types::*;
                 add_reservation_station_entry_next.rd = rd;
                 add_reservation_station_entry_next.rob_entry = rob_entry;
                 add_reservation_station_entry_next.decode_info = decode_info_in;
-                for (int i = 0; i < NUM_ADD_REGISTERS; i++)
+                for (int unsigned i = 0; i < NUM_ADD_REGISTERS; i++)
                 begin
                     if (~add_reservation_station[i].busy)
                     begin
@@ -274,7 +274,7 @@ import rv32i_types::*;
                 multiply_reservation_station_entry_next.rd = rd;
                 multiply_reservation_station_entry_next.rob_entry = rob_entry;
                 multiply_reservation_station_entry_next.decode_info = decode_info_in;
-                for (int i = 0; i < NUM_MULTIPLY_REGISTERS; i++)
+                for (int unsigned i = 0; i < NUM_MULTIPLY_REGISTERS; i++)
                 begin
                     if (~multiply_reservation_station[i].busy)
                     begin
@@ -296,7 +296,7 @@ import rv32i_types::*;
                 divide_reservation_station_entry_next.rd = rd;
                 divide_reservation_station_entry_next.rob_entry = rob_entry;
                 divide_reservation_station_entry_next.decode_info = decode_info_in;
-                for (int i = 0; i < NUM_DIVIDE_REGISTERS; i++)
+                for (int unsigned i = 0; i < NUM_DIVIDE_REGISTERS; i++)
                 begin
                     if (~divide_reservation_station[i].busy)
                     begin
@@ -358,7 +358,7 @@ import rv32i_types::*;
         divide_ps2 = '0;
         if (~multiply_fu_busy && (num_issues <= 3'd4))
         begin
-            for (int i = 0; i < NUM_MULTIPLY_REGISTERS; i++)
+            for (int unsigned i = 0; i < NUM_MULTIPLY_REGISTERS; i++)
             begin
                 if (multiply_reservation_station[i].busy && multiply_reservation_station[i].ps1_v && multiply_reservation_station[i].ps2_v)
                 begin    
@@ -382,7 +382,7 @@ import rv32i_types::*;
 
         if (~add_fu_busy && (num_issues <= 3'd4))
         begin
-            for (int i = 0; i < NUM_ADD_REGISTERS; i++)
+            for (int unsigned i = 0; i < NUM_ADD_REGISTERS; i++)
             begin
                 if (add_reservation_station[i].busy && add_reservation_station[i].ps1_v && add_reservation_station[i].ps2_v)
                 begin
@@ -405,7 +405,7 @@ import rv32i_types::*;
         end
         if (~divide_fu_busy && (num_issues <= 3'd4))
         begin
-            for (int i = 0; i < NUM_DIVIDE_REGISTERS; i++)
+            for (int unsigned i = 0; i < NUM_DIVIDE_REGISTERS; i++)
             begin
                 if (divide_reservation_station[i].busy && divide_reservation_station[i].ps1_v && divide_reservation_station[i].ps2_v)
                 begin    

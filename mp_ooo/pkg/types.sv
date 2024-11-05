@@ -1,9 +1,9 @@
 package rv32i_types;
 
-    parameter NUM_ADD_REGISTERS = 4;
-    parameter NUM_MULTIPLY_REGISTERS = 4;
-    parameter NUM_DIVIDE_REGISTERS = 4;
-    parameter MAX_ISSUES = 4; // num instructions to issue
+    localparam NUM_ADD_REGISTERS = 4;
+    localparam NUM_MULTIPLY_REGISTERS = 4;
+    localparam NUM_DIVIDE_REGISTERS = 4;
+    localparam MAX_ISSUES = 4; // num instructions to issue
     // parameter DATA_WIDTH = 6;
 
     typedef logic [6:0] physicalIndexing;
