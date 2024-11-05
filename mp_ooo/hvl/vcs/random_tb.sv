@@ -85,22 +85,27 @@ module random_tb
                 // end
                     itf.rdata <= four_bursts[63:0];
                     itf.rvalid <= 1'b1;
+                    itf.raddr <= itf.addr;
                     @ (posedge itf.clk);
 
                     itf.rdata <= four_bursts[127:64];
                     itf.rvalid <= 1'b1;
+                    itf.raddr <= itf.addr;
                     @(posedge itf.clk);
 
                     itf.rdata <= four_bursts[191:128];
                     itf.rvalid <= 1'b1;
+                    itf.raddr <= itf.addr;
                     @(posedge itf.clk);
 
                     itf.rdata <= four_bursts[255:192];
                 // If it's a write, do nothing and just respond.
                     itf.rvalid <= 1'b1;
+                    itf.raddr <= itf.addr;
                     @(posedge itf.clk) 
-
+                    itf.raddr <= 'x;
                     itf.rvalid <= 1'b0;
+                    itf.rdata <= 'x;
             end
         endtask : run_random_instrs
     
@@ -131,9 +136,11 @@ module random_tb
         initial begin
     
             // Wait for reset.
-            itf.ready <= 1'b0;
+            itf.ready <= 1'b1;
+            itf.rvalid <= 1'b0;
             @(posedge itf.clk iff itf.rst == 1'b0);
             itf.ready <= 1'b1;
+            
             // Get some useful state into the processor by loading in a bunch of state.
             // init_register_state();
     
