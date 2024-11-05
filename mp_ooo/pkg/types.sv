@@ -93,6 +93,10 @@ package rv32i_types;
     } rob_out_t;
 
     typedef struct packed {
+        logic valid;
+        rvfi_info rvfi;
+    } rob_entry_t;
+    typedef struct packed {
         logic           monitor_valid;
         logic   [63:0]  monitor_order;
         logic   [31:0]  monitor_inst;

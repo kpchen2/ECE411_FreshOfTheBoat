@@ -333,6 +333,7 @@ import rv32i_types::*;
     (
         .clk(clk),
         .rst(rst),
+        .rename_dispatch_rvfi(rename_dispatch_rvfi),
         .dispatch_valid(regf_we_dispatch),
         .rs_select(rs_signal),
         .dispatch_ps_ready1(ps1_valid),
@@ -354,6 +355,8 @@ import rv32i_types::*;
         // .add_regf_we(),
         // .multiply_regf_we(),
         // .divide_regf_we(),
+
+        .reservation_station_rvfi(reservation_station_rvfi),
 
         .add_fu_ready(start_add),
         .multiply_fu_ready(start_mul),
