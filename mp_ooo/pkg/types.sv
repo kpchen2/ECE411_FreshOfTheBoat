@@ -4,9 +4,9 @@ package rv32i_types;
     parameter NUM_MULTIPLY_REGISTERS = 4;
     parameter NUM_DIVIDE_REGISTERS = 4;
     parameter MAX_ISSUES = 4; // num instructions to issue
-    parameter DATA_WIDTH = 6;
+    // parameter DATA_WIDTH = 6;
 
-    typedef logic [DATA_WIDTH:0] physicalIndexing;
+    typedef logic [6:0] physicalIndexing;
 
     typedef struct packed {
         logic   [2:0]   funct3;

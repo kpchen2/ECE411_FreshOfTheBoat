@@ -46,7 +46,7 @@ import rv32i_types::*;
         end
 
         // Map arch sources to phys sources
-        if (decode_info.inst == 32'h13) begin
+        if (decode_info.inst == 32'h13 || decode_info.inst == 0) begin
             ps1 = '0;
             ps2 = '0;
             ps1_valid = '1;
