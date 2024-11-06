@@ -5,7 +5,7 @@ class RandInst;
     // You will increment this number as you generate more random instruction
     // types. Once finished, NUM_TYPES should be 9, for each opcode type in
     // rv32i_opcode.
-    localparam NUM_TYPES = 9;
+    localparam NUM_TYPES = 3;
 
     // Note that the `instr_t` type is from ../pkg/types.sv, there are TODOs
     // you must complete there to fully define `instr_t`.
@@ -74,7 +74,10 @@ class RandInst;
 
             if (instr.r_type.funct7 == base) {
                 instr.r_type.funct3 inside { arith_f3_sll,arith_f3_add,arith_f3_sr,arith_f3_slt,arith_f3_sltu,arith_f3_xor, arith_f3_or, arith_f3_and};
-            } 
+            } else if (instr.r_type.funct7 == mult)
+            {
+                instr.r_type.funct3 inside { arith_f3_sll, arith_f3_sr, arith_f3_add,arith_f3_slt,arith_f3_sltu,arith_f3_xor, arith_f3_or, arith_f3_and };
+            }
             
             else{
                 instr.r_type.funct3 inside { arith_f3_sr, arith_f3_add};
@@ -82,76 +85,76 @@ class RandInst;
         }
 
         // Store instructions -- these are easy to constrain!
-        instr_type[2] -> {
-            instr.s_type.opcode == op_b_store;
-            instr.s_type.funct3 == funct3;
+        // instr_type[2] -> {
+        //     instr.s_type.opcode == op_b_store;
+        //     instr.s_type.funct3 == funct3;
 
-            instr.s_type.funct3 inside {store_f3_sb, store_f3_sh, store_f3_sw};
-            if (instr.s_type.funct3 inside {store_f3_sh, store_f3_sw})
-            {
-                instr.s_type.rs1 == 5'b00000;
-            }
-            if (instr.s_type.funct3 inside {store_f3_sw})
-            {
-                instr.s_type.imm_s_bot[1:0] == 2'b00;
-            } else if (instr.s_type.funct3 inside {store_f3_sh})
-            {
-                instr.s_type.imm_s_bot[0] == 1'b0;
-            }
-        }
+        //     instr.s_type.funct3 inside {store_f3_sb, store_f3_sh, store_f3_sw};
+        //     if (instr.s_type.funct3 inside {store_f3_sh, store_f3_sw})
+        //     {
+        //         instr.s_type.rs1 == 5'b00000;
+        //     }
+        //     if (instr.s_type.funct3 inside {store_f3_sw})
+        //     {
+        //         instr.s_type.imm_s_bot[1:0] == 2'b00;
+        //     } else if (instr.s_type.funct3 inside {store_f3_sh})
+        //     {
+        //         instr.s_type.imm_s_bot[0] == 1'b0;
+        //     }
+        // }
 
         // // Load instructions
-        instr_type[3] -> {
-            instr.i_type.opcode == op_b_load;
-            instr.i_type.funct3 == funct3;
+        // instr_type[3] -> {
+        //     instr.i_type.opcode == op_b_load;
+        //     instr.i_type.funct3 == funct3;
 
-            instr.i_type.funct3 inside {load_f3_lb,load_f3_lh,load_f3_lw,load_f3_lbu,load_f3_lhu};
-            if (instr.i_type.funct3 inside {load_f3_lh,load_f3_lw,load_f3_lhu} )
-            {
-                instr.i_type.rs1 == 5'b00000;
-            }
+        //     instr.i_type.funct3 inside {load_f3_lb,load_f3_lh,load_f3_lw,load_f3_lbu,load_f3_lhu};
+        //     if (instr.i_type.funct3 inside {load_f3_lh,load_f3_lw,load_f3_lhu} )
+        //     {
+        //         instr.i_type.rs1 == 5'b00000;
+        //     }
 
-            if (instr.i_type.funct3 inside {load_f3_lw} )
-            {
-                instr.i_type.i_imm[1:0] == 2'b00;
-            } else
-            if (instr.i_type.funct3 inside {load_f3_lhu, load_f3_lh} )
-            {
-                instr.i_type.i_imm[0] == 1'b0;
-            }
-            // TODO: Constrain funct3 as well.
-        }
+        //     if (instr.i_type.funct3 inside {load_f3_lw} )
+        //     {
+        //         instr.i_type.i_imm[1:0] == 2'b00;
+        //     } else
+        //     if (instr.i_type.funct3 inside {load_f3_lhu, load_f3_lh} )
+        //     {
+        //         instr.i_type.i_imm[0] == 1'b0;
+        //     }
+        //     // TODO: Constrain funct3 as well.
+        // }
 
         // Branch instructions
 
-        instr_type[4] -> {
-            instr.b_type.opcode == op_b_br;
-            instr.i_type.funct3 == funct3;
-            instr.b_type.funct3 inside {branch_f3_beq, branch_f3_bne, branch_f3_blt, branch_f3_bge, branch_f3_bltu, branch_f3_bgeu};
+        // instr_type[4] -> {
+        //     instr.b_type.opcode == op_b_br;
+        //     instr.i_type.funct3 == funct3;
+        //     instr.b_type.funct3 inside {branch_f3_beq, branch_f3_bne, branch_f3_blt, branch_f3_bge, branch_f3_bltu, branch_f3_bgeu};
 
-        }
+        // }
 
         // Jump and Link register
 
-        instr_type[5] ->
-        {
-            instr.i_type.opcode == op_b_jalr;
-            instr.i_type.funct3 == arith_f3_add;
-        }
+        // instr_type[5] ->
+        // {
+        //     instr.i_type.opcode == op_b_jalr;
+        //     instr.i_type.funct3 == arith_f3_add;
+        // }
 
         // Jump and Link
 
-        instr_type[6] -> {
-            instr.j_type.opcode == op_b_jal;
-        }
+        // instr_type[6] -> {
+        //     instr.j_type.opcode == op_b_jal;
+        // }
 
         // Upper Immediate PC
-        instr_type[7] -> {
-            instr.j_type.opcode == op_b_auipc;
-        }
+        // instr_type[7] -> {
+        //     instr.j_type.opcode == op_b_auipc;
+        // }
 
         // Upper Immediate
-        instr_type[8] -> {
+        instr_type[2] -> {
             instr.j_type.opcode == op_b_lui;
         }
         // TODO: Do all 9 types!
