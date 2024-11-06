@@ -95,7 +95,7 @@ import rv32i_types::*;
             enqueue_mem_next = {1'b1, wdata_in};
         end
 
-        // empty = (tail_next[ADDR_WIDTH - 1:0] == head_next[ADDR_WIDTH - 1:0]) && (tail_next[ADDR_WIDTH] == head_next[ADDR_WIDTH]);   // logic if queue empty
+        empty = (tail_next[ADDR_WIDTH - 1:0] == head_next[ADDR_WIDTH - 1:0]) && (tail_next[ADDR_WIDTH] == head_next[ADDR_WIDTH]);   // logic if queue empty
     end
 
 endmodule : free_list

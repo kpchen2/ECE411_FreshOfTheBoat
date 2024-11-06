@@ -19,9 +19,6 @@ import rv32i_types::*;
     input   logic   [31:0]                      inst,
     input   logic                               regf_we,
 
-
-
-    
     // cdb inputs
     input   logic   [$clog2(QUEUE_DEPTH)-1:0]   add_rob_idx_in,
     input   logic                               add_cdb_valid,
@@ -83,6 +80,8 @@ import rv32i_types::*;
     logic   [$clog2(QUEUE_DEPTH)-1:0]   mul_rob_idx_in_next;
     logic   [$clog2(QUEUE_DEPTH)-1:0]   div_rob_idx_in_next;
 
+    logic   [5:0]   phys_reg_in_next;
+
     always_ff @ (posedge clk) begin
         enqueue_reg <= enqueue_next;
         dequeue_reg <= dequeue_valid;
@@ -99,6 +98,9 @@ import rv32i_types::*;
             // enqueue
             if (enqueue_next) begin
                 mem[tail_next[ADDR_WIDTH - 1:0]] <= enqueue_mem_next;
+
+                // used to be in comb (changed for Verilator)
+                mem[tail_next[ADDR_WIDTH - 1:0]].pd <= phys_reg_in_next;
             end
             // dequeue
             if (dequeue_valid) begin
@@ -141,8 +143,6 @@ import rv32i_types::*;
                 mem[div_rob_idx_in_next].rvfi.monitor_mem_wdata <= monitor_mem_wdata;
             end
   
-                    
-
             tail_reg <= tail_next;
             head_reg <= head_next;
         end
@@ -167,9 +167,12 @@ import rv32i_types::*;
         rob_num = tail_reg[5:0] + 1'b1;
         full = '0;
         dequeue_valid = '0;
+
+        phys_reg_in_next = phys_reg_in;
         
         if (!rst) begin
             full = (tail_reg[ADDR_WIDTH - 1:0] == head_reg[ADDR_WIDTH - 1:0]) && (tail_reg[ADDR_WIDTH] != head_reg[ADDR_WIDTH]);    // logic if queue full
+            enqueue_next = full ? '0 : enqueue_valid;
             dequeue_valid = (mem[head_reg[5:0]+1'b1].valid == 1'b1 && mem[head_reg[5:0]+1'b1].commit == 1'b1);  // dequeue if tail's inst is valid and ready to commit
 
             // send dequeue inst same cycle; update queue next cycle
@@ -181,13 +184,13 @@ import rv32i_types::*;
                 rob_out = dequeue_mem_next;
             end
             
-            if (enqueue_valid) begin
-                if (~full || dequeue_valid || (add_cdb_valid && add_rob_idx_in == head_reg[5:0]) || (mul_cdb_valid && mul_rob_idx_in == head_reg[5:0]) || (div_cdb_valid && div_rob_idx_in == head_reg[5:0])) begin
+            if (enqueue_next) begin
+                if (~full || dequeue_valid) begin
                     tail_next = tail_reg + 1'b1;
                     head_next = (head_next == head_reg) ? head_reg : head_reg + 1'd1;   // don't change what dequeue set head_next to
                     enqueue_mem_next.valid = 1'b1;
                     enqueue_mem_next.commit = 1'b0;
-                    enqueue_mem_next.pd = phys_reg_in;
+                    // enqueue_mem_next.pd = phys_reg_in;
                     enqueue_mem_next.rvfi.monitor_rd_addr = arch_reg_in;
                     enqueue_mem_next.rvfi.monitor_pc_rdata = pc_rdata;
                     enqueue_mem_next.rvfi.monitor_pc_wdata = pc_wdata;
@@ -203,9 +206,10 @@ import rv32i_types::*;
                     tail_next = tail_reg; 
                     head_next = (head_next == head_reg) ? head_reg : head_reg + 1'd1;   // don't change what dequeue set head_next to
                     enqueue_mem_next = mem[tail_reg[ADDR_WIDTH - 1:0]+1'b1];
-                
                 end
             end
+
+            full = (tail_next[ADDR_WIDTH - 1:0] == head_next[ADDR_WIDTH - 1:0]) && (tail_next[ADDR_WIDTH] != head_next[ADDR_WIDTH]);    // logic if queue full
         end
     end
 
