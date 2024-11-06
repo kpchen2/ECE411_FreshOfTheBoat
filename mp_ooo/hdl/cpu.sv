@@ -342,7 +342,8 @@ import rv32i_types::*;
         .rs2_add(add_ps2), .rs2_mul(multiply_ps2), .rs2_div(divide_ps2),          // SHOULD BE PS
         .rd_add(cdb_add.pd_s), .rd_mul(cdb_mul.pd_s), .rd_div(cdb_div.pd_s),
         .rs1_v_add(rs1_v_add), .rs1_v_mul(rs1_v_mul), .rs1_v_div(rs1_v_div),
-        .rs2_v_add(rs2_v_add), .rs2_v_mul(rs2_v_mul), .rs2_v_div(rs2_v_div)
+        .rs2_v_add(rs2_v_add), .rs2_v_mul(rs2_v_mul), .rs2_v_div(rs2_v_div),
+        .arch_s1_add(add_decode_info.rs1_s), .arch_s2_add(add_decode_info.rs2_s)
     );
 
     logic   start_add, start_mul, start_div;

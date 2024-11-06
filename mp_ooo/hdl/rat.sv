@@ -55,7 +55,7 @@ import rv32i_types::*;
             ps1 = rat[rs1];
             ps2 = (decode_info.opcode == op_b_imm || decode_info.opcode == op_b_lui) ? rat[rs1] : rat[rs2];
             ps1_valid = valid[rs1];
-            ps2_valid = (decode_info.opcode == op_b_imm || decode_info.opcode == op_b_lui) ? valid[rs1] : valid[rs2];
+            ps2_valid = (decode_info.opcode == op_b_imm || decode_info.opcode == op_b_lui) ? '1 : valid[rs2];
         end
 
         // CDB: set entry rd to valid if it still maps to pd
