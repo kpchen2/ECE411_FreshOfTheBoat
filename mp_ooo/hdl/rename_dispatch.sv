@@ -45,13 +45,13 @@ import rv32i_types::*;
 
     always_ff @(posedge clk) begin
         if (rst) begin
-            rob_full_reg = '0;
-            is_free_list_empty_reg = '1;
-            is_iqueue_empty_reg = '1;
+            rob_full_reg <= '0;
+            is_free_list_empty_reg <= '1;
+            is_iqueue_empty_reg <= '1;
         end else begin
-            rob_full_reg = rob_full;
-            is_free_list_empty_reg = is_free_list_empty;
-            is_iqueue_empty_reg = is_iqueue_empty;
+            rob_full_reg <= rob_full;
+            is_free_list_empty_reg <= is_free_list_empty;
+            is_iqueue_empty_reg <= is_iqueue_empty;
         end
     end
 
