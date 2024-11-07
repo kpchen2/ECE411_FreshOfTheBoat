@@ -24,6 +24,8 @@ import rv32i_types::*;
 
     decode_info_t decode_info_reg;
 
+    logic           divide_by_0;
+
     always_ff @(posedge clk) begin
         if (rst) begin
             complete_prev <= 1'b0;
@@ -47,7 +49,7 @@ import rv32i_types::*;
     .a(a_final),
     .b(b_final),
     .complete(complete_inst),
-    .divide_by_0(),
+    .divide_by_0(divide_by_0),
     .quotient(quotient_inst),
     .remainder(remainder_inst) );
 
@@ -124,6 +126,10 @@ import rv32i_types::*;
                 
             end
         endcase
+
+        if (divide_by_0 && rs1_v == '1 && complete_inst) begin
+            rd_v = '1; 
+        end
     end
 
 endmodule : fu_div_rem
