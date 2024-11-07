@@ -54,13 +54,18 @@ import rv32i_types::*;
             rob_mul_reg <= '0;
             pd_mul_reg <= '0;
             rd_mul_reg <= '0;
-            rob_div_reg <= '0;
-            pd_div_reg <= '0;
-            rd_div_reg <= '0;
         end else if (start_mul) begin
             rob_mul_reg <= rob_idx_mul;
             pd_mul_reg <= pd_s_mul;
             rd_mul_reg <= rd_s_mul;
+        end
+    end
+
+    always_ff @(posedge clk) begin
+        if (rst) begin
+            rob_div_reg <= '0;
+            pd_div_reg <= '0;
+            rd_div_reg <= '0;
         end else if (start_div) begin
             rob_div_reg <= rob_idx_div;
             pd_div_reg <= pd_s_div;
