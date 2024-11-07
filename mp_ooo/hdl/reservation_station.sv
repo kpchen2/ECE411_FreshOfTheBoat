@@ -70,6 +70,20 @@ import rv32i_types::*;
         input  logic       regf_we_div
     );
 
+    logic   regf_we_add_reg, regf_we_mul_reg, regf_we_div_reg;
+
+    always_ff @(posedge clk) begin
+        if (rst) begin
+            regf_we_add_reg <= '0;
+            regf_we_mul_reg <= '0;
+            regf_we_div_reg <= '0;
+        end else begin
+            regf_we_add_reg <= regf_we_add;
+            regf_we_mul_reg <= regf_we_mul;
+            regf_we_div_reg <= regf_we_div;
+        end
+    end
+
 
     //actual registers
     add_reservation_station_data add_reservation_station [NUM_ADD_REGISTERS];
@@ -145,8 +159,6 @@ import rv32i_types::*;
         end
         else
         begin
-
-            
             /* * * * * * add entry  * * * * */
 
             // next_free_entry_reg <= next_free_entry; // track the next free entry
