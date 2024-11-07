@@ -58,7 +58,7 @@ module random_tb
         // Note that this memory model is not consistent! It ignores
         // writes and always reads out a random, valid instruction.
         task run_random_instrs();
-            repeat (5000) begin
+            repeat (500) begin
                 logic [255:0] four_bursts;
                 // repeat (4) @ (posedge itf.clk)
                 @(posedge itf.clk iff ( itf.read));

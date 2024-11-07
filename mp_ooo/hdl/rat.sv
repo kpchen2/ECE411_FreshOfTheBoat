@@ -39,6 +39,19 @@ import rv32i_types::*;
         rat_next = rat;
         valid_next = valid;
 
+        // CDB: set entry rd to valid if it still maps to pd
+        if (regf_we_add && pd_add == rat[rd_add]) begin
+            valid_next[rd_add] = 1'b1;
+        end
+
+        if (regf_we_mul && pd_mul == rat[rd_mul]) begin
+            valid_next[rd_mul] = 1'b1;
+        end
+
+        if (regf_we_div && pd_div == rat[rd_div]) begin
+            valid_next[rd_div] = 1'b1;
+        end
+
         // Renames rd to pd, marking invalid
         if (regf_we_dispatch) begin
             rat_next[rd_dispatch] = (rd_dispatch != '0) ? pd_dispatch : rat_next[rd_dispatch];
@@ -56,19 +69,6 @@ import rv32i_types::*;
             ps2 = (decode_info.opcode == op_b_imm || decode_info.opcode == op_b_lui) ? rat[rs1] : rat[rs2];
             ps1_valid = valid[rs1];
             ps2_valid = (decode_info.opcode == op_b_imm || decode_info.opcode == op_b_lui) ? '1 : valid[rs2];
-        end
-
-        // CDB: set entry rd to valid if it still maps to pd
-        if (regf_we_add && pd_add == rat[rd_add]) begin
-            valid_next[rd_add] = 1'b1;
-        end
-
-        if (regf_we_mul && pd_mul == rat[rd_mul]) begin
-            valid_next[rd_mul] = 1'b1;
-        end
-
-        if (regf_we_div && pd_div == rat[rd_div]) begin
-            valid_next[rd_div] = 1'b1;
         end
     end
 
