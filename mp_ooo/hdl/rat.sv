@@ -41,7 +41,7 @@ import rv32i_types::*;
 
         // Renames rd to pd, marking invalid
         if (regf_we_dispatch) begin
-            rat_next[rd_dispatch] = pd_dispatch;
+            rat_next[rd_dispatch] = (rd_dispatch != '0) ? pd_dispatch : rat_next[rd_dispatch];
             valid_next[rd_dispatch] = 1'b0;
         end
 

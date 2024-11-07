@@ -10,7 +10,8 @@ import rv32i_types::*;
     input   logic   [31:0]  rd_v_add, rd_v_mul, rd_v_div,
     input   logic   [PHYS_REG_BITS-1:0]   rs1_add, rs2_add, rs1_mul, rs2_mul, rs1_div, rs2_div, rd_add, rd_mul, rd_div,
     output  logic   [31:0]  rs1_v_add, rs2_v_add, rs1_v_mul, rs2_v_mul, rs1_v_div, rs2_v_div,
-    input   logic   [4:0]   arch_s1_add, arch_s2_add
+    input   logic   [4:0]   arch_s1_add, arch_s2_add,
+    input   logic   [4:0]   arch_rd_add, arch_rd_mul, arch_rd_div
 );
 
             logic   [31:0]  data [2**PHYS_REG_BITS];
@@ -23,15 +24,15 @@ import rv32i_types::*;
         end
         
         if (!rst && (regf_we_add && (rd_add != 0))) begin
-            data[rd_add] <= rd_v_add;
+            data[rd_add] <= (arch_rd_add != 0) ? rd_v_add : '0;
         end
 
         if (!rst && (regf_we_mul && (rd_mul != 0))) begin
-            data[rd_mul] <= rd_v_mul;
+            data[rd_mul] <= (arch_rd_mul != 0) ? rd_v_mul : '0;
         end
 
         if (!rst && (regf_we_div && (rd_div != 0))) begin
-            data[rd_div] <= rd_v_div;
+            data[rd_div] <= (arch_rd_div != 0) ? rd_v_div : '0;
         end
     end
 
@@ -103,10 +104,10 @@ import rv32i_types::*;
         rs2_v_add = (arch_s2_add != 0) ? data[rs2_add] : '0;
 
         rs1_v_mul = (rs1_mul_f1 > 0) ? data[rs1_mul_f1] : '0;
-        rs2_v_mul = (rs1_mul_f1 > 0) ? data[rs2_mul_f2] : '0;
+        rs2_v_mul = (rs2_mul_f2 > 0) ? data[rs2_mul_f2] : '0;
 
         rs1_v_div = (rs1_div_f1 > 0) ? data[rs1_div_f1] : '0;
-        rs2_v_div = (rs1_div_f1 > 0) ? data[rs2_div_f2] : '0;
+        rs2_v_div = (rs2_div_f2 > 0) ? data[rs2_div_f2] : '0;
     end
 
 endmodule : phys_regfile
