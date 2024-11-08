@@ -177,6 +177,26 @@ import rv32i_types::*;
         .dfp_resp(cache_valid)
     );
 
+    // cache cache_d
+    // (
+    // .clk(),
+    // .rst(),
+
+    // .ufp_addr(),
+    // .ufp_rmask(),
+    // .ufp_wmask(),             // FILL WHEN WE WANT TO WRITE
+    // .ufp_rdata(),
+    // .ufp_wdata(),             // FILL WHEN WE WANT TO WRITE
+    // .ufp_resp(),
+
+    // .dfp_addr(),
+    // .dfp_read(),
+    // .dfp_write(),
+    // .dfp_rdata(),
+    // .dfp_wdata(),      // FILL WHEN WE WANT TO WRITE
+    // .dfp_resp()
+    // )
+
     // outputs cache_valid if cache_wdata is ready
     cacheline_adapter cache_adapter_i (
         .clk(clk),
