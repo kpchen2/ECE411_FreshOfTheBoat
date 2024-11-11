@@ -7,6 +7,7 @@ package rv32i_types;
     // parameter DATA_WIDTH = 6;
 
     typedef logic [6:0] physicalIndexing;
+    
     typedef struct packed {
         logic           monitor_valid;
         logic   [63:0]  monitor_order;
