@@ -21,12 +21,12 @@ module cache_arbiter
 
         output logic [31:0] bmem_addr,
         output logic bmem_read,
-        output logic bmem_write,
-        output logic   [63:0]      bmem_wdata,
+        output logic mem_valid,
+        output logic   [255:0]      full_burst,
         input logic bmem_ready,
         
-        input logic [255:0] cache_wdata
-        input  logic     cache_valid,
+        input logic [255:0] cache_wdata,
+        input  logic     cache_valid
 
 
     );
@@ -84,8 +84,8 @@ module cache_arbiter
         i_dfp_rdata = '0;
         bmem_read = '0;
         bmem_addr = '0;
-        bmem_write = '0;
-        bmem_wdata = '0;
+        mem_valid = '0;
+        full_burst = '0;
         unique case (state)
             idle: 
             begin
@@ -95,8 +95,8 @@ module cache_arbiter
                 i_dfp_rdata = '0;
                 bmem_read = '0;
                 bmem_addr = '0;
-                bmem_write = '0;
-                bmem_wdata = '0;
+                mem_valid = '0;
+                full_burst = '0;
 
                 if (~d_dfp_read && ~d_dfp_write && ~i_dfp_read)
                 begin
@@ -136,10 +136,11 @@ module cache_arbiter
                 d_dfp_rdata = '0;
                 i_dfp_resp = 1'b0;
                 i_dfp_rdata = '0;
-                bmem_read = i_dfp_read_reg;
+                bmem_read = (!i_dfp_read_reg && i_dfp_read_next) ? '1 : '0;
+                // bmem_read = i_dfp_read_reg;
                 bmem_addr = i_dfp_addr;
-                bmem_write = '0;
-                bmem_wdata = '0;
+                mem_valid = '0;
+                full_burst = '0;
                 
                 if (cache_valid)
                 begin
@@ -188,10 +189,10 @@ module cache_arbiter
                 d_dfp_rdata = '0;
                 i_dfp_resp = 1'b0;
                 i_dfp_rdata = '0;
-                bmem_read = d_dfp_read_reg;
+                bmem_read = (!d_dfp_read_reg && d_dfp_read_next) ? '1 : '0;
                 bmem_addr = d_dfp_addr;
-                bmem_write = d_dfp_write_reg;
-                bmem_wdata = d_dfp_wdata;
+                mem_valid = d_dfp_write_reg;
+                full_burst = d_dfp_wdata;
 
                 if (cache_valid)
                 begin
