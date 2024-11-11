@@ -23,8 +23,10 @@ module cache_arbiter
         output logic bmem_read,
         output logic bmem_write,
         output logic   [63:0]      bmem_wdata,
-        input  logic     bmem_rvalid,
-        input logic [255:0] bmem_rdata
+        input logic bmem_ready,
+        
+        input logic [255:0] cache_wdata
+        input  logic     cache_valid,
 
 
     );
@@ -55,7 +57,7 @@ module cache_arbiter
             d_dfp_write_reg <= 1'b0;
             i_dfp_read_reg <= 1'b0;
         end
-        else if (bmem_rvalid)
+        else if (bmem_ready)
         begin
             state <= state_next;
             d_dfp_read_reg <= d_dfp_read_next;
@@ -139,10 +141,10 @@ module cache_arbiter
                 bmem_write = '0;
                 bmem_wdata = '0;
                 
-                if (bmem_rvalid)
+                if (cache_valid)
                 begin
                     i_dfp_resp = 1'b1;
-                    i_dfp_rdata = bmem_rdata;
+                    i_dfp_rdata = cache_wdata;
                 end
                 else
                 begin
@@ -191,9 +193,9 @@ module cache_arbiter
                 bmem_write = d_dfp_write_reg;
                 bmem_wdata = d_dfp_wdata;
 
-                if (bmem_rvalid)
+                if (cache_valid)
                 begin
-                    d_dfp_rdata = bmem_rdata;
+                    d_dfp_rdata = cache_wdata;
                     d_dfp_resp = 1'b1; 
                 end
                 else
