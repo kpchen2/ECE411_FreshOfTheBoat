@@ -194,28 +194,26 @@ import rv32i_types::*;
         .dfp_resp(cache_valid)
     );
 
-    cache cache_d
-    (
-    .clk(clk),
-    .rst(rst),
+    cache cache_d (
+        .clk(clk),
+        .rst(rst),
 
-    .ufp_addr(mem_addr),
-    .ufp_rmask(load_rmask),
-    .ufp_wmask(store_wmask),             // FILL WHEN WE WANT TO WRITE
-    .ufp_rdata(load_rdata),
-    .ufp_wdata(store_wdata),             // FILL WHEN WE WANT TO WRITE
-    .ufp_resp(d_ufp_resp),
+        .ufp_addr(mem_addr),
+        .ufp_rmask(load_rmask),
+        .ufp_wmask(store_wmask),
+        .ufp_rdata(load_rdata),
+        .ufp_wdata(store_wdata),
+        .ufp_resp(d_ufp_resp),
 
-    .dfp_addr(d_dfp_addr),
-    .dfp_read(d_dfp_read),
-    .dfp_write(d_dfp_write),
-    .dfp_rdata(d_dfp_rdata),
-    .dfp_wdata(d_dfp_wdata),      // FILL WHEN WE WANT TO WRITE
-    .dfp_resp(d_dfp_resp)
+        .dfp_addr(d_dfp_addr),
+        .dfp_read(d_dfp_read),
+        .dfp_write(d_dfp_write),
+        .dfp_rdata(d_dfp_rdata),        // CONNECT TO BMEM
+        .dfp_wdata(d_dfp_wdata),
+        .dfp_resp(d_dfp_resp)           // CONNECT TO BMEM
     );
 
-    cache_arbiter arbiter
-    (
+    cache_arbiter arbiter (
         .clk(clk),
         .rst(rst),
         .i_dfp_addr(dfp_addr),
@@ -238,12 +236,7 @@ import rv32i_types::*;
 
         .cache_wdata(cache_wdata),
         .cache_valid(cache_valid)
-
     );
-
-
-
-
 
     // outputs cache_valid if cache_wdata is ready
     cacheline_adapter cache_adapter_i (

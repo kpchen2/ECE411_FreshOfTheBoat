@@ -8,13 +8,13 @@ import rv32i_types::*;
     input   logic           rst,
     input   logic           regf_we_add, regf_we_mul, regf_we_div,
     input   logic   [31:0]  rd_v_add, rd_v_mul, rd_v_div,
-    input   logic   [PHYS_REG_BITS-1:0]   rs1_add, rs2_add, rs1_mul, rs2_mul, rs1_div, rs2_div, rd_add, rd_mul, rd_div,
+    input   logic   [PHYS_REG_BITS-1:0]   rs1_add, rs2_add, rs1_mul, rs2_mul, rs1_div, rs2_div, rd_add, rd_mul, rd_div, 
     output  logic   [31:0]  rs1_v_add, rs2_v_add, rs1_v_mul, rs2_v_mul, rs1_v_div, rs2_v_div,
     input   logic   [4:0]   arch_s1_add, arch_s2_add,
     input   logic   [4:0]   arch_rd_add, arch_rd_mul, arch_rd_div
 );
 
-            logic   [31:0]  data [2**PHYS_REG_BITS];
+    logic   [31:0]  data [2**PHYS_REG_BITS];
 
     always_ff @(posedge clk) begin
         if (rst) begin

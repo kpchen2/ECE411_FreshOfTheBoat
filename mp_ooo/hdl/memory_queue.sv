@@ -11,6 +11,7 @@ import rv32i_types::*;
     input   logic   [6:0]   opcode,
     input   logic   [5:0]   phys_reg_in,
     input   logic           enqueue_valid,
+    input   logic   [5:0]   rob_num,
 
     // adder inputs
     input   logic   [31:0]  addr,
@@ -25,17 +26,30 @@ import rv32i_types::*;
     input   logic   [31:0]  data_in,
     input   logic           data_valid,
 
+    // regfile inputs
+    input   logic   [31:0]  rd_v,   // ADD ANOTHER PORT TO REGFILE
+
     // outputs
     output  logic   [5:0]   phys_reg_out,
-    output  logic           phys_reg_valid,
+    output  logic           output_valid,
     output  logic   [31:0]  data_out,
     output  logic           full,
 
-    output  logic   [5:0]   mem_idx_out
+    // rename/dispatch outputs
+    output  logic   [5:0]   mem_idx_out,
+
+    // dcache outputs
+    output  logic   [31:0]  d_addr,
+    output  logic   [3:0]   d_rmask,
+    output  logic   [3:0]   d_wmask,
+    output  logic   [31:0]  d_wdata,
+
+    // regfile outputs
+    output  logic   [31:0]  rd_s    // ADD ANOTHER PORT TO REGFILE
 );
 
     localparam ADDR_WIDTH = $clog2(QUEUE_DEPTH);
-    localparam DATA_WIDTH = 46;                        // 1 bit for ready, 32 bits for addr, 7 bits for opcode, 6 bits for phys_reg
+    localparam DATA_WIDTH = 52;                        // 1 bit for ready, 32 bits for addr, 7 bits for opcode, 6 bits for phys_reg, 6 bits for rob_num
 
     logic   [ADDR_WIDTH:0]      tail_reg;              // extra bit for overflow
     logic   [ADDR_WIDTH:0]      head_reg;              // extra bit for overflow
@@ -56,6 +70,7 @@ import rv32i_types::*;
 
     assign data_out = data_in;
     assign mem_idx_out = tail_reg[5:0] + 1'b1;
+    assign rd_s = phys_reg_in;
 
     always_ff @ (posedge clk) begin
         enqueue_reg <= enqueue_valid;
@@ -75,12 +90,12 @@ import rv32i_types::*;
                 mem[tail_next[ADDR_WIDTH - 1:0]] <= enqueue_mem_next;
             end
             // dequeue
-            if (dequeue_valid) begin
+            if (data_valid) begin
                 mem[head_next[ADDR_WIDTH - 1:0]] <= dequeue_mem_next;
             end
             // adder done
             if (addr_valid) begin
-                mem[mem_idx_in][45:29] = {1'b1, addr};
+                mem[mem_idx_in][51:19] = {1'b1, addr};
             end
   
             tail_reg <= tail_next;
@@ -95,8 +110,14 @@ import rv32i_types::*;
         dequeue_mem_next = '0;
 
         phys_reg_out = '0;
-        phys_reg_valid = '0;
+        output_valid = '0;
         full = '0;
+
+        d_addr = '0;
+        d_rmask = '0;
+        d_wmask = '0;
+        d_wdata = '0;
+        rd_s = '0;
         
         if (!rst) begin
             full = (tail_reg[ADDR_WIDTH - 1:0] == head_reg[ADDR_WIDTH - 1:0]) && (tail_reg[ADDR_WIDTH] != head_reg[ADDR_WIDTH]);    // logic if queue full
@@ -109,14 +130,26 @@ import rv32i_types::*;
                 dequeue_mem_next[DATA_WIDTH] = 1'b0;
 
                 phys_reg_out = dequeue_mem_next[5:0];
-                phys_reg_valid = '1;
+                output_valid = '1;
+            end
+
+            // ready to access cache
+            if (mem[head_reg[5:0]+1'b1][DATA_WIDTH:DATA_WIDTH - 1] == 2'b11) begin
+                d_addr = mem[head_reg[5:0]+1'b1][50:19];
+                
+                if (opcode == op_b_load) begin
+                    d_rmask = '1;
+                end else if (commited_rob_valid && mem[head_reg[5:0]+1'b1][5:0] == commited_rob) begin
+                    d_wmask = '1;
+                    d_wdata = rd_v;
+                end
             end
             
             if (enqueue_valid) begin
                 if (~full || data_valid) begin
                     tail_next = tail_reg + 1'b1;
                     head_next = (head_next == head_reg) ? head_reg : head_reg + 1'd1;   // don't change what dequeue set head_next to
-                    enqueue_mem_next = {1'b0, 32'x, opcode, phys_reg_in};
+                    enqueue_mem_next = {2'b10, 32'bx, opcode, phys_reg_in, rob_num};
 
                 end else begin
                     tail_next = tail_reg; 
