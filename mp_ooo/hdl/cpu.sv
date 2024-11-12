@@ -128,10 +128,10 @@ import rv32i_types::*;
     logic  [31:0]                    dispatch_inst;
     logic                            dispatch_regf_we;
     
-    assign mem_addr = '0;   
-    assign load_rmask = '0; 
-    assign store_wmask = '0;
-    assign store_wdata = '0;
+    // assign mem_addr = '0;   
+    // assign load_rmask = '0; 
+    // assign store_wmask = '0;
+    // assign store_wdata = '0;
      // do this for now, NEED RELEVANT MEM DATA LATER
 
 
@@ -223,28 +223,28 @@ import rv32i_types::*;
     memory_queue memory_queue_i (
         .clk(clk),
         .rst(rst),
-        .opcode(),
+        .opcode(decode_info.opcode),
         .phys_reg_in(),
         .enqueue_valid(),
-        .rob_num(),
-        .addr(),
-        .addr_valid(),
-        .mem_idx_in(),
-        .commited_rob(),
-        .data_in(),
-        .data_valid(),
-        .rd_v(),
+        .rob_num(rob_num),
+        .addr(),            // FROM ADDER
+        .addr_valid(),      // FROM ADDER
+        .mem_idx_in(),      // FROM ADDER
+        .commited_rob(),    // FROM ROB (ROB HEAD)
+        .data_in(load_rdata),
+        .data_valid(d_ufp_resp),
+        .rd_v(),            // FROM REGFILE
         
-        .phys_reg_out(),
-        .output_valid(),
-        .data_out(),
+        .phys_reg_out(),    // OUTPUT SOMEWHERE
+        .output_valid(),    // OUTPUT SOMEWHERE
+        .data_out(),        // OUTPUT SOMEWHERE
         .full(),
-        .mem_idx_out(),
-        .d_addr(),
-        .d_rmask(),
-        .d_wmask(),
-        .d_wdata(),
-        .rd_s()
+        .mem_idx_out(),     // OUTPUT TO RENAME DISPATCH
+        .d_addr(mem_addr),
+        .d_rmask(load_rmask),
+        .d_wmask(store_wmask),
+        .d_wdata(store_wdata),
+        .rd_s()             // OUTPUT TO REGFILE
     );
 
     cache_arbiter arbiter (
