@@ -229,8 +229,8 @@ module cache_arbiter
                 else if ((d_dfp_read || d_dfp_write ) && i_dfp_read)
                 begin
                     state_next = i;
-                    d_dfp_read_next = 1'b1;
-                    d_dfp_write_next = 1'b1;
+                    d_dfp_read_next =  d_dfp_read ? 1'b1 : 1'b0;
+                    d_dfp_write_next = d_dfp_write ? 1'b1 : 1'b0;
                     i_dfp_read_next = 1'b1;
                 end
             end
