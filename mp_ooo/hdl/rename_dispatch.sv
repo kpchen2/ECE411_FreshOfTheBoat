@@ -105,7 +105,7 @@ import rv32i_types::*;
             decode_info.inst   = inst;
             regf_we = 1'b1;
             order_next = order + 64'd1;
-            rd = decode_info.rd_s;
+            rd = (inst[6:0] == op_b_br) ? '0 : decode_info.rd_s;
             rs1 = decode_info.rs1_s;
             rs2 = decode_info.rs2_s;
 

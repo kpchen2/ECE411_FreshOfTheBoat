@@ -115,6 +115,9 @@ import rv32i_types::*;
     logic  [31:0]                    dispatch_inst;
     logic                            dispatch_regf_we;
 
+    logic           global_branch_signal;
+    logic   [31:0]  global_branch_addr;
+
 
     always_ff @(posedge clk) begin
 
@@ -160,6 +163,7 @@ import rv32i_types::*;
                     ufp_rmask = '0;
                 end
             end
+            pc_next = global_branch_signal ? global_branch_addr : pc_next;
         end
     end
     
@@ -293,6 +297,9 @@ import rv32i_types::*;
         .div_rob_idx_in(cdb_div.rob_idx),
         .div_cdb_valid(cdb_div.valid),
         .div_inst(cdb_div.inst),
+        .br_rob_idx_in(cdb_br.rob_idx),
+        .br_cdb_valid(cdb_br.valid),
+        .br_inst(cdb_br.inst),
 
 
         .add_rs1_rdata(rs1_v_add),
@@ -307,6 +314,12 @@ import rv32i_types::*;
         .divide_rs2_rdata(rs2_v_div),
         .divide_rd_wdata(cdb_div.rd_v),
 
+        .branch_rs1_rdata(rs1_v_br),
+        .branch_rs2_rdata(rs2_v_br),
+        .branch_rd_wdata(cdb_br.rd_v),
+        .branch_pc_branch(cdb_br.pc_branch),
+        .branch_pc_select(cdb_br.pc_select),
+
         .monitor_mem_addr('0),
         .monitor_mem_rmask('0),
         .monitor_mem_wmask('0),
@@ -315,7 +328,9 @@ import rv32i_types::*;
         .rob_out(rob_entry),
         .dequeue_valid(rob_valid),
         .rob_num(rob_num),
-        .full(rob_full)
+        .full(rob_full),
+        .global_branch_addr(global_branch_addr),
+        .global_branch_signal(global_branch_signal)
     );
     
     rrat rrat_i (
