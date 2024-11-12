@@ -49,7 +49,7 @@ import rv32i_types::*;
         mem_wdata_next = mem_wdata_reg;
         bmem_write = 1'b1;
         bmem_wdata = '0;
-        unique case (state)
+        case (state)
         start:
         begin
             if (mem_valid)

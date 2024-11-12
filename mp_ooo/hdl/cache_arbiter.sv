@@ -86,7 +86,7 @@ module cache_arbiter
         bmem_addr = '0;
         mem_valid = '0;
         full_burst = '0;
-        unique case (state)
+        case (state)
             idle: 
             begin
                 d_dfp_resp = '0;
@@ -136,7 +136,7 @@ module cache_arbiter
                 d_dfp_rdata = '0;
                 i_dfp_resp = 1'b0;
                 i_dfp_rdata = '0;
-                bmem_read = (!i_dfp_read_reg && i_dfp_read_next) ? '1 : '0;
+                bmem_read = (i_dfp_read_reg) ? '1 : '0;
                 // bmem_read = i_dfp_read_reg;
                 bmem_addr = i_dfp_addr;
                 mem_valid = '0;
@@ -189,7 +189,7 @@ module cache_arbiter
                 d_dfp_rdata = '0;
                 i_dfp_resp = 1'b0;
                 i_dfp_rdata = '0;
-                bmem_read = (!d_dfp_read_reg && d_dfp_read_next) ? '1 : '0;
+                bmem_read = (d_dfp_read_reg) ? '1 : '0;
                 bmem_addr = d_dfp_addr;
                 mem_valid = d_dfp_write_reg;
                 full_burst = d_dfp_wdata;
