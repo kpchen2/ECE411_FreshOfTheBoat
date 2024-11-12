@@ -101,6 +101,8 @@ package rv32i_types;
         logic   [31:0]  rd_v;
         logic           valid;
         logic   [31:0]  inst;
+        logic           pc_select;
+        logic   [31:0]  pc_branch;
     } cdb_t;
 
     typedef struct packed {
