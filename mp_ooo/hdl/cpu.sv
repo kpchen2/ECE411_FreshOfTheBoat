@@ -213,6 +213,34 @@ import rv32i_types::*;
         .dfp_resp(d_dfp_resp)           // CONNECT TO BMEM
     );
 
+    memory_queue memory_queue_i (
+        .clk(clk),
+        .rst(rst),
+        .opcode(),
+        .phys_reg_in(),
+        .enqueue_valid(),
+        .rob_num(),
+        .addr(),
+        .addr_valid(),
+        .mem_idx_in(),
+        .commited_rob(),
+        .commited_rob_valid(),
+        .data_in(),
+        .data_valid(),
+        .rd_v(),
+        
+        .phys_reg_out(),
+        .output_valid(),
+        .data_out(),
+        .full(),
+        .mem_idx_out(),
+        .d_addr(),
+        .d_rmask(),
+        .d_wmask(),
+        .d_wdata(),
+        .rd_s()
+    );
+
     cache_arbiter arbiter (
         .clk(clk),
         .rst(rst),

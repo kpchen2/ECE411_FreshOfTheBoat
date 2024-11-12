@@ -45,7 +45,7 @@ import rv32i_types::*;
     output  logic   [31:0]  d_wdata,
 
     // regfile outputs
-    output  logic   [31:0]  rd_s    // ADD ANOTHER PORT TO REGFILE
+    output  logic   [5:0]  rd_s    // ADD ANOTHER PORT TO REGFILE
 );
 
     localparam ADDR_WIDTH = $clog2(QUEUE_DEPTH);
@@ -68,9 +68,8 @@ import rv32i_types::*;
     logic   [5:0]   rob_num_next;
     logic   [31:0]  data_in_next;
 
-    assign data_out = data_in;
-    assign mem_idx_out = tail_reg[5:0] + 1'b1;
-    assign rd_s = phys_reg_in;
+    assign data_out = data_in;                  // output cache data same cycle
+    assign mem_idx_out = tail_reg[5:0] + 1'b1;  // output mem_idx to rename/dispatch
 
     always_ff @ (posedge clk) begin
         enqueue_reg <= enqueue_valid;
@@ -117,7 +116,7 @@ import rv32i_types::*;
         d_rmask = '0;
         d_wmask = '0;
         d_wdata = '0;
-        rd_s = '0;
+        rd_s = mem[head_reg[5:0]+1'b1][11:6];
         
         if (!rst) begin
             full = (tail_reg[ADDR_WIDTH - 1:0] == head_reg[ADDR_WIDTH - 1:0]) && (tail_reg[ADDR_WIDTH] != head_reg[ADDR_WIDTH]);    // logic if queue full
