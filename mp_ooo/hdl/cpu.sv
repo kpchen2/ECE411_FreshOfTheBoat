@@ -450,8 +450,8 @@ import rv32i_types::*;
 
         .regf_we_add(cdb_add.valid),
         .regf_we_mul(cdb_mul.valid),
-        .regf_we_div(cdb_div.valid)
-        //.regf_we_br(cdb_br.valid)
+        .regf_we_div(cdb_div.valid),
+        .regf_we_br(cdb_br.valid)
     );
 
 endmodule : cpu

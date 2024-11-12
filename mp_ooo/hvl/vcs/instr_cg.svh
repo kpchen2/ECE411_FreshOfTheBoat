@@ -28,15 +28,23 @@ covergroup instr_cg with function sample(instr_t instr);
         // We want to ignore the cases where funct3 isn't relevant.
 
         // For example, for JAL, funct3 doesn't exist. Put it in an ignore_bins.
-        ignore_bins JAL_FUNCT3 = funct3_cross with (instr.i_type.opcode == op_b_jal);
+        illegal_bins JAL_FUNCT3 = funct3_cross with (instr.i_type.opcode == op_b_jal);
+
+        illegal_bins JALR_FUNCT3 = funct3_cross with (instr.i_type.opcode == op_b_jalr);
 
         // TODO:    What other opcodes does funct3 not exist for? Put those in
         // ignore_bins.
-        ignore_bins AUIPC_FUNCT3 = funct3_cross with (instr.i_type.opcode == op_b_auipc);
+        illegal_bins AUIPC_FUNCT3 = funct3_cross with (instr.i_type.opcode == op_b_auipc);
 
 
         ignore_bins LUI_FUNCT3 = funct3_cross with (instr.i_type.opcode == op_b_lui);
 
+        illegal_bins LOAD_I_FUNCT3 = funct3_cross with (instr.i_type.opcode == op_b_load);
+
+
+        illegal_bins STORE_I_FUNCT3 = funct3_cross with (instr.i_type.opcode == op_b_store);
+        
+        illegal_bins BRANCH_I_FUNCT3 = funct3_cross with (instr.i_type.opcode == op_b_br);
 
         // Branch instructions use funct3, but only 6 of the 8 possible values
         // are valid. Ignore the other two -- don't add them into the coverage
@@ -48,22 +56,25 @@ covergroup instr_cg with function sample(instr_t instr);
         // TODO: You'll also have to ignore some funct3 cases in JALR, LOAD, and
         // STORE. Write the illegal_bins/ignore_bins for those cases.
 
-        illegal_bins JALR_FUNCT3 = funct3_cross with 
-        (
-            instr.i_type.opcode == op_b_jalr 
-            && !(instr.i_type.funct3 inside {arith_f3_add} ));
-
-        illegal_bins LOAD_FUNCT3 = funct3_cross with
-        (
-            instr.i_type.opcode == op_b_load
-            && !(instr.i_type.funct3 inside {load_f3_lb, load_f3_lh, load_f3_lw, load_f3_lbu, load_f3_lhu}) );
+        // illegal_bins JALR_FUNCT3 = funct3_cross with 
+        // (
+        //     instr.i_type.opcode == op_b_jalr 
+        //     && !(instr.i_type.funct3 inside {arith_f3_add} ));
+        
+        // illegal_bins LOAD_FUNCT3 = funct3_cross with
+        // (
+        //     instr.i_type.opcode == op_b_load
+        //     && !(instr.i_type.funct3 inside {load_f3_lb, load_f3_lh, load_f3_lw, load_f3_lbu, load_f3_lhu}) 
+        //     );
         
 
-        illegal_bins STORE_FUNCT3 = funct3_cross with 
-        (
-            instr.i_type.opcode == op_b_store &&
-            !(instr.i_type.funct3 inside {store_f3_sb,store_f3_sh,store_f3_sw} )
-        );
+        // illegal_bins STORE_FUNCT3 = funct3_cross with 
+        // (
+        //     instr.i_type.opcode == op_b_store &&
+        //     !(instr.i_type.funct3 inside {store_f3_sb,store_f3_sh,store_f3_sw} )
+        // );
+
+
     }
 
     // Coverpoint to make separate bins for funct7.
