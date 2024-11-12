@@ -68,6 +68,9 @@ import rv32i_types::*;
     logic   [5:0]   rob_num_next;
     logic   [31:0]  data_in_next;
 
+    logic           enqueue_valid_next, data_valid_next, addr_valid_next;
+    logic   [5:0]   mem_idx_in_next;
+
     assign data_out = data_in;                  // output cache data same cycle
     assign mem_idx_out = tail_reg[5:0] + 1'b1;  // output mem_idx to rename/dispatch
 
@@ -94,8 +97,8 @@ import rv32i_types::*;
             end
             // adder done
             if (addr_valid) begin
-                mem[mem_idx_in].ready = 1'b1; 
-                mem[mem_idx_in].addr = addr;
+                mem[mem_idx_in].ready <= 1'b1; 
+                mem[mem_idx_in].addr <= addr;
             end
   
             tail_reg <= tail_next;
@@ -118,6 +121,11 @@ import rv32i_types::*;
         d_wmask = '0;
         d_wdata = '0;
         rd_s = mem[head_reg[5:0]+1'b1].pd_s;
+
+        enqueue_valid_next = enqueue_valid;
+        data_valid_next = data_valid;
+        addr_valid_next = addr_valid;
+        mem_idx_in_next = mem_idx_in;
         
         if (!rst) begin
             full = (tail_reg[ADDR_WIDTH - 1:0] == head_reg[ADDR_WIDTH - 1:0]) && (tail_reg[ADDR_WIDTH] != head_reg[ADDR_WIDTH]);    // logic if queue full

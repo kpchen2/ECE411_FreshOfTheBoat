@@ -134,7 +134,7 @@ import rv32i_types::*;
             phys_reg_in = 6'b000010;
             rob_num = 6'b000001;
             enqueue_valid = '1;
-            addr = 32'hCAFEBABE;
+            addr = '1;
             mem_idx_in = '0;
             addr_valid = '1;
             commited_rob = 'x;
@@ -157,214 +157,47 @@ import rv32i_types::*;
             data_valid = '0;
             rd_v = 'x;
             repeat (3) @(posedge clk);
-        end
-    endtask
 
-    // overlapping enqueues and dequeues all in order
-    task overlapping;
-        begin
-            phys_reg_in = 6'b000010;
-            arch_reg_in = 5'b00000;
-            enqueue_valid = '1;
-            rob_idx_in = 'x;
-            cdb_valid = '0;
-            repeat (1) @(posedge clk);
-
-            phys_reg_in = 6'b000100;
-            arch_reg_in = 5'b00001;
-            enqueue_valid = '1;
-            rob_idx_in = '0;
-            cdb_valid = '1;
-            repeat (1) @(posedge clk);
-
-            phys_reg_in = 6'b001000;
-            arch_reg_in = 5'b00011;
-            enqueue_valid = '1;
-            rob_idx_in = 6'b000001;
-            cdb_valid = '1;
-            repeat (1) @(posedge clk);
-
+            opcode = 'x;
             phys_reg_in = 'x;
-            arch_reg_in = 'x;
+            rob_num = 'x;
             enqueue_valid = '0;
-            rob_idx_in = 6'b000010;
-            cdb_valid = '1;
+            addr = 'x;
+            mem_idx_in = 'x;
+            addr_valid = '0;
+            commited_rob = 'x;
+            commited_rob_valid = '0;
+            data_in = 32'hBABECAFE;
+            data_valid = '1;
+            rd_v = 'x;
             repeat (1) @(posedge clk);
 
+            opcode = 'x;
             phys_reg_in = 'x;
-            arch_reg_in = 'x;
+            rob_num = 'x;
             enqueue_valid = '0;
-            rob_idx_in = 'x;
-            cdb_valid = '0;
-            repeat (1) @(posedge clk);
-        end
-    endtask
+            addr = 32'h12345678;
+            mem_idx_in = 6'b000001;
+            addr_valid = '1;
+            commited_rob = 'x;
+            commited_rob_valid = '0;
+            data_in = 'x;
+            data_valid = '0;
+            rd_v = 32'h00000002;
+            repeat (2) @(posedge clk);
 
-    // enqueues then dequeues ooo
-    task normal_ooo;
-        begin
-            phys_reg_in = 6'b000010;
-            arch_reg_in = 5'b00000;
-            enqueue_valid = '1;
-            rob_idx_in = 'x;
-            cdb_valid = '0;
-            repeat (1) @(posedge clk);
-
-            phys_reg_in = 6'b000100;
-            arch_reg_in = 5'b00001;
-            enqueue_valid = '1;
-            rob_idx_in = 'x;
-            cdb_valid = '0;
-            repeat (1) @(posedge clk);
-
-            phys_reg_in = 6'b001000;
-            arch_reg_in = 5'b00011;
-            enqueue_valid = '1;
-            rob_idx_in = 'x;
-            cdb_valid = '0;
-            repeat (1) @(posedge clk);
-
+            opcode = 'x;
             phys_reg_in = 'x;
-            arch_reg_in = 'x;
+            rob_num = 'x;
             enqueue_valid = '0;
-            rob_idx_in = 6'b000001;
-            cdb_valid = '1;
-            repeat (1) @(posedge clk);
-
-            phys_reg_in = 'x;
-            arch_reg_in = 'x;
-            enqueue_valid = '0;
-            rob_idx_in = 6'b000010;
-            cdb_valid = '1;
-            repeat (1) @(posedge clk);
-
-            phys_reg_in = 'x;
-            arch_reg_in = 'x;
-            enqueue_valid = '0;
-            rob_idx_in = 'x;
-            cdb_valid = '0;
-            repeat (1) @(posedge clk);
-
-            phys_reg_in = 'x;
-            arch_reg_in = 'x;
-            enqueue_valid = '0;
-            rob_idx_in = 6'b000000;
-            cdb_valid = '1;
-            repeat (1) @(posedge clk);
-
-            phys_reg_in = 'x;
-            arch_reg_in = 'x;
-            enqueue_valid = '0;
-            rob_idx_in = 'x;
-            cdb_valid = '0;
-            repeat (1) @(posedge clk);
-        end
-    endtask
-
-    // overlapping enqueues and dequeues ooo
-    task overlapping_ooo;
-        begin
-            phys_reg_in = 6'b000010;
-            arch_reg_in = 5'b00000;
-            enqueue_valid = '1;
-            rob_idx_in = 'x;
-            cdb_valid = '0;
-            repeat (1) @(posedge clk);
-
-            phys_reg_in = 6'b000100;
-            arch_reg_in = 5'b00001;
-            enqueue_valid = '1;
-            rob_idx_in = 'x;
-            cdb_valid = '0;
-            repeat (1) @(posedge clk);
-
-            phys_reg_in = 6'b001000;
-            arch_reg_in = 5'b00011;
-            enqueue_valid = '1;
-            rob_idx_in = 6'b000001;
-            cdb_valid = '1;
-            repeat (1) @(posedge clk);
-
-            phys_reg_in = 6'b010000;
-            arch_reg_in = 5'b00111;
-            enqueue_valid = '1;
-            rob_idx_in = 6'b000010;
-            cdb_valid = '1;
-            repeat (1) @(posedge clk);
-
-            phys_reg_in = 'x;
-            arch_reg_in = 'x;
-            enqueue_valid = '0;
-            rob_idx_in = 6'b000000;
-            cdb_valid = '1;
-            repeat (1) @(posedge clk);
-
-            phys_reg_in = 'x;
-            arch_reg_in = 'x;
-            enqueue_valid = '0;
-            rob_idx_in = 6'b000011;
-            cdb_valid = '1;
-            repeat (1) @(posedge clk);
-
-            phys_reg_in = 'x;
-            arch_reg_in = 'x;
-            enqueue_valid = '0;
-            rob_idx_in = 'x;
-            cdb_valid = '0;
-            repeat (1) @(posedge clk);
-        end
-    endtask
-
-    // overflow
-    task overflow;
-        begin
-            phys_reg_in = 6'b000010;
-            arch_reg_in = 5'b00000;
-            enqueue_valid = '1;
-            rob_idx_in = 'x;
-            cdb_valid = '0;
-            repeat (63) @(posedge clk);
-
-            phys_reg_in = 6'b000100;
-            arch_reg_in = 5'b00001;
-            enqueue_valid = '1;
-            rob_idx_in = 'x;
-            cdb_valid = '0;
-            repeat (1) @(posedge clk);
-
-            phys_reg_in = 6'b001000;
-            arch_reg_in = 5'b00011;
-            enqueue_valid = '1;
-            rob_idx_in = 'x;
-            cdb_valid = '0;
-            repeat (1) @(posedge clk);
-
-            phys_reg_in = 6'b010000;
-            arch_reg_in = 5'b00111;
-            enqueue_valid = '1;
-            rob_idx_in = 'x;
-            cdb_valid = '0;
-            repeat (1) @(posedge clk);
-
-            phys_reg_in = 'x;
-            arch_reg_in = 'x;
-            enqueue_valid = '0;
-            rob_idx_in = 6'b000000;
-            cdb_valid = '1;
-            repeat (1) @(posedge clk);
-
-            phys_reg_in = 6'b100000;
-            arch_reg_in = 5'b01111;
-            enqueue_valid = '1;
-            rob_idx_in = 6'b000001;
-            cdb_valid = '1;
-            repeat (1) @(posedge clk);
-
-            phys_reg_in = 'x;
-            arch_reg_in = 'x;
-            enqueue_valid = '0;
-            rob_idx_in = 6'b000010;
-            cdb_valid = '1;
+            addr = 'x;
+            mem_idx_in = 'x;
+            addr_valid = '0;
+            commited_rob = 6'b000001;
+            commited_rob_valid = '1;
+            data_in = 'x;
+            data_valid = '0;
+            rd_v = 32'h00000002;
             repeat (1) @(posedge clk);
         end
     endtask
@@ -376,11 +209,7 @@ import rv32i_types::*;
     initial begin
         reset();
 
-        // normal();
-        // overlapping();
-        // normal_ooo();
-        overlapping_ooo();
-        // overflow();
+        normal();
 
         repeat (10) @(posedge clk);
 
