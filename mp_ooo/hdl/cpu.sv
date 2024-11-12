@@ -397,6 +397,7 @@ import rv32i_types::*;
         .cdb_ps_id_add(cdb_add.pd_s),
         .cdb_ps_id_multiply(cdb_mul.pd_s),
         .cdb_ps_id_divide(cdb_div.pd_s),
+        .cdb_ps_id_branch(cdb_br.pd_s),
         .decode_info_in(decode_info),
         
         .add_fu_busy('0),     // WAS SET TO BUSY_ADD
