@@ -74,12 +74,10 @@ class RandInst;
 
             if (instr.r_type.funct7 == base) {
                 instr.r_type.funct3 inside { arith_f3_sll,arith_f3_add,arith_f3_sr,arith_f3_slt,arith_f3_sltu,arith_f3_xor, arith_f3_or, arith_f3_and};
-            } else if (instr.r_type.funct7 == mult)
-            {
+            } else if (instr.r_type.funct7 == mult) {
                 instr.r_type.funct3 inside { arith_f3_sll, arith_f3_sr, arith_f3_add,arith_f3_slt,arith_f3_sltu,arith_f3_xor, arith_f3_or, arith_f3_and };
             }
-            
-            else{
+            else {
                 instr.r_type.funct3 inside { arith_f3_sr, arith_f3_add};
             }
         }
