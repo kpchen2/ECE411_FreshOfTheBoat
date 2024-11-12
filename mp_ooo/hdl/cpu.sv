@@ -171,7 +171,7 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
 
-        .ufp_addr(pc),
+        .ufp_addr(global_branch_signal ? global_branch_addr - 4 : pc),
         .ufp_rmask(ufp_rmask),
         .ufp_wmask('0),             // FILL WHEN WE WANT TO WRITE
         .ufp_rdata(ufp_rdata),
@@ -396,7 +396,8 @@ import rv32i_types::*;
         .rob_idx_br(branch_rob_entry),
         .pd_s_br(branch_pd),
         .rd_s_br(branch_rd),
-        .cdb_br(cdb_br)
+        .cdb_br(cdb_br),
+        .global_branch_signal(global_branch_signal)
     );
 
     reservation_station reservation_stations_i

@@ -225,7 +225,7 @@ import rv32i_types::*;
                     // enqueue_mem_next.pd = phys_reg_in;
                     enqueue_mem_next.rvfi.monitor_rd_addr = arch_reg_in;
                     enqueue_mem_next.rvfi.monitor_pc_rdata = pc_rdata;
-                    enqueue_mem_next.rvfi.monitor_pc_wdata = global_branch_signal ? global_branch_addr : pc_wdata;
+                    enqueue_mem_next.rvfi.monitor_pc_wdata = pc_wdata;
                     enqueue_mem_next.rvfi.monitor_order = order;
                     enqueue_mem_next.rvfi.monitor_rs1_addr = (inst[6:0] == op_b_lui) ? '0 : rs1_s;
                     enqueue_mem_next.rvfi.monitor_rs2_addr = (inst[6:0] == op_b_imm || inst[6:0] == op_b_lui) ? '0 : rs2_s;

@@ -36,7 +36,9 @@ import rv32i_types::*;
     input   logic   [5:0]   pd_s_br,
     input   logic   [4:0]   rd_s_br,
     output  cdb_t           cdb_br,
-    output  logic           busy_br
+    output  logic           busy_br,
+
+    input   logic           global_branch_signal
 );
 
     logic   valid_add, valid_mul, valid_div, valid_br;
@@ -195,6 +197,9 @@ import rv32i_types::*;
         cdb_br.inst = decode_info_br.inst;
         cdb_br.pc_select = pc_select;
         cdb_br.pc_branch = pc_branch;
+
+        // cdb_add = global_branch_signal ? '0 : cdb_add;
+        // cdb_br = global_branch_signal ? '0 : cdb_br;
     end
 
 endmodule : execute
