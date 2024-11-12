@@ -48,12 +48,13 @@ import rv32i_types::*;
     logic   [31:0]  load_rdata;     // from a load
     logic   [31:0]  store_wdata;    // from a store
     logic           d_ufp_resp;     // data cache should output this
-    
 
     logic           initial_flag, initial_flag_reg;     // for initial read AND full_stall reads
     logic           full_stall;
     
     logic   [31:0]  bmem_raddr_dummy;
+    logic   [255:0] full_burst;
+    logic           mem_valid;    
 
     /* CP2 SIGNALS */
     logic   [31:0]  inst;
@@ -126,12 +127,18 @@ import rv32i_types::*;
     logic  [4:0]                     dispatch_rs2_s;
     logic  [31:0]                    dispatch_inst;
     logic                            dispatch_regf_we;
+    
+    assign mem_addr = '0;   
+    assign load_rmask = '0; 
+    assign store_wmask = '0;
+    assign store_wdata = '0;
+     // do this for now, NEED RELEVANT MEM DATA LATER
 
 
     always_ff @(posedge clk) begin
 
         bmem_raddr_dummy <= bmem_raddr; // useless
-        bmem_wdata <= '0;               // useless
+        // bmem_wdata <= '0;               // useless
 
         if (rst) begin
             pc <= 32'h1eceb000;
@@ -151,11 +158,11 @@ import rv32i_types::*;
             pc_next = pc;
             initial_flag = '1;
             ufp_rmask = '0;
-            bmem_read = '0;
+            // bmem_read = '0;
             
 
         end else begin
-            bmem_read = (!dfp_read_reg && dfp_read) ? '1 : '0;          // bmem_read high on rising dfp_read edge (DOESN'T MATCH TIMING DIAGRAM)
+            // bmem_read = (!dfp_read_reg && dfp_read) ? '1 : '0;          // bmem_read high on rising dfp_read edge (DOESN'T MATCH TIMING DIAGRAM)
 
             if ((initial_flag_reg || i_ufp_resp) && !full_stall && bmem_ready) begin
                 pc_next = pc + 4;
@@ -258,8 +265,8 @@ import rv32i_types::*;
 
         .bmem_addr(bmem_addr),
         .bmem_read(bmem_read),
-        .bmem_write(bmem_write),
-        .bmem_wdata(bmem_wdata),
+        .mem_valid(mem_valid),
+        .full_burst(full_burst),
         .bmem_ready(bmem_ready),
 
         .cache_wdata(cache_wdata),
@@ -272,8 +279,12 @@ import rv32i_types::*;
         .rst(rst),
         .bmem_rdata(bmem_rdata),
         .bmem_rvalid(bmem_rvalid),
+        .full_burst(full_burst),
+        .mem_valid(mem_valid),
         .cache_wdata(cache_wdata),
-        .cache_valid(cache_valid)
+        .cache_valid(cache_valid),
+        .bmem_wdata(bmem_wdata),
+        .bmem_write(bmem_write)
     );
 
     queue #(.DATA_WIDTH(32), .QUEUE_DEPTH(64)) queue_i (
