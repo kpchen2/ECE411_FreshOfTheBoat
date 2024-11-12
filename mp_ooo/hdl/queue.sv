@@ -14,7 +14,8 @@ import rv32i_types::*;
     input logic dequeue_in,
 
     output logic full_out,
-    output logic empty_out
+    output logic empty_out,
+    input logic global_branch_signal
 );
 
     localparam ADDR_WIDTH = $clog2(QUEUE_DEPTH);
@@ -103,6 +104,9 @@ import rv32i_types::*;
 
             head_next = (dequeue_in && !empty) ? head_reg + 1'd1 : head_reg;
         end
+
+        tail_next = global_branch_signal ? '1 : tail_next;
+        head_next = global_branch_signal ? '1 : head_next;
 
         full = (tail_next[ADDR_WIDTH - 1:0] == head_next[ADDR_WIDTH - 1:0]) && (tail_next[ADDR_WIDTH] != head_next[ADDR_WIDTH]);    // logic if queue full
         empty_out = (tail_next[ADDR_WIDTH - 1:0] == head_next[ADDR_WIDTH - 1:0]) && (tail_next[ADDR_WIDTH] == head_next[ADDR_WIDTH]);   // logic if queue empty

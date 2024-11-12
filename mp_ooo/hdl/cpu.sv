@@ -204,7 +204,8 @@ import rv32i_types::*;
         .rdata_out(inst),
         .dequeue_in(dequeue),
         .full_out(full_stall),
-        .empty_out(iqueue_empty)
+        .empty_out(iqueue_empty),
+        .global_branch_signal(global_branch_signal)
     );
 
     queue #(.DATA_WIDTH(32), .QUEUE_DEPTH(64)) queue_pc
@@ -216,7 +217,8 @@ import rv32i_types::*;
         .rdata_out(prog),
         .dequeue_in(dequeue),
         .full_out(full_garbage),
-        .empty_out(empty_garbage)
+        .empty_out(empty_garbage),
+        .global_branch_signal(global_branch_signal)
     );
 
     rename_dispatch rename_dispatch_i (
@@ -350,7 +352,8 @@ import rv32i_types::*;
         .enqueue_in(enqueue),
         .rdata_out(phys_reg),
         .dequeue_in(dequeue),
-        .empty_out(is_free_list_empty)
+        .empty_out(is_free_list_empty),
+        .global_branch_signal(global_branch_signal)
     );
 
     phys_regfile phys_regfile_i (
