@@ -20,7 +20,6 @@ import rv32i_types::*;
 
     // rob inputs
     input   logic   [5:0]   commited_rob,
-    input   logic           commited_rob_valid,
 
     // dcache inputs
     input   logic   [31:0]  data_in,
@@ -31,7 +30,7 @@ import rv32i_types::*;
 
     // outputs
     output  logic   [5:0]   phys_reg_out,
-    output  logic           output_valid,
+    output  logic           output_valid,       // USE THIS FOR MEM COMMIT AS WELL
     output  logic   [31:0]  data_out,
     output  logic           full,
 
@@ -63,13 +62,13 @@ import rv32i_types::*;
 
     logic           enqueue_reg;
     logic           dequeue_reg;
-    logic           addr_next;
 
     logic   [5:0]   rob_num_next;
     logic   [31:0]  data_in_next;
 
     logic           enqueue_valid_next, data_valid_next, addr_valid_next;
     logic   [5:0]   mem_idx_in_next;
+    logic   [31:0]  addr_next;
 
     assign data_out = data_in;                  // output cache data same cycle
     assign mem_idx_out = tail_reg[5:0] + 1'b1;  // output mem_idx to rename/dispatch
@@ -88,17 +87,17 @@ import rv32i_types::*;
 
         end else begin
             // enqueue
-            if (enqueue_valid) begin
+            if (enqueue_valid_next) begin
                 mem[tail_next[ADDR_WIDTH - 1:0]] <= enqueue_mem_next;
             end
             // dequeue
-            if (data_valid) begin
+            if (data_valid_next) begin
                 mem[head_next[ADDR_WIDTH - 1:0]] <= dequeue_mem_next;
             end
             // adder done
-            if (addr_valid) begin
-                mem[mem_idx_in].ready <= 1'b1; 
-                mem[mem_idx_in].addr <= addr;
+            if (addr_valid_next) begin
+                mem[mem_idx_in_next].addr_ready <= 1'b1; 
+                mem[mem_idx_in_next].addr <= addr_next;
             end
   
             tail_reg <= tail_next;
@@ -126,6 +125,7 @@ import rv32i_types::*;
         data_valid_next = data_valid;
         addr_valid_next = addr_valid;
         mem_idx_in_next = mem_idx_in;
+        addr_next = addr;
         
         if (!rst) begin
             full = (tail_reg[ADDR_WIDTH - 1:0] == head_reg[ADDR_WIDTH - 1:0]) && (tail_reg[ADDR_WIDTH] != head_reg[ADDR_WIDTH]);    // logic if queue full
@@ -139,15 +139,16 @@ import rv32i_types::*;
 
                 phys_reg_out = dequeue_mem_next.pd_s;
                 output_valid = '1;
+
             end
 
             // ready to access cache
-            if (mem[head_reg[5:0]+1'b1].valid == 1'b1 && mem[head_reg[5:0]+1'b1].ready == 1'b1 ) begin
+            if (mem[head_reg[5:0]+1'b1].valid == 1'b1 && mem[head_reg[5:0]+1'b1].addr_ready == 1'b1 ) begin
                 d_addr = mem[head_reg[5:0]+1'b1].addr;
                 
                 if (opcode == op_b_load) begin
                     d_rmask = '1;
-                end else if (commited_rob_valid && mem[head_reg[5:0]+1'b1].rob_num == commited_rob) begin
+                end else if (mem[head_reg[5:0]+1'b1].rob_num == commited_rob) begin
                     d_wmask = '1;
                     d_wdata = rd_v;
                 end
@@ -158,7 +159,7 @@ import rv32i_types::*;
                     tail_next = tail_reg + 1'b1;
                     head_next = (head_next == head_reg) ? head_reg : head_reg + 1'd1;   // don't change what dequeue set head_next to
                     enqueue_mem_next.valid = 1'b1;
-                    enqueue_mem_next.ready = 1'b0;
+                    enqueue_mem_next.addr_ready = 1'b0;
                     enqueue_mem_next.addr = 32'bx;
                     enqueue_mem_next.opcode = opcode;
                     enqueue_mem_next.pd_s = phys_reg_in;

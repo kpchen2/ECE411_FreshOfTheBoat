@@ -231,7 +231,6 @@ import rv32i_types::*;
         .addr_valid(),
         .mem_idx_in(),
         .commited_rob(),
-        .commited_rob_valid(),
         .data_in(),
         .data_valid(),
         .rd_v(),

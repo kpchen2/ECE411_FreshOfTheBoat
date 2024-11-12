@@ -22,7 +22,6 @@ import rv32i_types::*;
     logic           addr_valid;
     logic   [5:0]   mem_idx_in;
     logic   [5:0]   commited_rob;
-    logic           commited_rob_valid;
     logic   [31:0]  data_in;
     logic           data_valid;
     logic   [31:0]  rd_v;
@@ -73,7 +72,6 @@ import rv32i_types::*;
         .mem_idx_in(mem_idx_in),
         // rob inputs
         .commited_rob(commited_rob),
-        .commited_rob_valid(commited_rob_valid),
         // dcache inputs
         .data_in(data_in),
         .data_valid(data_valid),
@@ -109,8 +107,7 @@ import rv32i_types::*;
             addr = 'x;
             mem_idx_in = 'x;
             addr_valid = '0;
-            commited_rob = 'x;
-            commited_rob_valid = '0;
+            commited_rob = '0;
             data_in = 'x;
             data_valid = '0;
             rd_v = 'x;
@@ -123,8 +120,7 @@ import rv32i_types::*;
             addr = 'x;
             mem_idx_in = 'x;
             addr_valid = '0;
-            commited_rob = 'x;
-            commited_rob_valid = '0;
+            commited_rob = '0;
             data_in = 'x;
             data_valid = '0;
             rd_v = 32'h00000001;
@@ -137,8 +133,7 @@ import rv32i_types::*;
             addr = '1;
             mem_idx_in = '0;
             addr_valid = '1;
-            commited_rob = 'x;
-            commited_rob_valid = '0;
+            commited_rob = '0;
             data_in = 'x;
             data_valid = '0;
             rd_v = 32'h00000001;
@@ -151,8 +146,7 @@ import rv32i_types::*;
             addr = 'x;
             mem_idx_in = 'x;
             addr_valid = '0;
-            commited_rob = 'x;
-            commited_rob_valid = '0;
+            commited_rob = '0;
             data_in = 'x;
             data_valid = '0;
             rd_v = 'x;
@@ -165,8 +159,7 @@ import rv32i_types::*;
             addr = 'x;
             mem_idx_in = 'x;
             addr_valid = '0;
-            commited_rob = 'x;
-            commited_rob_valid = '0;
+            commited_rob = '0;
             data_in = 32'hBABECAFE;
             data_valid = '1;
             rd_v = 'x;
@@ -179,8 +172,7 @@ import rv32i_types::*;
             addr = 32'h12345678;
             mem_idx_in = 6'b000001;
             addr_valid = '1;
-            commited_rob = 'x;
-            commited_rob_valid = '0;
+            commited_rob = 6'b000001;
             data_in = 'x;
             data_valid = '0;
             rd_v = 32'h00000002;
@@ -194,10 +186,48 @@ import rv32i_types::*;
             mem_idx_in = 'x;
             addr_valid = '0;
             commited_rob = 6'b000001;
-            commited_rob_valid = '1;
             data_in = 'x;
             data_valid = '0;
             rd_v = 32'h00000002;
+            repeat (1) @(posedge clk);
+
+            opcode = 'x;
+            phys_reg_in = 'x;
+            rob_num = 'x;
+            enqueue_valid = '0;
+            addr = 'x;
+            mem_idx_in = 'x;
+            addr_valid = '0;
+            commited_rob = 6'b000001;
+            data_in = 'x;
+            data_valid = '0;
+            rd_v = 'x;
+            repeat (2) @(posedge clk);
+
+            opcode = 'x;
+            phys_reg_in = 'x;
+            rob_num = 'x;
+            enqueue_valid = '0;
+            addr = 'x;
+            mem_idx_in = 'x;
+            addr_valid = '0;
+            commited_rob = 6'b000001;
+            data_in = 32'hAAAAAAAA;
+            data_valid = '1;
+            rd_v = 'x;
+            repeat (1) @(posedge clk);
+
+            opcode = 'x;
+            phys_reg_in = 'x;
+            rob_num = 'x;
+            enqueue_valid = '0;
+            addr = 'x;
+            mem_idx_in = 'x;
+            addr_valid = '0;
+            commited_rob = 'x;
+            data_in = 'x;
+            data_valid = '0;
+            rd_v = 'x;
             repeat (1) @(posedge clk);
         end
     endtask
