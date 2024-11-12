@@ -57,9 +57,9 @@ import rv32i_types::*;
     logic   [ADDR_WIDTH:0]      tail_next;             // combinational
     logic   [ADDR_WIDTH:0]      head_next;             // combinational
 
-    logic   [DATA_WIDTH:0]      mem [QUEUE_DEPTH];     // extra bit for validity | QUEUE_DEPTH entries with each entry begin DATA_WIDTH+1 size
-    logic   [DATA_WIDTH:0]      enqueue_mem_next;
-    logic   [DATA_WIDTH:0]      dequeue_mem_next;
+    lsq_entry_t     mem [QUEUE_DEPTH];     // extra bit for validity | QUEUE_DEPTH entries with each entry begin DATA_WIDTH+1 size
+    lsq_entry_t     enqueue_mem_next;
+    lsq_entry_t     dequeue_mem_next;
 
     logic           enqueue_reg;
     logic           dequeue_reg;
@@ -94,7 +94,8 @@ import rv32i_types::*;
             end
             // adder done
             if (addr_valid) begin
-                mem[mem_idx_in][51:19] = {1'b1, addr};
+                mem[mem_idx_in].ready = 1'b1; 
+                mem[mem_idx_in].addr = addr;
             end
   
             tail_reg <= tail_next;
@@ -116,7 +117,7 @@ import rv32i_types::*;
         d_rmask = '0;
         d_wmask = '0;
         d_wdata = '0;
-        rd_s = mem[head_reg[5:0]+1'b1][11:6];
+        rd_s = mem[head_reg[5:0]+1'b1].pd_s;
         
         if (!rst) begin
             full = (tail_reg[ADDR_WIDTH - 1:0] == head_reg[ADDR_WIDTH - 1:0]) && (tail_reg[ADDR_WIDTH] != head_reg[ADDR_WIDTH]);    // logic if queue full
@@ -126,19 +127,19 @@ import rv32i_types::*;
             if (data_valid) begin
                 head_next = head_reg + 1'd1;
                 dequeue_mem_next = mem[head_reg[ADDR_WIDTH - 1:0]+1'b1];
-                dequeue_mem_next[DATA_WIDTH] = 1'b0;
+                dequeue_mem_next.valid = 1'b0;
 
-                phys_reg_out = dequeue_mem_next[5:0];
+                phys_reg_out = dequeue_mem_next.pd_s;
                 output_valid = '1;
             end
 
             // ready to access cache
-            if (mem[head_reg[5:0]+1'b1][DATA_WIDTH:DATA_WIDTH - 1] == 2'b11) begin
-                d_addr = mem[head_reg[5:0]+1'b1][50:19];
+            if (mem[head_reg[5:0]+1'b1].valid == 1'b1 && mem[head_reg[5:0]+1'b1].ready == 1'b1 ) begin
+                d_addr = mem[head_reg[5:0]+1'b1].addr;
                 
                 if (opcode == op_b_load) begin
                     d_rmask = '1;
-                end else if (commited_rob_valid && mem[head_reg[5:0]+1'b1][5:0] == commited_rob) begin
+                end else if (commited_rob_valid && mem[head_reg[5:0]+1'b1].rob_num == commited_rob) begin
                     d_wmask = '1;
                     d_wdata = rd_v;
                 end
@@ -148,7 +149,12 @@ import rv32i_types::*;
                 if (~full || data_valid) begin
                     tail_next = tail_reg + 1'b1;
                     head_next = (head_next == head_reg) ? head_reg : head_reg + 1'd1;   // don't change what dequeue set head_next to
-                    enqueue_mem_next = {2'b10, 32'bx, opcode, phys_reg_in, rob_num};
+                    enqueue_mem_next.valid = 1'b1;
+                    enqueue_mem_next.ready = 1'b0;
+                    enqueue_mem_next.addr = 32'bx;
+                    enqueue_mem_next.opcode = opcode;
+                    enqueue_mem_next.pd_s = phys_reg_in;
+                    enqueue_mem_next.rob_num = rob_num;
 
                 end else begin
                     tail_next = tail_reg; 

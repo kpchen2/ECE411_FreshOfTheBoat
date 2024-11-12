@@ -120,7 +120,15 @@ package rv32i_types;
         rvfi_info rvfi;
     } rob_entry_t;
     
-
+    typedef struct packed {
+        logic valid;
+        logic ready;
+        logic [31:0] addr;
+        logic [6:0] opcode;
+        logic [5:0] pd_s;
+        logic [5:0] rob_num;
+    } lsq_entry_t;
+    
     typedef struct packed {
         rvfi_info if_id_rvfi;
     } if_id_t;
@@ -245,7 +253,7 @@ package rv32i_types;
 
     typedef enum logic [6:0] {
         base           = 7'b0000000,
-        variant        = 7'b0100000,
+        variant        = 7'b0100000 ,
         mult           = 7'b0000001
     } funct7_t;
 
