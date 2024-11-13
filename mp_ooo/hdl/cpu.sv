@@ -115,6 +115,9 @@ import rv32i_types::*;
     logic  [31:0]                    dispatch_inst;
     logic                            dispatch_regf_we;
 
+    logic           global_branch_signal;
+    logic   [31:0]  global_branch_addr;
+
 
     always_ff @(posedge clk) begin
 
@@ -160,6 +163,7 @@ import rv32i_types::*;
                     ufp_rmask = '0;
                 end
             end
+            pc_next = global_branch_signal ? global_branch_addr : pc_next;
         end
     end
     
@@ -200,7 +204,8 @@ import rv32i_types::*;
         .rdata_out(inst),
         .dequeue_in(dequeue),
         .full_out(full_stall),
-        .empty_out(iqueue_empty)
+        .empty_out(iqueue_empty),
+        .global_branch_signal(global_branch_signal)
     );
 
     queue #(.DATA_WIDTH(32), .QUEUE_DEPTH(64)) queue_pc
@@ -212,7 +217,8 @@ import rv32i_types::*;
         .rdata_out(prog),
         .dequeue_in(dequeue),
         .full_out(full_garbage),
-        .empty_out(empty_garbage)
+        .empty_out(empty_garbage),
+        .global_branch_signal(global_branch_signal)
     );
 
     rename_dispatch rename_dispatch_i (
@@ -251,7 +257,9 @@ import rv32i_types::*;
         .dispatch_rs1_s(dispatch_rs1_s),
         .dispatch_rs2_s(dispatch_rs2_s),
         .dispatch_inst(dispatch_inst),
-        .dispatch_regf_we(dispatch_regf_we)
+        .dispatch_regf_we(dispatch_regf_we),
+        .global_branch_signal(global_branch_signal),
+        .global_branch_addr(global_branch_addr)
     );
 
     rat rat_i (
@@ -323,7 +331,9 @@ import rv32i_types::*;
         .rob_out(rob_entry),
         .dequeue_valid(rob_valid),
         .rob_num(rob_num),
-        .full(rob_full)
+        .full(rob_full),
+        .global_branch_signal(global_branch_signal),
+        .global_branch_addr(global_branch_addr)
     );
     
     rrat rrat_i (

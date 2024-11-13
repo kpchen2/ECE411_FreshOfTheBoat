@@ -63,7 +63,9 @@ import rv32i_types::*;
 
     // other output
     output  logic   [$clog2(QUEUE_DEPTH)-1:0]   rob_num,
-    output  logic                               full
+    output  logic                               full,
+    output  logic                               global_branch_signal,
+    output  logic   [31:0]                      global_branch_addr
 );
 
     localparam ADDR_WIDTH = $clog2(QUEUE_DEPTH);
@@ -164,6 +166,7 @@ import rv32i_types::*;
                 mem[br_rob_idx_in_next].rvfi.monitor_mem_wmask <= monitor_mem_wmask;
                 mem[br_rob_idx_in_next].rvfi.monitor_mem_rdata <= monitor_mem_rdata;
                 mem[br_rob_idx_in_next].rvfi.monitor_mem_wdata <= monitor_mem_wdata;
+                mem[br_rob_idx_in_next].rvfi.monitor_pc_wdata <= global_branch_signal ? global_branch_addr : mem[br_rob_idx_in_next].rvfi.monitor_pc_wdata;
             end
   
             tail_reg <= tail_next;
@@ -172,6 +175,8 @@ import rv32i_types::*;
     end
 
     always_comb begin
+        global_branch_signal = branch_pc_select;
+        global_branch_addr = branch_pc_branch;
         tail_next = tail_reg;
         head_next = head_reg;
         rob_out = '0;
