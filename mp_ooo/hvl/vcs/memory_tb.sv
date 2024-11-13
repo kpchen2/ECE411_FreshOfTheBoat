@@ -177,38 +177,12 @@ import rv32i_types::*;
             data_in = 'x;
             data_valid = '0;
             store_wdata = 32'h00000002;
-            repeat (2) @(posedge clk);
-
-            opcode = 'x;
-            phys_reg_in = 'x;
-            rob_num = 'x;
-            enqueue_valid = '0;
-            addr = 'x;
-            mem_idx_in = 'x;
-            addr_valid = '0;
-            commited_rob = 6'b000001;
-            data_in = 'x;
-            data_valid = '0;
-            store_wdata = 32'h00000002;
             repeat (1) @(posedge clk);
 
-            opcode = 'x;
-            phys_reg_in = 'x;
-            rob_num = 'x;
-            enqueue_valid = '0;
-            addr = 'x;
-            mem_idx_in = 'x;
-            addr_valid = '0;
-            commited_rob = 6'b000001;
-            data_in = 'x;
-            data_valid = '0;
-            store_wdata = 'x;
-            repeat (2) @(posedge clk);
-
-            opcode = 'x;
-            phys_reg_in = 'x;
-            rob_num = 'x;
-            enqueue_valid = '0;
+            opcode = 7'b0000011;
+            phys_reg_in = 6'b000011;
+            rob_num = 6'b000010;
+            enqueue_valid = '1;
             addr = 'x;
             mem_idx_in = 'x;
             addr_valid = '0;
@@ -230,6 +204,58 @@ import rv32i_types::*;
             data_valid = '0;
             store_wdata = 'x;
             repeat (1) @(posedge clk);
+
+            opcode = 'x;
+            phys_reg_in = 'x;
+            rob_num = 'x;
+            enqueue_valid = '0;
+            addr = 'x;
+            mem_idx_in = 'x;
+            addr_valid = '0;
+            commited_rob = 6'b000010;
+            data_in = 'x;
+            data_valid = '0;
+            store_wdata = 'x;
+            repeat (3) @(posedge clk);
+
+            opcode = 'x;
+            phys_reg_in = 'x;
+            rob_num = 'x;
+            enqueue_valid = '0;
+            addr = 32'hAABACADA;
+            mem_idx_in = 6'b000010;
+            addr_valid = '1;
+            commited_rob = 6'b000010;
+            data_in = 'x;
+            data_valid = '0;
+            store_wdata = 32'h00000003;
+            repeat (1) @(posedge clk);
+
+            opcode = 'x;
+            phys_reg_in = 'x;
+            rob_num = 'x;
+            enqueue_valid = '0;
+            addr = 'x;
+            mem_idx_in = 'x;
+            addr_valid = '0;
+            commited_rob = 6'b000010;
+            data_in = 32'hBBBBBBBB;
+            data_valid = '1;
+            store_wdata = 'x;
+            repeat (1) @(posedge clk);
+
+            opcode = 'x;
+            phys_reg_in = 'x;
+            rob_num = 'x;
+            enqueue_valid = '0;
+            addr = 'x;
+            mem_idx_in = 'x;
+            addr_valid = '0;
+            commited_rob = 6'b000011;
+            data_in = 'x;
+            data_valid = '0;
+            store_wdata = 'x;
+            repeat (3) @(posedge clk);
         end
     endtask
 
