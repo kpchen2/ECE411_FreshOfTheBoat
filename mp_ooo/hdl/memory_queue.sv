@@ -63,7 +63,7 @@ import rv32i_types::*;
 
     logic           enqueue_valid_next, data_valid_next, addr_valid_next;
     logic   [5:0]   mem_idx_in_next;
-    logic   [31:0]  addr_next;
+    logic   [31:0]  addr_next, store_wdata_next;
 
     assign data_out = data_in;                  // output cache data same cycle
     assign mem_idx_out = tail_reg[5:0] + 1'b1;  // output mem_idx to rename/dispatch
@@ -93,7 +93,7 @@ import rv32i_types::*;
             if (addr_valid_next) begin
                 mem[mem_idx_in_next].addr_ready <= 1'b1; 
                 mem[mem_idx_in_next].addr <= addr_next;
-                mem[mem_idx_in_next].store_wdata <= store_wdata;
+                mem[mem_idx_in_next].store_wdata <= store_wdata_next;
             end
   
             tail_reg <= tail_next;
@@ -121,6 +121,7 @@ import rv32i_types::*;
         addr_valid_next = addr_valid;
         mem_idx_in_next = mem_idx_in;
         addr_next = addr;
+        store_wdata_next = store_wdata;
         
         if (!rst) begin
             full = (tail_reg[ADDR_WIDTH - 1:0] == head_reg[ADDR_WIDTH - 1:0]) && (tail_reg[ADDR_WIDTH] != head_reg[ADDR_WIDTH]);    // logic if queue full
