@@ -75,32 +75,44 @@ import rv32i_types::*;
     logic           dequeue;
     logic           is_free_list_empty;
 
-    cdb_t           cdb_add, cdb_mul, cdb_div;
+    cdb_t           cdb_add, cdb_mul, cdb_div ,cdb_mem, cdb_branch;
     decode_info_t   decode_info ;
 
     decode_info_t add_decode_info;
     decode_info_t multiply_decode_info;
     decode_info_t divide_decode_info;
-    
+    decode_info_t mem_decode_info;
+    decode_info_t branch_decode_info;
+
     logic    add_fu_ready;
     logic multiply_fu_ready;
     logic divide_fu_ready;
+    logic mem_fu_ready;
+    logic branch_fu_ready;
 
     logic [5:0] add_rob_entry;
     logic [5:0] multiply_rob_entry;
     logic [5:0] divide_rob_entry;
+    logic [5:0] mem_rob_entry;
+    logic [5:0] branch_rob_entry;
+
 
     logic [5:0] add_pd;
     logic [5:0] multiply_pd;
     logic [5:0] divide_pd;
+    logic [5:0] mem_pd;
+    logic [5:0] branch_pd;
 
     logic [4:0] add_rd;
     logic [4:0 ] multiply_rd;
     logic [4:0] divide_rd;
+    logic [4:0] mem_rd;
+    logic [4:0] branch_rd;
+
 
     logic   [1:0]   rs_signal;
 
-    logic           rs_add_full, rs_mul_full, rs_div_full;
+    logic           rs_add_full, rs_mul_full, rs_div_full, rs_mem_full, rs_branch_full;
 
     logic   [5:0]   ps1_out, ps2_out;
     logic           ps1_valid_out, ps2_valid_out;
@@ -220,33 +232,33 @@ import rv32i_types::*;
         .dfp_resp(d_dfp_resp)           // CONNECT TO BMEM
     );
 
-    memory_queue memory_queue_i (
-        .clk(clk),
-        .rst(rst),
-        .opcode(),
-        .phys_reg_in(),
-        .enqueue_valid(),
-        .rob_num(),
-        .addr(),
-        .addr_valid(),
-        .mem_idx_in(),
-        .commited_rob(),
-        .commited_rob_valid(),
-        .data_in(),
-        .data_valid(),
-        .rd_v(),
+    // memory_queue memory_queue_i (
+    //     .clk(clk),
+    //     .rst(rst),
+    //     .opcode(),
+    //     .phys_reg_in(),
+    //     .enqueue_valid(),
+    //     .rob_num(),
+    //     .addr(),
+    //     .addr_valid(),
+    //     .mem_idx_in(),
+    //     .commited_rob(),
+    //     .commited_rob_valid(),
+    //     .data_in(),
+    //     .data_valid(),
+    //     .rd_v(),
         
-        .phys_reg_out(),
-        .output_valid(),
-        .data_out(),
-        .full(),
-        .mem_idx_out(),
-        .d_addr(),
-        .d_rmask(),
-        .d_wmask(),
-        .d_wdata(),
-        .rd_s()
-    );
+    //     .phys_reg_out(),
+    //     .output_valid(),
+    //     .data_out(),
+    //     .full(),
+    //     .mem_idx_out(),
+    //     .d_addr(),
+    //     .d_rmask(),
+    //     .d_wmask(),
+    //     .d_wdata(),
+    //     .rd_s()
+    // );
 
     cache_arbiter arbiter (
         .clk(clk),
