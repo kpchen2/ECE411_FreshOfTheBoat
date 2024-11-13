@@ -9,6 +9,7 @@ import rv32i_types::*;
 
     // rename/dispatch inputs
     input   logic   [6:0]   opcode,
+    input   logic   [2:0]   funct3,
     input   logic   [5:0]   phys_reg_in,
     input   logic           enqueue_valid,
     input   logic   [5:0]   rob_num,
@@ -65,7 +66,7 @@ import rv32i_types::*;
     logic   [5:0]   mem_idx_in_next;
     logic   [31:0]  addr_next, store_wdata_next;
 
-    assign data_out = data_in;                  // output cache data same cycle
+    // assign data_out = data_in;                  // output cache data same cycle
     assign mem_idx_out = tail_reg[5:0] + 1'b1;  // output mem_idx to rename/dispatch
 
     always_ff @ (posedge clk) begin
@@ -93,6 +94,7 @@ import rv32i_types::*;
             if (addr_valid_next) begin
                 mem[mem_idx_in_next].addr_ready <= 1'b1; 
                 mem[mem_idx_in_next].addr <= addr_next;
+                mem[mem_idx_in_next].shift_bits <= addr_next[1:0];
                 mem[mem_idx_in_next].store_wdata <= store_wdata_next;
             end
   
@@ -108,6 +110,7 @@ import rv32i_types::*;
         dequeue_mem_next = '0;
 
         phys_reg_out = '0;
+        data_out = '0;
         output_valid = '0;
         full = '0;
 
@@ -125,7 +128,6 @@ import rv32i_types::*;
         
         if (!rst) begin
             full = (tail_reg[ADDR_WIDTH - 1:0] == head_reg[ADDR_WIDTH - 1:0]) && (tail_reg[ADDR_WIDTH] != head_reg[ADDR_WIDTH]);    // logic if queue full
-            // dequeue_valid = (mem[head_reg[5:0]+1'b1].valid == 1'b1 && mem[head_reg[5:0]+1'b1].commit == 1'b1);  // dequeue if tail's inst is valid and ready to commit
 
             // send dequeue inst same cycle; update queue next cycle
             if (data_valid) begin
@@ -134,20 +136,45 @@ import rv32i_types::*;
                 dequeue_mem_next.valid = 1'b0;
 
                 phys_reg_out = dequeue_mem_next.pd_s;
+                data_out = data_in;
                 output_valid = '1;
-
-            end
+                
+                unique case (mem[head_reg[5:0]+1'b1].funct3)
+                    load_f3_lb : data_out = {{24{data_in[7 +8 *mem[head_reg[5:0]+1'b1].shift_bits]}}   , data_in[8 *mem[head_reg[5:0]+1'b1].shift_bits    +: 8 ]};
+                    load_f3_lbu: data_out = {{24{1'b0}}                                                , data_in[8 *mem[head_reg[5:0]+1'b1].shift_bits    +: 8 ]};
+                    load_f3_lh : data_out = {{16{data_in[15+16*mem[head_reg[5:0]+1'b1].shift_bits[1]]}}, data_in[16*mem[head_reg[5:0]+1'b1].shift_bits[1] +: 16]};
+                    load_f3_lhu: data_out = {{16{1'b0}}                                                , data_in[16*mem[head_reg[5:0]+1'b1].shift_bits[1] +: 16]};
+                    load_f3_lw : data_out = data_in;
+                    default    : data_out = 'x;
+                endcase
 
             // ready to access cache
-            if (mem[head_reg[5:0]+1'b1].valid == 1'b1 && mem[head_reg[5:0]+1'b1].addr_ready == 1'b1 ) begin
+            end else if (mem[head_reg[5:0]+1'b1].valid == 1'b1 && mem[head_reg[5:0]+1'b1].addr_ready == 1'b1) begin
                 d_addr = mem[head_reg[5:0]+1'b1].addr;
                 
                 if (mem[head_reg[5:0]+1'b1].opcode == op_b_load) begin
-                    d_rmask = '1;
+                    unique case (mem[head_reg[5:0]+1'b1].funct3)
+                        load_f3_lb, load_f3_lbu: d_rmask = 4'b0001 << d_addr[1:0];
+                        load_f3_lh, load_f3_lhu: d_rmask = 4'b0011 << d_addr[1:0];
+                        load_f3_lw             : d_rmask = 4'b1111;
+                        default                : d_rmask = 'x;
+                    endcase
                 end else if (mem[head_reg[5:0]+1'b1].rob_num == commited_rob) begin
-                    d_wmask = '1;
-                    d_wdata = mem[head_reg[5:0]+1'b1].store_wdata;
+                    unique case (mem[head_reg[5:0]+1'b1].funct3)
+                        store_f3_sb: d_wmask = 4'b0001 << d_addr[1:0];
+                        store_f3_sh: d_wmask = 4'b0011 << d_addr[1:0];
+                        store_f3_sw: d_wmask = 4'b1111;
+                        default    : d_wmask = 'x;
+                    endcase
+                    unique case (mem[head_reg[5:0]+1'b1].funct3)
+                        store_f3_sb: d_wdata[8 *d_addr[1:0] +: 8 ] = mem[head_reg[5:0]+1'b1].store_wdata[7 :0];
+                        store_f3_sh: d_wdata[16*d_addr[1]   +: 16] = mem[head_reg[5:0]+1'b1].store_wdata[15:0];
+                        store_f3_sw: d_wdata = mem[head_reg[5:0]+1'b1].store_wdata;
+                        default    : d_wdata = 'x;
+                    endcase
                 end
+
+                d_addr[1:0] = 2'b0;
             end
             
             if (enqueue_valid) begin
@@ -158,6 +185,7 @@ import rv32i_types::*;
                     enqueue_mem_next.addr_ready = 1'b0;
                     enqueue_mem_next.addr = 32'bx;
                     enqueue_mem_next.opcode = opcode;
+                    enqueue_mem_next.funct3 = funct3;
                     enqueue_mem_next.pd_s = phys_reg_in;
                     enqueue_mem_next.rob_num = rob_num;
 

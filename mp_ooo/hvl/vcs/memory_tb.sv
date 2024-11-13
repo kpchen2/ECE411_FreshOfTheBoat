@@ -15,6 +15,7 @@ import rv32i_types::*;
     logic           rst;
     // rename/dispatch inputs
     logic   [6:0]   opcode;
+    logic   [2:0]   funct3;
     logic   [5:0]   phys_reg_in;
     logic           enqueue_valid;
     logic   [5:0]   rob_num;
@@ -67,6 +68,7 @@ import rv32i_types::*;
         .rst(rst),
         // rename/dispatch inputs
         .opcode(opcode),
+        .funct3(funct3),
         .phys_reg_in(phys_reg_in),
         .enqueue_valid(enqueue_valid),
         .rob_num(rob_num),
@@ -102,6 +104,7 @@ import rv32i_types::*;
     task normal;
         begin
             opcode = 'x;
+            funct3 = 'x;
             phys_reg_in = 'x;
             rob_num = 'x;
             enqueue_valid = '0;
@@ -115,6 +118,7 @@ import rv32i_types::*;
             repeat (5) @(posedge clk);
 
             opcode = 7'b0000011;
+            funct3 = 3'b001;
             phys_reg_in = 6'b000001;
             rob_num = '0;
             enqueue_valid = '1;
@@ -128,6 +132,7 @@ import rv32i_types::*;
             repeat (1) @(posedge clk);
 
             opcode = 7'b0100011;
+            funct3 = 3'b001;
             phys_reg_in = 6'b000010;
             rob_num = 6'b000001;
             enqueue_valid = '1;
@@ -141,6 +146,7 @@ import rv32i_types::*;
             repeat (1) @(posedge clk);
 
             opcode = 'x;
+            funct3 = 'x;
             phys_reg_in = 'x;
             rob_num = 'x;
             enqueue_valid = '0;
@@ -154,6 +160,7 @@ import rv32i_types::*;
             repeat (3) @(posedge clk);
 
             opcode = 'x;
+            funct3 = 'x;
             phys_reg_in = 'x;
             rob_num = 'x;
             enqueue_valid = '0;
@@ -167,6 +174,7 @@ import rv32i_types::*;
             repeat (1) @(posedge clk);
 
             opcode = 'x;
+            funct3 = 'x;
             phys_reg_in = 'x;
             rob_num = 'x;
             enqueue_valid = '0;
@@ -179,7 +187,22 @@ import rv32i_types::*;
             store_wdata = 32'h00000002;
             repeat (1) @(posedge clk);
 
+            opcode = 'x;
+            funct3 = 'x;
+            phys_reg_in = 'x;
+            rob_num = 'x;
+            enqueue_valid = '0;
+            addr = 'x;
+            mem_idx_in = 'x;
+            addr_valid = '0;
+            commited_rob = 6'b000001;
+            data_in = 'x;
+            data_valid = '0;
+            store_wdata = 'x;
+            repeat (1) @(posedge clk);
+
             opcode = 7'b0000011;
+            funct3 = 3'b001;
             phys_reg_in = 6'b000011;
             rob_num = 6'b000010;
             enqueue_valid = '1;
@@ -193,19 +216,21 @@ import rv32i_types::*;
             repeat (1) @(posedge clk);
 
             opcode = 'x;
+            funct3 = 'x;
             phys_reg_in = 'x;
             rob_num = 'x;
             enqueue_valid = '0;
             addr = 'x;
             mem_idx_in = 'x;
             addr_valid = '0;
-            commited_rob = 'x;
+            commited_rob = 6'b000010;
             data_in = 'x;
             data_valid = '0;
             store_wdata = 'x;
             repeat (1) @(posedge clk);
 
             opcode = 'x;
+            funct3 = 'x;
             phys_reg_in = 'x;
             rob_num = 'x;
             enqueue_valid = '0;
@@ -219,6 +244,7 @@ import rv32i_types::*;
             repeat (3) @(posedge clk);
 
             opcode = 'x;
+            funct3 = 'x;
             phys_reg_in = 'x;
             rob_num = 'x;
             enqueue_valid = '0;
@@ -232,6 +258,7 @@ import rv32i_types::*;
             repeat (1) @(posedge clk);
 
             opcode = 'x;
+            funct3 = 'x;
             phys_reg_in = 'x;
             rob_num = 'x;
             enqueue_valid = '0;
@@ -245,6 +272,7 @@ import rv32i_types::*;
             repeat (1) @(posedge clk);
 
             opcode = 'x;
+            funct3 = 'x;
             phys_reg_in = 'x;
             rob_num = 'x;
             enqueue_valid = '0;
