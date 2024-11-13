@@ -121,6 +121,13 @@ import rv32i_types::*;
             if (dequeue_valid) begin
                 mem[head_next[ADDR_WIDTH - 1:0]] <= dequeue_mem_next;
             end
+
+            if (global_branch_signal) begin
+                for (int i = 0; i < QUEUE_DEPTH; i++) begin
+                    mem[i] <= '0;
+                end
+            end
+
             // add instruction done
             if (add_cdb_valid_next) begin
                 mem[add_rob_idx_in_next].commit <= '1;
@@ -171,19 +178,13 @@ import rv32i_types::*;
                 mem[br_rob_idx_in_next].rvfi.monitor_pc_wdata <= global_branch_signal ? global_branch_addr : mem[br_rob_idx_in_next].rvfi.monitor_pc_wdata;
             end
 
-            // if (global_branch_signal) begin
-            //     for (int i = 0; i < QUEUE_DEPTH; i++) begin
-            //         mem[i] <= '0;
-            //     end
-            // end
-
             tail_reg <= tail_next;
             head_reg <= head_next;
         end
     end
 
     always_comb begin
-        tail_next = tail_reg;
+        tail_next = global_branch_signal ? (head_next) : tail_reg;
         head_next = head_reg;
         rob_out = '0;
         enqueue_mem_next = '0;
@@ -225,7 +226,7 @@ import rv32i_types::*;
             
             if (enqueue_next) begin
                 if (~full || dequeue_valid) begin
-                    tail_next = tail_reg + 1'b1;
+                    tail_next = tail_next + 1'b1;
                     head_next = (head_next == head_reg) ? head_reg : head_reg + 1'd1;   // don't change what dequeue set head_next to
                     enqueue_mem_next.valid = 1'b1;
                     enqueue_mem_next.commit = 1'b0;
@@ -242,12 +243,12 @@ import rv32i_types::*;
                     // SET EVERYTHING LATER {2'b10, phys_reg_in, arch_reg_in};               // 1 bit for valid, 1 bit for commit, 6 bits for phys reg, 5 bits for arch reg
 
                 end else begin
-                    tail_next = tail_reg; 
+                    tail_next = tail_next; 
                     head_next = (head_next == head_reg) ? head_reg : head_reg + 1'd1;   // don't change what dequeue set head_next to
                     enqueue_mem_next = mem[tail_reg[ADDR_WIDTH - 1:0]+1'b1];
                 end
             end
-            tail_next = global_branch_signal ? (head_next) : tail_next;
+            // tail_next = global_branch_signal ? (head_next) : tail_next;
 
             full = (tail_next[ADDR_WIDTH - 1:0] == head_next[ADDR_WIDTH - 1:0]) && (tail_next[ADDR_WIDTH] != head_next[ADDR_WIDTH]);    // logic if queue full
         end

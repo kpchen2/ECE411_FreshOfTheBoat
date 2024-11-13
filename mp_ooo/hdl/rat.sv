@@ -78,6 +78,8 @@ import rv32i_types::*;
             ps1_valid = (decode_info.opcode == op_b_jal) ? 1'b1 : valid[rs1];
             ps2_valid = (decode_info.opcode inside {op_b_imm, op_b_lui, op_b_jal, op_b_jalr}) ? '1 : valid[rs2];
         end
+
+        valid_next[0] = 1'b1;
     end
 
     always_ff @(posedge clk) begin
