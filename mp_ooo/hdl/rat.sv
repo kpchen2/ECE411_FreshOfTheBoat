@@ -70,6 +70,8 @@ import rv32i_types::*;
             ps1_valid = valid[rs1];
             ps2_valid = (decode_info.opcode == op_b_imm || decode_info.opcode == op_b_lui) ? '1 : valid[rs2];
         end
+
+        valid_next[0] = 1'b1;
     end
 
     always_ff @(posedge clk) begin
