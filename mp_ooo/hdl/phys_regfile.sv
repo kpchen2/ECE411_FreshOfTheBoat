@@ -6,10 +6,10 @@ import rv32i_types::*;
 (
     input   logic           clk,
     input   logic           rst,
-    input   logic           regf_we_add, regf_we_mul, regf_we_div, regf_we_br,
-    input   logic   [31:0]  rd_v_add, rd_v_mul, rd_v_div, rd_v_br,
-    input   logic   [PHYS_REG_BITS-1:0]   rs1_add, rs2_add, rs1_mul, rs2_mul, rs1_div, rs2_div, rs1_br, rs2_br, rd_add, rd_mul, rd_div, rd_br,
-    output  logic   [31:0]  rs1_v_add, rs2_v_add, rs1_v_mul, rs2_v_mul, rs1_v_div, rs2_v_div, rs1_v_br, rs2_v_br,
+    input   logic           regf_we_add, regf_we_mul, regf_we_div, regf_we_mem, regf_we_br,
+    input   logic   [31:0]  rd_v_add, rd_v_mul, rd_v_div, rd_v_mem, rd_v_br,
+    input   logic   [PHYS_REG_BITS-1:0]   rs1_add, rs2_add, rs1_mul, rs2_mul, rs1_div, rs2_div, rs1_mem, rs2_mem, rs1_br, rs2_br, rd_add, rd_mul, rd_div, rd_mem, rd_br,
+    output  logic   [31:0]  rs1_v_add, rs2_v_add, rs1_v_mul, rs2_v_mul, rs1_v_div, rs2_v_div, rs1_v_mem, rs2_v_mem, rs1_v_br, rs2_v_br,
     input   logic   [4:0]   arch_s1_add, arch_s2_add,
     input   logic   [4:0]   arch_s1_br, arch_s2_br,
     input   logic   [4:0]   arch_rd_add, arch_rd_mul, arch_rd_div, arch_rd_br

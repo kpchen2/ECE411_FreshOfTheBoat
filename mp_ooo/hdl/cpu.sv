@@ -75,7 +75,7 @@ import rv32i_types::*;
     logic           dequeue;
     logic           is_free_list_empty;
 
-    cdb_t           cdb_add, cdb_mul, cdb_div;
+    cdb_t           cdb_add, cdb_mul, cdb_div, cdb_mem, cdb_br;
     decode_info_t   decode_info ;
 
     decode_info_t add_decode_info;
@@ -107,7 +107,6 @@ import rv32i_types::*;
     logic [4:0] divide_rd;
     logic [4:0] branch_rd;
     logic [4:0] mem_rd;
-    logic [4:0] branch_rd;
 
 
     logic   [1:0]   rs_signal;
@@ -145,11 +144,6 @@ import rv32i_types::*;
     assign store_wmask = '0;
     assign store_wdata = '0;
      // do this for now, NEED RELEVANT MEM DATA LATER
-
-    logic           global_branch_signal, global_branch_signal_reg;
-    logic   [31:0]  global_branch_addr;
-
-    logic   [5:0]   rrat[32];
 
     logic           global_branch_signal, global_branch_signal_reg;
     logic   [31:0]  global_branch_addr;
@@ -204,7 +198,6 @@ import rv32i_types::*;
                 end
             end
             pc_next = global_branch_signal ? global_branch_addr : pc_next;
-            // ufp_rmask = global_branch_signal ? '0 : ufp_rmask;
         end
     end
     
