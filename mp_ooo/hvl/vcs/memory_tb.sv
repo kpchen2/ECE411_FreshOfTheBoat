@@ -1,12 +1,12 @@
-module top_tb;
-import rv32i_types::*;
-    //---------------------------------------------------------------------------------
-    // Waveform generation.
-    //---------------------------------------------------------------------------------
-    initial begin
-        $fsdbDumpfile("dump.fsdb");
-        $fsdbDumpvars(0, "+all");
-    end
+// module top_tb;
+// import rv32i_types::*;
+//     //---------------------------------------------------------------------------------
+//     // Waveform generation.
+//     //---------------------------------------------------------------------------------
+//     initial begin
+//         $fsdbDumpfile("dump.fsdb");
+//         $fsdbDumpvars(0, "+all");
+//     end
 
     //---------------------------------------------------------------------------------
     // TODO: Declare cache port signals:
@@ -48,20 +48,20 @@ import rv32i_types::*;
     initial clk = 1'b1;
     always #1ns clk = ~clk;
 
-    //---------------------------------------------------------------------------------
-    // TODO: Write a task to generate reset:
-    //---------------------------------------------------------------------------------
-    task reset;
-        begin
-            rst = 1'b1;
-            repeat (2) @(posedge clk);
-            rst <= 1'b0;
-        end
-    endtask
+//     //---------------------------------------------------------------------------------
+//     // TODO: Write a task to generate reset:
+//     //---------------------------------------------------------------------------------
+//     task reset;
+//         begin
+//             rst = 1'b1;
+//             repeat (2) @(posedge clk);
+//             rst <= 1'b0;
+//         end
+//     endtask
 
-    //---------------------------------------------------------------------------------
-    // TODO: Instantiate the DUT and physical memory:
-    //---------------------------------------------------------------------------------
+//     //---------------------------------------------------------------------------------
+//     // TODO: Instantiate the DUT and physical memory:
+//     //---------------------------------------------------------------------------------
 
     memory_queue dut(
         .clk(clk),
@@ -97,9 +97,9 @@ import rv32i_types::*;
         .d_wdata(d_wdata)
     );
 
-    //---------------------------------------------------------------------------------
-    // TODO: Write tasks to test various functionalities:
-    //---------------------------------------------------------------------------------
+//     //---------------------------------------------------------------------------------
+//     // TODO: Write tasks to test various functionalities:
+//     //---------------------------------------------------------------------------------
 
     task normal;
         begin
@@ -291,13 +291,13 @@ import rv32i_types::*;
     // TODO: Main initial block that calls your tasks, then calls $finish
     //---------------------------------------------------------------------------------
 
-    initial begin
-        reset();
+//     initial begin
+//         reset();
 
-        normal();
+//         normal();
 
-        repeat (10) @(posedge clk);
+//         repeat (10) @(posedge clk);
 
-        $finish;
-    end
-endmodule : top_tb
+//         $finish;
+//     end
+// endmodule : top_tb

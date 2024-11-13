@@ -49,6 +49,7 @@ import rv32i_types::*;
     logic   [31:0]  store_wdata;    // from a store
     logic           d_ufp_resp;     // data cache should output this
 
+    logic    [31:0] fu_mem_store_wdata;
     logic           initial_flag, initial_flag_reg;     // for initial read AND full_stall reads
     logic           full_stall;
     
@@ -75,39 +76,50 @@ import rv32i_types::*;
     logic           dequeue;
     logic           is_free_list_empty;
 
-    cdb_t           cdb_add, cdb_mul, cdb_div;
+    cdb_t           cdb_add, cdb_mul, cdb_div, cdb_mem, cdb_br;
     decode_info_t   decode_info ;
 
     decode_info_t add_decode_info;
     decode_info_t multiply_decode_info;
     decode_info_t divide_decode_info;
+    decode_info_t mem_decode_info;
+    decode_info_t branch_decode_info;
     
     logic    add_fu_ready;
     logic multiply_fu_ready;
     logic divide_fu_ready;
+    logic mem_fu_ready;
+    logic branch_fu_ready;
 
     logic [5:0] add_rob_entry;
     logic [5:0] multiply_rob_entry;
     logic [5:0] divide_rob_entry;
+    logic [5:0] mem_rob_entry;
+    logic [5:0] branch_rob_entry; 
 
     logic [5:0] add_pd;
     logic [5:0] multiply_pd;
     logic [5:0] divide_pd;
+    logic [5:0] mem_pd;
+    logic [5:0] branch_pd;
 
     logic [4:0] add_rd;
-    logic [4:0 ] multiply_rd;
+    logic [4:0] multiply_rd;
     logic [4:0] divide_rd;
+    logic [4:0] branch_rd;
+    logic [4:0] mem_rd;
 
-    logic   [1:0]   rs_signal;
 
-    logic           rs_add_full, rs_mul_full, rs_div_full;
+    logic   [2:0]   rs_signal;
+
+    logic           rs_add_full, rs_mul_full, rs_div_full, rs_mem_full, rs_br_full; 
 
     logic   [5:0]   ps1_out, ps2_out;
     logic           ps1_valid_out, ps2_valid_out;
 
-    logic   [31:0]  rs1_v_add, rs1_v_mul, rs1_v_div, rs2_v_add, rs2_v_mul, rs2_v_div;
+    logic   [31:0]  rs1_v_add, rs1_v_mul, rs1_v_div, rs1_v_mem, rs1_v_br, rs2_v_add, rs2_v_mul, rs2_v_div, rs2_v_mem, rs2_v_br; 
 
-    logic   [5:0]   add_ps1, add_ps2, multiply_ps1, multiply_ps2, divide_ps1, divide_ps2;
+    logic   [5:0]   add_ps1, add_ps2, multiply_ps1, multiply_ps2, divide_ps1, divide_ps2, mem_ps1, mem_ps2, branch_ps1, branch_ps2; 
     
     rob_entry_t rob_entry;
 
@@ -132,13 +144,20 @@ import rv32i_types::*;
 
     logic           mem_output_valid;
     logic   [5:0]   mem_rob_idx_in;
-    
+    logic   [5:0]   res_dispatch_mem_idx, fu_mem_idx;
     // assign mem_addr = '0;   
     // assign load_rmask = '0; 
     // assign store_wmask = '0;
     // assign store_wdata = '0;
+    logic [31:0]    calculated_address;
      // do this for now, NEED RELEVANT MEM DATA LATER
 
+    logic           global_branch_signal, global_branch_signal_reg;
+    logic   [31:0]  global_branch_addr;
+
+    logic   [5:0]   rrat[32];
+    assign global_branch_signal = cdb_br.pc_select;
+    assign global_branch_addr = cdb_br.pc_branch;
 
     always_ff @(posedge clk) begin
 
@@ -150,11 +169,13 @@ import rv32i_types::*;
             initial_flag_reg <= '1;
             dfp_read_reg <= '0;
             order  <= '0;
+            global_branch_signal_reg <= '0;
         end else begin
             pc <= pc_next;
             initial_flag_reg <= initial_flag;
             dfp_read_reg <= dfp_read;
             order <= order_next;
+            global_branch_signal_reg <= global_branch_signal;
         end
     end
 
@@ -184,6 +205,7 @@ import rv32i_types::*;
                     ufp_rmask = '0;
                 end
             end
+            pc_next = global_branch_signal ? global_branch_addr : pc_next;
         end
     end
     
@@ -233,10 +255,10 @@ import rv32i_types::*;
         .phys_reg_in(pd_dispatch),          // FROM RENAME DISPATCH
         .enqueue_valid(regf_we_dispatch),   // FROM RENAME DISPATCH
         .rob_num(rob_num),
-        .addr(),                            // FROM ADDER
-        .addr_valid(),                      // FROM ADDER
-        .mem_idx_in(),                      // FROM ADDER
-        .store_wdata(),                     // FROM ADDER/REGFILE
+        .addr(calculated_address),                            // FROM ADDER
+        .addr_valid(cdb_mem.valid),                      // FROM ADDER
+        .mem_idx_in(fu_mem_idx),                      // FROM ADDER
+        .store_wdata(fu_mem_store_wdata),                     // FROM ADDER/REGFILE
         .commited_rob(rob_head),
         .data_in(load_rdata),
         .data_valid(d_ufp_resp),
@@ -295,11 +317,12 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
         .wdata_in(ufp_rdata),
-        .enqueue_in(i_ufp_resp),
+        .enqueue_in((global_branch_signal || global_branch_signal_reg) ? '0 : i_ufp_resp),
         .rdata_out(inst),
         .dequeue_in(dequeue),
         .full_out(full_stall),
-        .empty_out(iqueue_empty)
+        .empty_out(iqueue_empty),
+        .global_branch_signal(global_branch_signal)
     );
 
     queue #(.DATA_WIDTH(32), .QUEUE_DEPTH(64)) queue_pc
@@ -307,11 +330,12 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
         .wdata_in(pc),
-        .enqueue_in(i_ufp_resp),
+        .enqueue_in((global_branch_signal || global_branch_signal_reg) ? '0 : i_ufp_resp),
         .rdata_out(prog),
         .dequeue_in(dequeue),
         .full_out(full_garbage),
-        .empty_out(empty_garbage)
+        .empty_out(empty_garbage),
+        .global_branch_signal(global_branch_signal)
     );
 
     rename_dispatch rename_dispatch_i (
@@ -320,7 +344,7 @@ import rv32i_types::*;
         .inst(inst),
         .prog(prog),
         .rob_full(rob_full),
-        .rs_full_add(rs_add_full), .rs_full_mul(rs_mul_full), .rs_full_div(rs_div_full),
+        .rs_full_add(rs_add_full), .rs_full_mul(rs_mul_full), .rs_full_div(rs_div_full), .rs_full_br(rs_br_full), .rs_full_mem(rs_mem_full), // TODO: Change this later for branch
         .is_iqueue_empty(iqueue_empty),
         .phys_reg(phys_reg),
         .is_free_list_empty(is_free_list_empty),
@@ -352,24 +376,28 @@ import rv32i_types::*;
         .dispatch_inst(dispatch_inst),
         .dispatch_regf_we(dispatch_regf_we),
         .mem_idx_in(queue_mem_idx),
-        .mem_idx_out(dispatch_mem_idx)          // PROPAGATE THIS INTO MEM ADDER
-    );
+        .mem_idx_out(dispatch_mem_idx),          // PROPAGATE THIS INTO MEM ADDER
+        .global_branch_addr(global_branch_addr),
+        .global_branch_signal(global_branch_signal)
+        );
 
     rat rat_i (
         .clk(clk),
         .rst(rst),
         .rd_dispatch(rd_dispatch),
         .rs1(rs1), .rs2(rs2),
-        .rd_add(cdb_add.rd_s), .rd_mul(cdb_mul.rd_s), .rd_div(cdb_div.rd_s),
+        .rd_add(cdb_add.rd_s), .rd_mul(cdb_mul.rd_s), .rd_div(cdb_div.rd_s), .rd_br(cdb_br.rd_s), .rd_mem(cdb_mem.rd_s),
         .pd_dispatch(pd_dispatch),
-        .pd_add(cdb_add.pd_s), .pd_mul(cdb_mul.pd_s), .pd_div(cdb_div.pd_s),
+        .pd_add(cdb_add.pd_s), .pd_mul(cdb_mul.pd_s), .pd_div(cdb_div.pd_s), .pd_br(cdb_br.pd_s), .pd_mem(cdb_mem.pd_s),
         .ps1(ps1),
         .ps2(ps2),
         .ps1_valid(ps1_valid),
         .ps2_valid(ps2_valid),
         .regf_we_dispatch(regf_we_dispatch),
-        .regf_we_add(cdb_add.valid), .regf_we_mul(cdb_mul.valid), .regf_we_div(cdb_div.valid),
+        .regf_we_add(cdb_add.valid), .regf_we_mul(cdb_mul.valid), .regf_we_div(cdb_div.valid), .regf_we_br(cdb_br.valid), .regf_we_mem(cdb_mem.valid),
         .decode_info(decode_info)
+        // .rrat(rrat),
+        // .global_branch_signal(global_branch_signal)
     );
 
     rob rob_i (
@@ -394,7 +422,12 @@ import rv32i_types::*;
         .div_rob_idx_in(cdb_div.rob_idx),
         .div_cdb_valid(cdb_div.valid),
         .div_inst(cdb_div.inst),
-
+        .br_rob_idx_in(cdb_br.rob_idx),
+        .br_cdb_valid(cdb_br.valid),
+        .br_inst(cdb_br.inst),
+        .mem_rob_idx_in(cdb_mem.rob_idx),
+        .mem_cdb_valid(cdb_mem.valid),
+        .mem_inst(cdb_mem.inst),
 
         .add_rs1_rdata(rs1_v_add),
         .add_rs2_rdata(rs2_v_add),
@@ -407,6 +440,16 @@ import rv32i_types::*;
         .divide_rs1_rdata(rs1_v_div),
         .divide_rs2_rdata(rs2_v_div),
         .divide_rd_wdata(cdb_div.rd_v),
+
+        .branch_rs1_rdata(rs1_v_br),
+        .branch_rs2_rdata(rs2_v_br),
+        .branch_rd_wdata(cdb_br.rd_v),
+        .branch_pc_branch(cdb_br.pc_branch),
+        .branch_pc_select(cdb_br.pc_select),
+
+        .mem_rs1_rdata(rs1_v_mem),
+        .mem_rs2_rdata(rs2_v_mem),
+        .mem_rd_wdata(cdb_mem.rd_v),
 
         .monitor_mem_addr('0),      // SET
         .monitor_mem_rmask('0),     // SET
@@ -430,7 +473,8 @@ import rv32i_types::*;
         .pd(rob_entry.pd),
         .regf_we(rob_valid),
         .enqueue(enqueue),
-        .old_pd(old_pd)
+        .old_pd(old_pd),
+        .rrat_out(rrat)
     );
 
     free_list free_list_i (
@@ -440,33 +484,35 @@ import rv32i_types::*;
         .enqueue_in(enqueue),
         .rdata_out(phys_reg),
         .dequeue_in(dequeue),
-        .empty_out(is_free_list_empty)
+        .empty_out(is_free_list_empty),
+        .global_branch_signal(global_branch_signal)
     );
 
     phys_regfile phys_regfile_i (
         .clk(clk),
         .rst(rst),
-        .regf_we_add(cdb_add.valid), .regf_we_mul(cdb_mul.valid), .regf_we_div(cdb_div.valid),
-        .rd_v_add(cdb_add.rd_v), .rd_v_mul(cdb_mul.rd_v), .rd_v_div(cdb_div.rd_v),
-        .rs1_add(add_ps1), .rs1_mul(multiply_ps1), .rs1_div(divide_ps1),          // SHOULD BE PS
-        .rs2_add(add_ps2), .rs2_mul(multiply_ps2), .rs2_div(divide_ps2),          // SHOULD BE PS
-        .rd_add(cdb_add.pd_s), .rd_mul(cdb_mul.pd_s), .rd_div(cdb_div.pd_s),
-        .rs1_v_add(rs1_v_add), .rs1_v_mul(rs1_v_mul), .rs1_v_div(rs1_v_div),
-        .rs2_v_add(rs2_v_add), .rs2_v_mul(rs2_v_mul), .rs2_v_div(rs2_v_div),
-        .arch_s1_add(add_decode_info.rs1_s), .arch_s2_add(add_decode_info.rs2_s), .arch_rd_add(cdb_add.rd_s), .arch_rd_mul(cdb_mul.rd_s), .arch_rd_div(cdb_div.rd_s)
+        .regf_we_add(cdb_add.valid), .regf_we_mul(cdb_mul.valid), .regf_we_div(cdb_div.valid), .regf_we_br(cdb_br.valid), .regf_we_mem(cdb_mem.valid),
+        .rd_v_add(cdb_add.rd_v), .rd_v_mul(cdb_mul.rd_v), .rd_v_div(cdb_div.rd_v), .rd_v_br(cdb_br.rd_v), .rd_v_mem(cdb_mem.rd_v),
+        .rs1_add(add_ps1), .rs1_mul(multiply_ps1), .rs1_div(divide_ps1), .rs1_br(branch_ps1), .rs1_mem(mem_ps1),         // SHOULD BE PS
+        .rs2_add(add_ps2), .rs2_mul(multiply_ps2), .rs2_div(divide_ps2), .rs2_br(branch_ps2), .rs2_mem(mem_ps2),         // SHOULD BE PS
+        .rd_add(cdb_add.pd_s), .rd_mul(cdb_mul.pd_s), .rd_div(cdb_div.pd_s), .rd_br(cdb_br.pd_s), .rd_mem(cdb_mem.pd_s),
+        .rs1_v_add(rs1_v_add), .rs1_v_mul(rs1_v_mul), .rs1_v_div(rs1_v_div), .rs1_v_br(rs1_v_br), .rs1_v_mem(rs1_v_mem),
+        .rs2_v_add(rs2_v_add), .rs2_v_mul(rs2_v_mul), .rs2_v_div(rs2_v_div), .rs2_v_br(rs2_v_br), .rs2_v_mem(rs2_v_mem),
+        .arch_s1_add(add_decode_info.rs1_s), .arch_s2_add(add_decode_info.rs2_s), .arch_rd_add(cdb_add.rd_s), .arch_rd_mul(cdb_mul.rd_s), .arch_rd_div(cdb_div.rd_s), .arch_rd_mem(cdb_mem.rd_s), .arch_s1_mem(mem_decode_info.rs1_s), .arch_s2_mem(mem_decode_info.rs2_s),
+        .arch_s1_br(branch_decode_info.rs1_s), .arch_s2_br(branch_decode_info.rs2_s), .arch_rd_br(cdb_br.rd_s)
     );
 
-    logic   start_add, start_mul, start_div;
+    logic   start_add, start_mul, start_div, start_br , start_mem;
 
-    logic   busy_add, busy_mul, busy_div;
+    logic   busy_add, busy_mul, busy_div, busy_br, busy_mem;
 
     execute execute_i (
         .clk(clk),
         .rst(rst),
-        .rs1_v_add(rs1_v_add), .rs2_v_add(rs2_v_add), .rs1_v_mul(rs1_v_mul), .rs2_v_mul(rs2_v_mul), .rs1_v_div(rs1_v_div), .rs2_v_div(rs2_v_div),
-        .decode_info_add(add_decode_info), .decode_info_mul(multiply_decode_info), .decode_info_div(divide_decode_info),
-        .start_add(start_add), .start_mul(start_mul), .start_div(start_div),
-        .busy_add(busy_add), .busy_mul(busy_mul), .busy_div(busy_div),
+        .rs1_v_add(rs1_v_add), .rs2_v_add(rs2_v_add), .rs1_v_mul(rs1_v_mul), .rs2_v_mul(rs2_v_mul), .rs1_v_div(rs1_v_div), .rs2_v_div(rs2_v_div), .rs1_v_br(rs1_v_br), .rs2_v_br(rs2_v_br), .rs1_v_mem(rs1_v_mem), .rs2_v_mem(rs2_v_mem),
+        .decode_info_add(add_decode_info), .decode_info_mul(multiply_decode_info), .decode_info_div(divide_decode_info), .decode_info_br(branch_decode_info), .decode_info_mem(mem_decode_info),
+        .start_add(start_add), .start_mul(start_mul), .start_div(start_div), .start_br(start_br) , .start_mem(start_mem),
+        .busy_add(busy_add), .busy_mul(busy_mul), .busy_div(busy_div), .busy_br(busy_br), .busy_mem(busy_mem),
         .rob_idx_add(add_rob_entry),
         .pd_s_add(add_pd),
         .rd_s_add(add_rd),
@@ -478,7 +524,20 @@ import rv32i_types::*;
         .rob_idx_div(divide_rob_entry),
         .pd_s_div(divide_pd),
         .rd_s_div(divide_rd),
-        .cdb_div(cdb_div)
+        .cdb_div(cdb_div),
+        .rob_idx_br(branch_rob_entry),
+        .pd_s_br(branch_pd),
+        .rd_s_br(branch_rd),
+        .cdb_br(cdb_br),
+        .rob_idx_mem(mem_rob_entry),
+        .pd_s_mem(mem_pd),
+        .rd_s_mem(mem_rd),
+        .cdb_mem(cdb_mem),
+        // .global_branch_signal(global_branch_signal),
+        .mem_idx_in(res_dispatch_mem_idx),
+        .mem_idx_out(fu_mem_idx),
+        .store_wdata(fu_mem_store_wdata),
+        .calculated_address(calculated_address)
     );
 
     reservation_station reservation_stations_i (
@@ -496,11 +555,15 @@ import rv32i_types::*;
         .cdb_ps_id_add(cdb_add.pd_s),
         .cdb_ps_id_multiply(cdb_mul.pd_s),
         .cdb_ps_id_divide(cdb_div.pd_s),
+        .cdb_ps_id_branch(cdb_br.pd_s),
+        .cdb_ps_id_mem(cdb_mem.pd_s),
         .decode_info_in(decode_info),
         
         .add_fu_busy('0),     // WAS SET TO BUSY_ADD
         .multiply_fu_busy(busy_mul),
         .divide_fu_busy(busy_div),
+        .branch_fu_busy('0),
+        .mem_fu_busy(busy_mem),
 
         // .add_regf_we(),
         // .multiply_regf_we(),
@@ -510,26 +573,38 @@ import rv32i_types::*;
         .add_fu_ready(start_add),
         .multiply_fu_ready(start_mul),
         .divide_fu_ready(start_div),
+        .branch_fu_ready(start_br),
+        .mem_fu_ready(start_mem),
         
         .add_rob_entry(add_rob_entry),
         .multiply_rob_entry(multiply_rob_entry),
         .divide_rob_entry(divide_rob_entry),
+        .branch_rob_entry(branch_rob_entry),
+        .mem_rob_entry(mem_rob_entry),
 
         .add_pd(add_pd),
         .multiply_pd(multiply_pd), 
         .divide_pd(divide_pd),
+        .branch_pd(branch_pd),
+        .mem_pd(mem_pd),
 
         .add_rd(add_rd),
         .multiply_rd(multiply_rd),
         .divide_rd(divide_rd),
+        .branch_rd(branch_rd),
+        .mem_rd(mem_rd),
 
         .add_full(rs_add_full),
         .multiply_full(rs_mul_full),
         .divide_full(rs_div_full),
+        .branch_full(rs_br_full),
+        .mem_full(rs_mem_full),
 
         .add_decode_info_out(add_decode_info),
         .multiply_decode_info_out(multiply_decode_info),
         .divide_decode_info_out(divide_decode_info),
+        .branch_decode_info_out(branch_decode_info),
+        .mem_decode_info_out(mem_decode_info),
 
         .add_ps1(add_ps1),
         .add_ps2(add_ps2),
@@ -537,10 +612,18 @@ import rv32i_types::*;
         .multiply_ps2(multiply_ps2),
         .divide_ps1(divide_ps1),
         .divide_ps2(divide_ps2),
+        .branch_ps1(branch_ps1),
+        .branch_ps2(branch_ps2),
+        .mem_ps1(mem_ps1),
+        .mem_ps2(mem_ps2),
 
         .regf_we_add(cdb_add.valid),
         .regf_we_mul(cdb_mul.valid),
-        .regf_we_div(cdb_div.valid)
+        .regf_we_div(cdb_div.valid),
+        .regf_we_br(cdb_br.valid),
+        .regf_we_mem(cdb_mem.valid),
+        .mem_idx_in(dispatch_mem_idx),
+        .mem_idx_out(res_dispatch_mem_idx)
     );
 
 endmodule : cpu

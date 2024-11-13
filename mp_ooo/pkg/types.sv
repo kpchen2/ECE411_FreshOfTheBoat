@@ -3,6 +3,8 @@ package rv32i_types;
     localparam NUM_ADD_REGISTERS = 4;
     localparam NUM_MULTIPLY_REGISTERS = 4;
     localparam NUM_DIVIDE_REGISTERS = 4;
+    localparam NUM_MEM_REGISTERS = 4;
+    localparam NUM_BRANCH_REGISTERS = 4;
     localparam MAX_ISSUES = 4; // num instructions to issue
     // parameter DATA_WIDTH = 6;
 
@@ -42,6 +44,8 @@ package rv32i_types;
         logic   [4:0]  rs2_s;
         logic   [4:0]  rd_s;
         logic   [31:0] inst;
+
+        logic   [31:0]  pc;
     } decode_info_t;
 
     typedef struct packed {
@@ -81,12 +85,38 @@ package rv32i_types;
     } divide_reservation_station_data;
 
     typedef struct packed {
+        logic busy;
+        logic ps1_v;
+        logic [5:0] ps1;
+        logic ps2_v;
+        logic [5:0] ps2;
+        logic [5:0] pd;
+        logic [4:0] rd;
+        logic [5:0] rob_entry;
+        decode_info_t decode_info;
+    } mem_reservation_station_data;
+
+    typedef struct packed {
+        logic busy;
+        logic ps1_v;
+        logic [5:0] ps1;
+        logic ps2_v;
+        logic [5:0] ps2;
+        logic [5:0] pd;
+        logic [4:0] rd;
+        logic [5:0] rob_entry;
+        decode_info_t decode_info;
+    } branch_reservation_station_data;
+
+    typedef struct packed {
         logic   [5:0]   rob_idx;
         logic   [5:0]   pd_s;
         logic   [4:0]   rd_s;
         logic   [31:0]  rd_v;
         logic           valid;
         logic   [31:0]  inst;
+        logic           pc_select;
+        logic   [31:0]  pc_branch;
     } cdb_t;
 
     typedef struct packed {
