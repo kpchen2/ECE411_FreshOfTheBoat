@@ -8,15 +8,15 @@ import rv32i_types::*;
     input                   rst,
     input   logic   [31:0]  inst,
     input   logic   [31:0]  prog,
-    input   logic           rob_full, rs_full_add, rs_full_mul, rs_full_div, // May need to make multiple RS_full flags due to there being multiple stations
+    input   logic           rob_full, rs_full_add, rs_full_mul, rs_full_div,    // May need to make multiple RS_full flags due to there being multiple stations
 
     input   logic           is_iqueue_empty,
     // to and from free list
     input   logic   [5:0]   phys_reg,
     input   logic           is_free_list_empty,
-    input logic [63:0] order,
+    input   logic   [63:0]  order,
     output  logic           dequeue,
-    output logic [63:0] order_next,
+    output  logic   [63:0]  order_next,
     // to and from RAT
     output  logic   [4:0]                   rd, rs1, rs2,
     output  logic   [PHYS_REG_BITS-1:0]     pd,
@@ -35,7 +35,10 @@ import rv32i_types::*;
     output  logic   [4:0]                   dispatch_rs1_s,    
     output  logic   [4:0]                   dispatch_rs2_s,    
     output  logic   [31:0]                  dispatch_inst,     
-    output  logic                           dispatch_regf_we  
+    output  logic                           dispatch_regf_we,
+    // to and from memory queue
+    input   logic   [5:0]   mem_idx_in,
+    output  logic   [5:0]   mem_idx_out
 );
 
     // decode_info_t decode_info;
@@ -70,6 +73,7 @@ import rv32i_types::*;
         ps2_valid_out = ps2_valid;
         order_next = order;
         rob_num_out = rob_num;
+        mem_idx_out = mem_idx_in;
         dispatch_inst = '0;
         dispatch_pc_rdata = '0;
         dispatch_order = '0;

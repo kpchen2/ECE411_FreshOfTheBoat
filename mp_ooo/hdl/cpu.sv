@@ -64,7 +64,7 @@ import rv32i_types::*;
     logic   [5:0]   pd_dispatch, ps1, ps2;
     logic           ps1_valid, ps2_valid;
     logic           regf_we_dispatch;
-    logic   [5:0]   rob_num, rob_num_out;
+    logic   [5:0]   rob_num, rob_num_out, rob_head;
     logic   [4:0]   rd_rob;
     logic   [5:0]   pd_rob;
     logic           rob_valid;
@@ -127,6 +127,8 @@ import rv32i_types::*;
     logic  [4:0]                     dispatch_rs2_s;
     logic  [31:0]                    dispatch_inst;
     logic                            dispatch_regf_we;
+
+    logic   [5:0]   queue_mem_idx;
     
     // assign mem_addr = '0;   
     // assign load_rmask = '0; 
@@ -224,27 +226,26 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
         .opcode(decode_info.opcode),
-        .phys_reg_in(),
-        .enqueue_valid(),
+        .phys_reg_in(pd_dispatch),          // FROM RENAME DISPATCH
+        .enqueue_valid(regf_we_dispatch),   // FROM RENAME DISPATCH
         .rob_num(rob_num),
-        .addr(),            // FROM ADDER
-        .addr_valid(),      // FROM ADDER
-        .mem_idx_in(),      // FROM ADDER
-        .commited_rob(),    // FROM ROB (ROB HEAD)
+        .addr(),                    // FROM ADDER
+        .addr_valid(),              // FROM ADDER
+        .mem_idx_in(),              // FROM ADDER
+        .store_wdata(),             // FROM ADDER/REGFILE
+        .commited_rob(rob_head),    // FROM ROB (ROB HEAD)
         .data_in(load_rdata),
         .data_valid(d_ufp_resp),
-        .rd_v(),            // FROM REGFILE
         
         .phys_reg_out(),    // OUTPUT SOMEWHERE
         .output_valid(),    // OUTPUT SOMEWHERE
         .data_out(),        // OUTPUT SOMEWHERE
         .full(),
-        .mem_idx_out(),     // OUTPUT TO RENAME DISPATCH
+        .mem_idx_out(queue_mem_idx),     // OUTPUT TO RENAME DISPATCH
         .d_addr(mem_addr),
         .d_rmask(load_rmask),
         .d_wmask(store_wmask),
-        .d_wdata(store_wdata),
-        .rd_s()             // OUTPUT TO REGFILE
+        .d_wdata(store_wdata)
     );
 
     cache_arbiter arbiter (
@@ -345,7 +346,9 @@ import rv32i_types::*;
         .dispatch_rs1_s(dispatch_rs1_s),
         .dispatch_rs2_s(dispatch_rs2_s),
         .dispatch_inst(dispatch_inst),
-        .dispatch_regf_we(dispatch_regf_we)
+        .dispatch_regf_we(dispatch_regf_we),
+        .mem_idx_in(queue_mem_idx),
+        .mem_idx_out(dispatch_mem_idx)          // PROPAGATE THIS INTO MEM ADDER
     );
 
     rat rat_i (
@@ -409,6 +412,7 @@ import rv32i_types::*;
         .rob_out(rob_entry),
         .dequeue_valid(rob_valid),
         .rob_num(rob_num),
+        .rob_head(rob_head),
         .full(rob_full)
     );
     
@@ -470,8 +474,7 @@ import rv32i_types::*;
         .cdb_div(cdb_div)
     );
 
-    reservation_station reservation_stations_i
-    (
+    reservation_station reservation_stations_i (
         .clk(clk),
         .rst(rst),
         .dispatch_valid(regf_we_dispatch),

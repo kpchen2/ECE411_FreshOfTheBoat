@@ -17,6 +17,7 @@ import rv32i_types::*;
     input   logic   [31:0]  addr,
     input   logic           addr_valid,
     input   logic   [5:0]   mem_idx_in,
+    input   logic   [31:0]  store_wdata,        // ADD ANOTHER PORT TO REGFILE
 
     // rob inputs
     input   logic   [5:0]   commited_rob,
@@ -24,9 +25,6 @@ import rv32i_types::*;
     // dcache inputs
     input   logic   [31:0]  data_in,
     input   logic           data_valid,
-
-    // regfile inputs
-    input   logic   [31:0]  rd_v,   // ADD ANOTHER PORT TO REGFILE
 
     // outputs
     output  logic   [5:0]   phys_reg_out,
@@ -41,14 +39,11 @@ import rv32i_types::*;
     output  logic   [31:0]  d_addr,
     output  logic   [3:0]   d_rmask,
     output  logic   [3:0]   d_wmask,
-    output  logic   [31:0]  d_wdata,
-
-    // regfile outputs
-    output  logic   [5:0]  rd_s    // ADD ANOTHER PORT TO REGFILE
+    output  logic   [31:0]  d_wdata
 );
 
     localparam ADDR_WIDTH = $clog2(QUEUE_DEPTH);
-    localparam DATA_WIDTH = 52;                        // 1 bit for ready, 32 bits for addr, 7 bits for opcode, 6 bits for phys_reg, 6 bits for rob_num
+    // localparam DATA_WIDTH = 52;                        // 1 bit for ready, 32 bits for addr, 7 bits for opcode, 6 bits for phys_reg, 6 bits for rob_num
 
     logic   [ADDR_WIDTH:0]      tail_reg;              // extra bit for overflow
     logic   [ADDR_WIDTH:0]      head_reg;              // extra bit for overflow
@@ -98,6 +93,7 @@ import rv32i_types::*;
             if (addr_valid_next) begin
                 mem[mem_idx_in_next].addr_ready <= 1'b1; 
                 mem[mem_idx_in_next].addr <= addr_next;
+                mem[mem_idx_in_next].store_wdata = store_wdata;
             end
   
             tail_reg <= tail_next;
@@ -119,7 +115,6 @@ import rv32i_types::*;
         d_rmask = '0;
         d_wmask = '0;
         d_wdata = '0;
-        rd_s = mem[head_reg[5:0]+1'b1].pd_s;
 
         enqueue_valid_next = enqueue_valid;
         data_valid_next = data_valid;
@@ -150,7 +145,7 @@ import rv32i_types::*;
                     d_rmask = '1;
                 end else if (mem[head_reg[5:0]+1'b1].rob_num == commited_rob) begin
                     d_wmask = '1;
-                    d_wdata = rd_v;
+                    d_wdata = mem[head_reg[5:0]+1'b1].store_wdata;
                 end
             end
             
