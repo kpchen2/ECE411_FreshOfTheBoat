@@ -59,39 +59,44 @@ import rv32i_types::*;
     logic           dequeue;
     logic           is_free_list_empty;
 
-    cdb_t           cdb_add, cdb_mul, cdb_div;
-    decode_info_t   decode_info ;
+    cdb_t           cdb_add, cdb_mul, cdb_div, cdb_br;
+    decode_info_t   decode_info;
 
     decode_info_t add_decode_info;
     decode_info_t multiply_decode_info;
     decode_info_t divide_decode_info;
+    decode_info_t branch_decode_info;
     
     logic    add_fu_ready;
     logic multiply_fu_ready;
     logic divide_fu_ready;
+    logic branch_fu_ready;
 
     logic [5:0] add_rob_entry;
     logic [5:0] multiply_rob_entry;
     logic [5:0] divide_rob_entry;
+    logic [5:0] branch_rob_entry;
 
     logic [5:0] add_pd;
     logic [5:0] multiply_pd;
     logic [5:0] divide_pd;
+    logic [5:0] branch_pd;
 
     logic [4:0] add_rd;
-    logic [4:0 ] multiply_rd;
+    logic [4:0] multiply_rd;
     logic [4:0] divide_rd;
+    logic [4:0] branch_rd;
 
     logic   [1:0]   rs_signal;
 
-    logic           rs_add_full, rs_mul_full, rs_div_full;
+    logic           rs_add_full, rs_mul_full, rs_div_full, rs_br_full;
 
     logic   [5:0]   ps1_out, ps2_out;
     logic           ps1_valid_out, ps2_valid_out;
 
-    logic   [31:0]  rs1_v_add, rs1_v_mul, rs1_v_div, rs2_v_add, rs2_v_mul, rs2_v_div;
+    logic   [31:0]  rs1_v_add, rs1_v_mul, rs1_v_div, rs1_v_br, rs2_v_add, rs2_v_mul, rs2_v_div, rs2_v_br;
 
-    logic   [5:0]   add_ps1, add_ps2, multiply_ps1, multiply_ps2, divide_ps1, divide_ps2;
+    logic   [5:0]   add_ps1, add_ps2, multiply_ps1, multiply_ps2, divide_ps1, divide_ps2, branch_ps1, branch_ps2;
     
     rob_entry_t rob_entry;
 
@@ -216,7 +221,7 @@ import rv32i_types::*;
         .inst(inst),
         .prog(prog),
         .rob_full(rob_full),
-        .rs_full_add(rs_add_full), .rs_full_mul(rs_mul_full), .rs_full_div(rs_div_full),
+        .rs_full_add(rs_add_full), .rs_full_mul(rs_mul_full), .rs_full_div(rs_div_full), .rs_full_br(rs_br_full), // TODO: Change this later for branch
         .is_iqueue_empty(iqueue_empty),
         .phys_reg(phys_reg),
         .is_free_list_empty(is_free_list_empty),
@@ -254,15 +259,15 @@ import rv32i_types::*;
         .rst(rst),
         .rd_dispatch(rd_dispatch),
         .rs1(rs1), .rs2(rs2),
-        .rd_add(cdb_add.rd_s), .rd_mul(cdb_mul.rd_s), .rd_div(cdb_div.rd_s),
+        .rd_add(cdb_add.rd_s), .rd_mul(cdb_mul.rd_s), .rd_div(cdb_div.rd_s), .rd_br(cdb_br.rd_s),
         .pd_dispatch(pd_dispatch),
-        .pd_add(cdb_add.pd_s), .pd_mul(cdb_mul.pd_s), .pd_div(cdb_div.pd_s),
+        .pd_add(cdb_add.pd_s), .pd_mul(cdb_mul.pd_s), .pd_div(cdb_div.pd_s), .pd_br(cdb_br.pd_s),
         .ps1(ps1),
         .ps2(ps2),
         .ps1_valid(ps1_valid),
         .ps2_valid(ps2_valid),
         .regf_we_dispatch(regf_we_dispatch),
-        .regf_we_add(cdb_add.valid), .regf_we_mul(cdb_mul.valid), .regf_we_div(cdb_div.valid),
+        .regf_we_add(cdb_add.valid), .regf_we_mul(cdb_mul.valid), .regf_we_div(cdb_div.valid), .regf_we_br(cdb_br.valid),
         .decode_info(decode_info)
     );
 
@@ -336,27 +341,28 @@ import rv32i_types::*;
     phys_regfile phys_regfile_i (
         .clk(clk),
         .rst(rst),
-        .regf_we_add(cdb_add.valid), .regf_we_mul(cdb_mul.valid), .regf_we_div(cdb_div.valid),
-        .rd_v_add(cdb_add.rd_v), .rd_v_mul(cdb_mul.rd_v), .rd_v_div(cdb_div.rd_v),
-        .rs1_add(add_ps1), .rs1_mul(multiply_ps1), .rs1_div(divide_ps1),          // SHOULD BE PS
-        .rs2_add(add_ps2), .rs2_mul(multiply_ps2), .rs2_div(divide_ps2),          // SHOULD BE PS
-        .rd_add(cdb_add.pd_s), .rd_mul(cdb_mul.pd_s), .rd_div(cdb_div.pd_s),
-        .rs1_v_add(rs1_v_add), .rs1_v_mul(rs1_v_mul), .rs1_v_div(rs1_v_div),
-        .rs2_v_add(rs2_v_add), .rs2_v_mul(rs2_v_mul), .rs2_v_div(rs2_v_div),
-        .arch_s1_add(add_decode_info.rs1_s), .arch_s2_add(add_decode_info.rs2_s), .arch_rd_add(cdb_add.rd_s), .arch_rd_mul(cdb_mul.rd_s), .arch_rd_div(cdb_div.rd_s)
+        .regf_we_add(cdb_add.valid), .regf_we_mul(cdb_mul.valid), .regf_we_div(cdb_div.valid), .regf_we_br(cdb_br.valid),
+        .rd_v_add(cdb_add.rd_v), .rd_v_mul(cdb_mul.rd_v), .rd_v_div(cdb_div.rd_v), .rd_v_br(cdb_br.rd_v),
+        .rs1_add(add_ps1), .rs1_mul(multiply_ps1), .rs1_div(divide_ps1), .rs1_br(branch_ps1),         // SHOULD BE PS
+        .rs2_add(add_ps2), .rs2_mul(multiply_ps2), .rs2_div(divide_ps2), .rs2_br(branch_ps2),         // SHOULD BE PS
+        .rd_add(cdb_add.pd_s), .rd_mul(cdb_mul.pd_s), .rd_div(cdb_div.pd_s), .rd_br(cdb_br.pd_s),
+        .rs1_v_add(rs1_v_add), .rs1_v_mul(rs1_v_mul), .rs1_v_div(rs1_v_div), .rs1_v_br(rs1_v_br),
+        .rs2_v_add(rs2_v_add), .rs2_v_mul(rs2_v_mul), .rs2_v_div(rs2_v_div), .rs2_v_br(rs2_v_br),
+        .arch_s1_add(add_decode_info.rs1_s), .arch_s2_add(add_decode_info.rs2_s), .arch_rd_add(cdb_add.rd_s), .arch_rd_mul(cdb_mul.rd_s), .arch_rd_div(cdb_div.rd_s),
+        .arch_s1_br(branch_decode_info.rs1_s), .arch_s2_br(branch_decode_info.rs2_s), .arch_rd_br(cdb_br.rd_s)
     );
 
-    logic   start_add, start_mul, start_div;
+    logic   start_add, start_mul, start_div, start_br;
 
-    logic   busy_add, busy_mul, busy_div;
+    logic   busy_add, busy_mul, busy_div, busy_br;
 
     execute execute_i (
         .clk(clk),
         .rst(rst),
-        .rs1_v_add(rs1_v_add), .rs2_v_add(rs2_v_add), .rs1_v_mul(rs1_v_mul), .rs2_v_mul(rs2_v_mul), .rs1_v_div(rs1_v_div), .rs2_v_div(rs2_v_div),
-        .decode_info_add(add_decode_info), .decode_info_mul(multiply_decode_info), .decode_info_div(divide_decode_info),
-        .start_add(start_add), .start_mul(start_mul), .start_div(start_div),
-        .busy_add(busy_add), .busy_mul(busy_mul), .busy_div(busy_div),
+        .rs1_v_add(rs1_v_add), .rs2_v_add(rs2_v_add), .rs1_v_mul(rs1_v_mul), .rs2_v_mul(rs2_v_mul), .rs1_v_div(rs1_v_div), .rs2_v_div(rs2_v_div), .rs1_v_br(rs1_v_br), .rs2_v_br(rs2_v_br),
+        .decode_info_add(add_decode_info), .decode_info_mul(multiply_decode_info), .decode_info_div(divide_decode_info), .decode_info_br(branch_decode_info),
+        .start_add(start_add), .start_mul(start_mul), .start_div(start_div), .start_br(start_br),
+        .busy_add(busy_add), .busy_mul(busy_mul), .busy_div(busy_div), .busy_br(busy_br),
         .rob_idx_add(add_rob_entry),
         .pd_s_add(add_pd),
         .rd_s_add(add_rd),
@@ -368,7 +374,11 @@ import rv32i_types::*;
         .rob_idx_div(divide_rob_entry),
         .pd_s_div(divide_pd),
         .rd_s_div(divide_rd),
-        .cdb_div(cdb_div)
+        .cdb_div(cdb_div),
+        .rob_idx_br(branch_rob_entry),
+        .pd_s_br(branch_pd),
+        .rd_s_br(branch_rd),
+        .cdb_br(cdb_br)
     );
 
     reservation_station reservation_stations_i
@@ -387,11 +397,13 @@ import rv32i_types::*;
         .cdb_ps_id_add(cdb_add.pd_s),
         .cdb_ps_id_multiply(cdb_mul.pd_s),
         .cdb_ps_id_divide(cdb_div.pd_s),
+        .cdb_ps_id_branch(cdb_br.pd_s),
         .decode_info_in(decode_info),
         
         .add_fu_busy('0),     // WAS SET TO BUSY_ADD
         .multiply_fu_busy(busy_mul),
         .divide_fu_busy(busy_div),
+        .branch_fu_busy('0),
 
         // .add_regf_we(),
         // .multiply_regf_we(),
@@ -401,26 +413,32 @@ import rv32i_types::*;
         .add_fu_ready(start_add),
         .multiply_fu_ready(start_mul),
         .divide_fu_ready(start_div),
+        .branch_fu_ready(start_br),
         
         .add_rob_entry(add_rob_entry),
         .multiply_rob_entry(multiply_rob_entry),
         .divide_rob_entry(divide_rob_entry),
+        .branch_rob_entry(branch_rob_entry),
 
         .add_pd(add_pd),
         .multiply_pd(multiply_pd), 
         .divide_pd(divide_pd),
+        .branch_pd(branch_pd),
 
         .add_rd(add_rd),
         .multiply_rd(multiply_rd),
         .divide_rd(divide_rd),
+        .branch_rd(branch_rd),
 
         .add_full(rs_add_full),
         .multiply_full(rs_mul_full),
         .divide_full(rs_div_full),
+        .branch_full(rs_br_full),
 
         .add_decode_info_out(add_decode_info),
         .multiply_decode_info_out(multiply_decode_info),
         .divide_decode_info_out(divide_decode_info),
+        .branch_decode_info_out(branch_decode_info),
 
         .add_ps1(add_ps1),
         .add_ps2(add_ps2),
@@ -428,10 +446,13 @@ import rv32i_types::*;
         .multiply_ps2(multiply_ps2),
         .divide_ps1(divide_ps1),
         .divide_ps2(divide_ps2),
+        .branch_ps1(branch_ps1),
+        .branch_ps2(branch_ps2),
 
         .regf_we_add(cdb_add.valid),
         .regf_we_mul(cdb_mul.valid),
-        .regf_we_div(cdb_div.valid)
+        .regf_we_div(cdb_div.valid),
+        .regf_we_br(cdb_br.valid)
     );
 
 endmodule : cpu

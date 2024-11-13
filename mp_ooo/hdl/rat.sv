@@ -5,14 +5,14 @@ import rv32i_types::*;
 )
 (
     input   logic   clk, rst,
-    input   logic   [4:0]   rd_dispatch, rs1, rs2, rd_add, rd_mul, rd_div,
+    input   logic   [4:0]   rd_dispatch, rs1, rs2, rd_add, rd_mul, rd_div, rd_br,
 
-    input   logic   [PHYS_REG_BITS-1:0]     pd_dispatch, pd_add, pd_mul, pd_div,
+    input   logic   [PHYS_REG_BITS-1:0]     pd_dispatch, pd_add, pd_mul, pd_div, pd_br,
     output  logic   [PHYS_REG_BITS-1:0]     ps1, ps2,
     output  logic   ps1_valid, ps2_valid,
 
     input   logic   regf_we_dispatch,
-    input   logic   regf_we_add, regf_we_mul, regf_we_div,
+    input   logic   regf_we_add, regf_we_mul, regf_we_div, regf_we_br,
     input   decode_info_t   decode_info
 );
 
@@ -52,6 +52,10 @@ import rv32i_types::*;
             valid_next[rd_div] = 1'b1;
         end
 
+        if (regf_we_br && pd_br == rat[rd_br]) begin
+            valid_next[rd_br] = 1'b1;
+        end
+
         // Renames rd to pd, marking invalid
         if (regf_we_dispatch) begin
             rat_next[rd_dispatch] = (rd_dispatch != '0) ? pd_dispatch : rat_next[rd_dispatch];
@@ -65,10 +69,10 @@ import rv32i_types::*;
             ps1_valid = '1;
             ps2_valid = '1;
         end else begin
-            ps1 = rat[rs1];
-            ps2 = (decode_info.opcode == op_b_imm || decode_info.opcode == op_b_lui) ? rat[rs1] : rat[rs2];
-            ps1_valid = valid[rs1];
-            ps2_valid = (decode_info.opcode == op_b_imm || decode_info.opcode == op_b_lui) ? '1 : valid[rs2];
+            ps1 = (decode_info.opcode == op_b_jal) ? '0 : rat[rs1];
+            ps2 = (decode_info.opcode inside {op_b_imm, op_b_lui, op_b_jal, op_b_jalr}) ? rat[rs1] : rat[rs2];
+            ps1_valid = (decode_info.opcode == op_b_jal) ? 1'b1 : valid[rs1];
+            ps2_valid = (decode_info.opcode inside {op_b_imm, op_b_lui, op_b_jal, op_b_jalr}) ? '1 : valid[rs2];
         end
 
         valid_next[0] = 1'b1;
