@@ -118,6 +118,7 @@ import rv32i_types::*;
     logic           global_branch_signal, global_branch_signal_reg;
     logic   [31:0]  global_branch_addr;
 
+    logic   [5:0]  rrat[32];
 
     always_ff @(posedge clk) begin
 
@@ -278,7 +279,9 @@ import rv32i_types::*;
         .ps2_valid(ps2_valid),
         .regf_we_dispatch(regf_we_dispatch),
         .regf_we_add(cdb_add.valid), .regf_we_mul(cdb_mul.valid), .regf_we_div(cdb_div.valid), .regf_we_br(cdb_br.valid),
-        .decode_info(decode_info)
+        .decode_info(decode_info),
+        .global_branch_signal(global_branch_signal),
+        .rrat(rrat)
     );
 
     rob rob_i (
@@ -335,6 +338,7 @@ import rv32i_types::*;
         .rob_num(rob_num),
         .full(rob_full),
         .global_branch_signal(global_branch_signal),
+        .global_branch_signal_reg(global_branch_signal_reg),
         .global_branch_addr(global_branch_addr)
     );
     
@@ -345,7 +349,8 @@ import rv32i_types::*;
         .pd(rob_entry.pd),
         .regf_we(rob_valid),
         .enqueue(enqueue),
-        .old_pd(old_pd)
+        .old_pd(old_pd),
+        .rrat_out(rrat)
     );
 
     free_list free_list_i (

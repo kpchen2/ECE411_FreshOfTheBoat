@@ -13,7 +13,9 @@ import rv32i_types::*;
 
     input   logic   regf_we_dispatch,
     input   logic   regf_we_add, regf_we_mul, regf_we_div, regf_we_br,
-    input   decode_info_t   decode_info
+    input   decode_info_t   decode_info,
+    input   logic   global_branch_signal,
+    input   logic   [PHYS_REG_BITS-1:0]     rrat[32]
 );
 
     logic [PHYS_REG_BITS-1:0] rat[32]; // holds mapping from arch register to phys register
@@ -76,6 +78,16 @@ import rv32i_types::*;
         end
 
         valid_next[0] = 1'b1;
+
+        if (global_branch_signal) begin
+            for (int i = 0; i < 32; i++) begin
+                rat_next[i] = rrat[i];
+                valid_next[i] = 1'b1;
+            end
+        end
+
+        // rat_next = global_branch_signal ? rrat : rat_next;
+        // valid_next = global_branch_signal ? '1 : valid_next;
     end
 
     always_ff @(posedge clk) begin

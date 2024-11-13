@@ -65,6 +65,7 @@ import rv32i_types::*;
     output  logic   [$clog2(QUEUE_DEPTH)-1:0]   rob_num,
     output  logic                               full,
     output  logic                               global_branch_signal,
+    input   logic                               global_branch_signal_reg,
     output  logic   [31:0]                      global_branch_addr
 );
 
@@ -239,7 +240,7 @@ import rv32i_types::*;
                 end
             end
 
-            tail_next = global_branch_signal ? head_next : tail_next;
+            tail_next = (global_branch_signal || global_branch_signal_reg) ? head_next : tail_next;
 
             full = (tail_next[ADDR_WIDTH - 1:0] == head_next[ADDR_WIDTH - 1:0]) && (tail_next[ADDR_WIDTH] != head_next[ADDR_WIDTH]);    // logic if queue full
         end
