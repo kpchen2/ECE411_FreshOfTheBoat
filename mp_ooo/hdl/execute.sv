@@ -6,10 +6,12 @@ import rv32i_types::*;
 (
     input   logic           clk,
     input   logic           rst,
-    input   logic   [31:0]  rs1_v_add, rs2_v_add, rs1_v_mul, rs2_v_mul, rs1_v_div, rs2_v_div, rs1_v_br, rs2_v_br,
-    input   decode_info_t   decode_info_add, decode_info_mul, decode_info_div, decode_info_br,
-    input   logic           start_add, start_mul, start_div, start_br,
+    input   logic   [31:0]  rs1_v_add, rs2_v_add, rs1_v_mul, rs2_v_mul, rs1_v_div, rs2_v_div, rs1_v_br, rs2_v_br,rs1_v_mem, rs2_v_mem,
+    input   decode_info_t   decode_info_add, decode_info_mul, decode_info_div, decode_info_br, decode_info_mem,
+    input   logic           start_add, start_mul, start_div, start_br, start_mem,
 
+    input logic [5:0] mem_idx_in,
+    output logic [5:0] mem_idx_out,
     // ADD PORTS
     input   logic   [5:0]   rob_idx_add,
     input   logic   [5:0]   pd_s_add,
@@ -37,18 +39,26 @@ import rv32i_types::*;
     input   logic   [4:0]   rd_s_br,
     output  cdb_t           cdb_br,
     output  logic           busy_br,
+    // input   logic           global_branch_signal,
 
-    input   logic           global_branch_signal
+    // MEM PORTS
+    input   logic   [5:0]   rob_idx_mem,
+    input   logic   [5:0]   pd_s_mem,
+    input   logic   [4:0]   rd_s_mem,
+    output  cdb_t           cdb_mem,
+    output  logic           busy_mem,
+    output logic    [31:0]  store_wdata,
+    output logic    [31:0]  calculated_address
 );
 
-    logic   valid_add, valid_mul, valid_div, valid_br;
+    logic   valid_add, valid_mul, valid_div, valid_br, valid_mem;
     // cdb_t   cdb_add, cdb_mul, cdb_div;
 
-    logic   [5:0]   rob_add_reg, rob_mul_reg, rob_div_reg, rob_br_reg;
-    logic   [5:0]   pd_add_reg, pd_mul_reg, pd_div_reg, pd_br_reg;
-    logic   [4:0]   rd_add_reg, rd_mul_reg, rd_div_reg, rd_br_reg;
+    logic   [5:0]   rob_add_reg, rob_mul_reg, rob_div_reg,  rob_br_reg, rob_mem_reg;
+    logic   [5:0]   pd_add_reg, pd_mul_reg, pd_div_reg,     pd_br_reg, pd_mem_reg;
+    logic   [4:0]   rd_add_reg, rd_mul_reg, rd_div_reg,     rd_br_reg, rd_mem_reg;
 
-    logic   [31:0]  rd_v_add, rd_v_mul, rd_v_div, rd_v_br;
+    logic   [31:0]  rd_v_add, rd_v_mul, rd_v_div, rd_v_br;//, rd_v_mem;
 
     logic           mul_1, mul_2, mul_3, mul_4;
     logic           div_1, div_2, div_3, div_4;
@@ -69,6 +79,9 @@ import rv32i_types::*;
             rob_mul_reg <= '0;
             pd_mul_reg <= '0;
             rd_mul_reg <= '0;
+            rob_mem_reg <= '0;
+            pd_mem_reg <= '0;
+            rd_mem_reg <= '0;
         end else if (start_mul) begin
             rob_mul_reg <= rob_idx_mul;
             pd_mul_reg <= pd_s_mul;
@@ -158,7 +171,22 @@ import rv32i_types::*;
         .pc_branch(pc_branch)
     );
 
-    always_comb begin
+    fu_mem fu_mem_i(
+        .rs1_v(rs1_v_mem), .rs2_v(rs2_v_mem),
+       .decode_info(decode_info_mem),
+        .start(start_mem),
+        .addr_valid(valid_mem),
+        .busy(busy_mem),
+        .mem_addr(calculated_address),
+        .i_imm(decode_info_mem.i_imm),
+        .dispatch_mem_idx(mem_idx_in),
+        .mem_idx_out(mem_idx_out),
+        .store_wdata(store_wdata)
+
+    );
+
+    always_comb 
+    begin
         busy_mul = mul_1 || mul_2 || mul_3 || mul_4;
         busy_div = div_1 || div_2 || div_3 || div_4;
 
@@ -197,6 +225,15 @@ import rv32i_types::*;
         cdb_br.inst = decode_info_br.inst;
         cdb_br.pc_select = pc_select;
         cdb_br.pc_branch = pc_branch;
+
+        cdb_mem.rob_idx = rob_idx_mem;
+        cdb_mem.pd_s = pd_s_mem;
+        cdb_mem.rd_s = rd_s_mem;
+        cdb_mem.rd_v = '0; // 0 for now because we don't know value until we send to cache
+        cdb_mem.valid = valid_mem;
+        cdb_mem.inst = decode_info_mem.inst;
+        cdb_mem.pc_select = pc_select;
+        cdb_mem.pc_branch = pc_branch;
 
         // cdb_add = global_branch_signal ? '0 : cdb_add;
         // cdb_br = global_branch_signal ? '0 : cdb_br;

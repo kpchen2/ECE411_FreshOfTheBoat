@@ -8,7 +8,7 @@ import rv32i_types::*;
     input                   rst,
     input   logic   [31:0]  inst,
     input   logic   [31:0]  prog,
-    input   logic           rob_full, rs_full_add, rs_full_mul, rs_full_div,    // May need to make multiple RS_full flags due to there being multiple stations
+    input   logic           rob_full, rs_full_add, rs_full_mul, rs_full_div,  rs_full_br, rs_full_mem,  // May need to make multiple RS_full flags due to there being multiple stations
 
     input   logic           is_iqueue_empty,
     // to and from free list
@@ -38,7 +38,9 @@ import rv32i_types::*;
     output  logic                           dispatch_regf_we,
     // to and from memory queue
     input   logic   [5:0]   mem_idx_in,
-    output  logic   [5:0]   mem_idx_out
+    output  logic   [5:0]   mem_idx_out,
+    input   logic   [31:0]  global_branch_addr,
+    input   logic           global_branch_signal
 );
 
     // decode_info_t decode_info;

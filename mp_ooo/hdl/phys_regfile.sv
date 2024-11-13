@@ -13,7 +13,7 @@ import rv32i_types::*;
     input   logic   [4:0]   arch_s1_add, arch_s2_add,
     input   logic   [4:0]   arch_s1_br, arch_s2_br,
     input   logic   [4:0]   arch_s1_mem, arch_s2_mem,
-    input   logic   [4:0]   arch_rd_add, arch_rd_mul, arch_rd_div, arch_rd_br
+    input   logic   [4:0]   arch_rd_add, arch_rd_mul, arch_rd_div, arch_rd_br, arch_rd_mem
 );
 
     logic   [31:0]  data [2**PHYS_REG_BITS];

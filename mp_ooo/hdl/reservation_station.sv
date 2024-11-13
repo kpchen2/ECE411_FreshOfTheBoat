@@ -92,11 +92,35 @@ import rv32i_types::*;
         input  logic       regf_we_add,
         input  logic       regf_we_mul,
         input  logic       regf_we_div,
-        input  logic       regf_we_mem
+        input  logic       regf_we_mem,
+        input  logic       regf_we_br,
+        input  logic [5:0]  mem_idx_in,
+        output logic [5:0]  mem_idx_out
+
     );
 
+    logic   regf_we_add_reg, regf_we_mul_reg, regf_we_div_reg, regf_we_br_reg, regf_we_mem_reg;
 
     //actual registers
+    assign mem_idx_out = mem_idx_in;
+    
+    always_ff @(posedge clk) begin
+        if (rst) begin
+            regf_we_add_reg <= '0;
+            regf_we_mul_reg <= '0;
+            regf_we_div_reg <= '0;
+            regf_we_br_reg  <= '0;
+            regf_we_mem_reg <= '0;
+        end else begin
+            regf_we_add_reg <= regf_we_add;
+            regf_we_mul_reg <= regf_we_mul;
+            regf_we_div_reg <= regf_we_div;
+            regf_we_br_reg <= regf_we_br;
+            regf_we_mem_reg <= regf_we_mem;
+
+        end
+    end
+
     add_reservation_station_data add_reservation_station [NUM_ADD_REGISTERS];
     multiply_reservation_station_data multiply_reservation_station [NUM_MULTIPLY_REGISTERS];
     divide_reservation_station_data divide_reservation_station [NUM_DIVIDE_REGISTERS];
@@ -441,7 +465,7 @@ import rv32i_types::*;
                 branch_reservation_station_entry_next.decode_info = decode_info_in;
                 branch_reservation_station_entry_next.ps1_v = ((regf_we_add && cdb_ps_id_add == ps1) || (regf_we_mul && cdb_ps_id_multiply == ps1) || (regf_we_div && cdb_ps_id_divide == ps1) || (regf_we_br && cdb_ps_id_branch == ps1)|| (regf_we_mem && cdb_ps_id_mem == ps1)) ? '1 : dispatch_ps_ready1;
                 branch_reservation_station_entry_next.ps2_v = ((regf_we_add && cdb_ps_id_add == ps2) || (regf_we_mul && cdb_ps_id_multiply == ps2) || (regf_we_div && cdb_ps_id_divide == ps2) || (regf_we_br && cdb_ps_id_branch == ps2)|| (regf_we_mem && cdb_ps_id_mem == ps2)) ? '1 : dispatch_ps_ready2;
-            2 
+            
                 for (int unsigned i = 0; i < NUM_BRANCH_REGISTERS; i++)
                 begin
                     if (~branch_reservation_station[i].busy)
@@ -460,7 +484,7 @@ import rv32i_types::*;
                 mem_reservation_station_entry_next.pd = pd;
                 mem_reservation_station_entry_next.rd = rd;
                 mem_reservation_station_entry_next.rob_entry = rob_entry;
-                mem_reservation_station_entry_next.decode_info = decode_info_in1
+                mem_reservation_station_entry_next.decode_info = decode_info_in;
                 mem_reservation_station_entry_next.ps1_v = ((regf_we_add && cdb_ps_id_add == ps1) || (regf_we_mul && cdb_ps_id_multiply == ps1) || (regf_we_div && cdb_ps_id_divide == ps1) || (regf_we_br && cdb_ps_id_branch == ps1)|| (regf_we_mem && cdb_ps_id_mem == ps1)) ? '1 : dispatch_ps_ready1;
                 mem_reservation_station_entry_next.ps2_v = ((regf_we_add && cdb_ps_id_add == ps2) || (regf_we_mul && cdb_ps_id_multiply == ps2) || (regf_we_div && cdb_ps_id_divide == ps2) || (regf_we_br && cdb_ps_id_branch == ps2)|| (regf_we_mem && cdb_ps_id_mem == ps2)) ? '1 : dispatch_ps_ready2;
                 
