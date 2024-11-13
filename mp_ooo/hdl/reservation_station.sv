@@ -79,7 +79,8 @@ import rv32i_types::*;
         input  logic       regf_we_add,
         input  logic       regf_we_mul,
         input  logic       regf_we_div,
-        input  logic       regf_we_br
+        input  logic       regf_we_br,
+        input  logic       global_branch_signal
     );
 
     logic   regf_we_add_reg, regf_we_mul_reg, regf_we_div_reg;
@@ -284,6 +285,25 @@ import rv32i_types::*;
                     branch_reservation_station[i].ps2_v <= 1'b1;
                 end
             end 
+
+            // if (global_branch_signal) begin
+            //     for (int i = 0 ; i < NUM_ADD_REGISTERS; i ++)
+            //     begin
+            //         add_reservation_station[i] <= '0;
+            //     end
+            //     for (int i = 0 ; i < NUM_MULTIPLY_REGISTERS; i++)
+            //     begin
+            //         multiply_reservation_station[i] <= '0;
+            //     end
+            //     for (int i = 0 ; i < NUM_DIVIDE_REGISTERS; i++)
+            //     begin
+            //         divide_reservation_station[i] <= '0;
+            //     end
+            //     for (int i = 0 ; i < NUM_BRANCH_REGISTERS; i++)
+            //     begin
+            //         branch_reservation_station[i] <= '0;
+            //     end
+            // end
         end
     end
 
