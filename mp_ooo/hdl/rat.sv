@@ -13,7 +13,9 @@ import rv32i_types::*;
 
     input   logic   regf_we_dispatch,
     input   logic   regf_we_add, regf_we_mul, regf_we_div, regf_we_br,
-    input   decode_info_t   decode_info
+    input   decode_info_t   decode_info,
+    input   logic   [PHYS_REG_BITS-1:0] rrat[32],
+    input   logic   global_branch_signal
 );
 
     logic [PHYS_REG_BITS-1:0] rat[32]; // holds mapping from arch register to phys register
@@ -61,6 +63,8 @@ import rv32i_types::*;
             rat_next[rd_dispatch] = (rd_dispatch != '0) ? pd_dispatch : rat_next[rd_dispatch];
             valid_next[rd_dispatch] = 1'b0;
         end
+
+        // rat_next = global_branch_signal ? rrat : rat_next;
 
         // Map arch sources to phys sources
         if (decode_info.inst == 32'h13 || decode_info.inst == 0) begin

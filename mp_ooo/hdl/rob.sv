@@ -168,8 +168,21 @@ import rv32i_types::*;
                 mem[br_rob_idx_in_next].rvfi.monitor_mem_wmask <= monitor_mem_wmask;
                 mem[br_rob_idx_in_next].rvfi.monitor_mem_rdata <= monitor_mem_rdata;
                 mem[br_rob_idx_in_next].rvfi.monitor_mem_wdata <= monitor_mem_wdata;
+                mem[br_rob_idx_in_next].rvfi.monitor_pc_wdata <= global_branch_signal ? global_branch_addr : mem[br_rob_idx_in_next].rvfi.monitor_pc_wdata;
             end
-  
+
+            if (global_branch_signal) begin
+                for (int i = 0; i < QUEUE_DEPTH; i++) begin
+                    mem[i] <= '0;
+                end
+            end
+
+            // if (global_branch_signal) begin
+            //     for (int i = 0; i < QUEUE_DEPTH; i++) begin
+            //         mem[i] <= '0;
+            //     end
+            // end
+
             tail_reg <= tail_next;
             head_reg <= head_next;
         end
@@ -240,7 +253,7 @@ import rv32i_types::*;
                     enqueue_mem_next = mem[tail_reg[ADDR_WIDTH - 1:0]+1'b1];
                 end
             end
-            tail_next = global_branch_signal ? head_next : tail_next;
+            tail_next = global_branch_signal ? (head_next) : tail_next;
 
             full = (tail_next[ADDR_WIDTH - 1:0] == head_next[ADDR_WIDTH - 1:0]) && (tail_next[ADDR_WIDTH] != head_next[ADDR_WIDTH]);    // logic if queue full
         end

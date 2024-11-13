@@ -115,8 +115,10 @@ import rv32i_types::*;
     logic  [31:0]                    dispatch_inst;
     logic                            dispatch_regf_we;
 
-    logic           global_branch_signal;
+    logic           global_branch_signal, global_branch_signal_reg;
     logic   [31:0]  global_branch_addr;
+
+    logic   [5:0]   rrat[32];
 
 
     always_ff @(posedge clk) begin
@@ -129,11 +131,13 @@ import rv32i_types::*;
             initial_flag_reg <= '1;
             dfp_read_reg <= '0;
             order  <= '0;
+            global_branch_signal_reg <= '0;
         end else begin
             pc <= pc_next;
             initial_flag_reg <= initial_flag;
             dfp_read_reg <= dfp_read;
             order <= order_next;
+            global_branch_signal_reg <= global_branch_signal;
         end
     end
 
@@ -164,6 +168,7 @@ import rv32i_types::*;
                 end
             end
             pc_next = global_branch_signal ? global_branch_addr : pc_next;
+            // ufp_rmask = global_branch_signal ? '0 : ufp_rmask;
         end
     end
     
@@ -171,7 +176,7 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
 
-        .ufp_addr(global_branch_signal ? global_branch_addr - 4 : pc),
+        .ufp_addr(pc),
         .ufp_rmask(ufp_rmask),
         .ufp_wmask('0),             // FILL WHEN WE WANT TO WRITE
         .ufp_rdata(ufp_rdata),
@@ -200,7 +205,7 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
         .wdata_in(ufp_rdata),
-        .enqueue_in(ufp_resp),
+        .enqueue_in(global_branch_signal_reg ? '0 : ufp_resp),
         .rdata_out(inst),
         .dequeue_in(dequeue),
         .full_out(full_stall),
@@ -213,7 +218,7 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
         .wdata_in(pc),
-        .enqueue_in(ufp_resp),
+        .enqueue_in(global_branch_signal_reg ? '0 : ufp_resp),
         .rdata_out(prog),
         .dequeue_in(dequeue),
         .full_out(full_garbage),
@@ -257,7 +262,10 @@ import rv32i_types::*;
         .dispatch_rs1_s(dispatch_rs1_s),
         .dispatch_rs2_s(dispatch_rs2_s),
         .dispatch_inst(dispatch_inst),
-        .dispatch_regf_we(dispatch_regf_we)
+        .dispatch_regf_we(dispatch_regf_we),
+
+        .global_branch_addr(global_branch_addr),
+        .global_branch_signal(global_branch_signal)
     );
 
     rat rat_i (
@@ -274,7 +282,9 @@ import rv32i_types::*;
         .ps2_valid(ps2_valid),
         .regf_we_dispatch(regf_we_dispatch),
         .regf_we_add(cdb_add.valid), .regf_we_mul(cdb_mul.valid), .regf_we_div(cdb_div.valid), .regf_we_br(cdb_br.valid),
-        .decode_info(decode_info)
+        .decode_info(decode_info),
+        .rrat(rrat),
+        .global_branch_signal(global_branch_signal)
     );
 
     rob rob_i (
@@ -342,7 +352,8 @@ import rv32i_types::*;
         .pd(rob_entry.pd),
         .regf_we(rob_valid),
         .enqueue(enqueue),
-        .old_pd(old_pd)
+        .old_pd(old_pd),
+        .rrat_out(rrat)
     );
 
     free_list free_list_i (

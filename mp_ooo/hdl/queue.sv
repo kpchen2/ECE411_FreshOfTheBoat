@@ -52,12 +52,18 @@ import rv32i_types::*;
             end
 
         end else begin
-            if (enqueue_next) begin
-                mem[tail_next[$clog2(QUEUE_DEPTH) - 1:0]] <= enqueue_mem_next;
-            end
-            
-            if (dequeue_next) begin
-                mem[head_next[$clog2(QUEUE_DEPTH) - 1:0]] <= dequeue_mem_next;
+            if (global_branch_signal) begin
+                for (int i = 0; i < QUEUE_DEPTH; i++) begin
+                    mem[i] <= '0;
+                end
+            end else begin
+                if (enqueue_next) begin
+                    mem[tail_next[$clog2(QUEUE_DEPTH) - 1:0]] <= enqueue_mem_next;
+                end
+                
+                if (dequeue_next) begin
+                    mem[head_next[$clog2(QUEUE_DEPTH) - 1:0]] <= dequeue_mem_next;
+                end
             end
 
             tail_reg <= tail_next;
