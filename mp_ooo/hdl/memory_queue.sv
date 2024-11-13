@@ -141,7 +141,7 @@ import rv32i_types::*;
             if (mem[head_reg[5:0]+1'b1].valid == 1'b1 && mem[head_reg[5:0]+1'b1].addr_ready == 1'b1 ) begin
                 d_addr = mem[head_reg[5:0]+1'b1].addr;
                 
-                if (opcode == op_b_load) begin
+                if (mem[head_reg[5:0]+1'b1].opcode == op_b_load) begin
                     d_rmask = '1;
                 end else if (mem[head_reg[5:0]+1'b1].rob_num == commited_rob) begin
                     d_wmask = '1;
