@@ -63,6 +63,7 @@ import rv32i_types::*;
 
     // other output
     output  logic   [$clog2(QUEUE_DEPTH)-1:0]   rob_num,
+    output  logic   [$clog2(QUEUE_DEPTH)-1:0]   rob_head,
     output  logic                               full,
 
     // branch signals
@@ -204,6 +205,7 @@ import rv32i_types::*;
         br_rob_idx_in_next = br_rob_idx_in;
 
         rob_num = tail_reg[5:0] + 1'b1;
+        rob_head = head_reg[5:0] + 1'b1;
         full = '0;
         dequeue_valid = '0;
 

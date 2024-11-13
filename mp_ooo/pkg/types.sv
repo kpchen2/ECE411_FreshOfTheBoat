@@ -151,12 +151,13 @@ package rv32i_types;
     } rob_entry_t;
     
     typedef struct packed {
-        logic valid;
-        logic ready;
-        logic [31:0] addr;
-        logic [6:0] opcode;
-        logic [5:0] pd_s;
-        logic [5:0] rob_num;
+        logic           valid;
+        logic           addr_ready;
+        logic   [31:0]  addr;
+        logic   [6:0]   opcode;
+        logic   [5:0]   pd_s;
+        logic   [5:0]   rob_num;
+        logic   [31:0]  store_wdata;
     } lsq_entry_t;
     
     typedef struct packed {

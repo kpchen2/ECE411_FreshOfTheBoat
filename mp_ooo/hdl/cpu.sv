@@ -64,7 +64,7 @@ import rv32i_types::*;
     logic   [5:0]   pd_dispatch, ps1, ps2;
     logic           ps1_valid, ps2_valid;
     logic           regf_we_dispatch;
-    logic   [5:0]   rob_num, rob_num_out;
+    logic   [5:0]   rob_num, rob_num_out, rob_head;
     logic   [4:0]   rd_rob;
     logic   [5:0]   pd_rob;
     logic           rob_valid;
@@ -138,11 +138,13 @@ import rv32i_types::*;
     logic  [4:0]                     dispatch_rs2_s;
     logic  [31:0]                    dispatch_inst;
     logic                            dispatch_regf_we;
-     
-    assign mem_addr = '0;   
-    assign load_rmask = '0; 
-    assign store_wmask = '0;
-    assign store_wdata = '0;
+ 
+    logic   [5:0]   queue_mem_idx, dispatch_mem_idx;
+    
+    // assign mem_addr = '0;   
+    // assign load_rmask = '0; 
+    // assign store_wmask = '0;
+    // assign store_wdata = '0;
      // do this for now, NEED RELEVANT MEM DATA LATER
 
     logic           global_branch_signal, global_branch_signal_reg;
@@ -239,33 +241,31 @@ import rv32i_types::*;
         .dfp_resp(d_dfp_resp)           // CONNECT TO BMEM
     );
 
-    // memory_queue memory_queue_i (
-    //     .clk(clk),
-    //     .rst(rst),
-    //     .opcode(),
-    //     .phys_reg_in(),
-    //     .enqueue_valid(),
-    //     .rob_num(),
-    //     .addr(),
-    //     .addr_valid(),
-    //     .mem_idx_in(),
-    //     .commited_rob(),
-    //     .commited_rob_valid(),
-    //     .data_in(),
-    //     .data_valid(),
-    //     .rd_v(),
+    memory_queue memory_queue_i (
+        .clk(clk),
+        .rst(rst),
+        .opcode(decode_info.opcode),
+        .phys_reg_in(pd_dispatch),          // FROM RENAME DISPATCH
+        .enqueue_valid(regf_we_dispatch),   // FROM RENAME DISPATCH
+        .rob_num(rob_num),
+        .addr(),                    // FROM ADDER
+        .addr_valid(),              // FROM ADDER
+        .mem_idx_in(),              // FROM ADDER
+        .store_wdata(),             // FROM ADDER/REGFILE
+        .commited_rob(rob_head),    // FROM ROB (ROB HEAD)
+        .data_in(load_rdata),
+        .data_valid(d_ufp_resp),
         
-    //     .phys_reg_out(),
-    //     .output_valid(),
-    //     .data_out(),
-    //     .full(),
-    //     .mem_idx_out(),
-    //     .d_addr(),
-    //     .d_rmask(),
-    //     .d_wmask(),
-    //     .d_wdata(),
-    //     .rd_s()
-    // );
+        .phys_reg_out(),    // OUTPUT SOMEWHERE
+        .output_valid(),    // OUTPUT SOMEWHERE
+        .data_out(),        // OUTPUT SOMEWHERE
+        .full(),
+        .mem_idx_out(queue_mem_idx),     // OUTPUT TO RENAME DISPATCH
+        .d_addr(mem_addr),
+        .d_rmask(load_rmask),
+        .d_wmask(store_wmask),
+        .d_wdata(store_wdata)
+    );
 
     cache_arbiter arbiter (
         .clk(clk),
@@ -368,9 +368,8 @@ import rv32i_types::*;
         .dispatch_rs2_s(dispatch_rs2_s),
         .dispatch_inst(dispatch_inst),
         .dispatch_regf_we(dispatch_regf_we),
-
-        .global_branch_addr(global_branch_addr),
-        .global_branch_signal(global_branch_signal)
+        .mem_idx_in(queue_mem_idx),
+        .mem_idx_out(dispatch_mem_idx)          // PROPAGATE THIS INTO MEM ADDER
     );
 
     rat rat_i (
@@ -445,9 +444,8 @@ import rv32i_types::*;
         .rob_out(rob_entry),
         .dequeue_valid(rob_valid),
         .rob_num(rob_num),
-        .full(rob_full),
-        .global_branch_addr(global_branch_addr),
-        .global_branch_signal(global_branch_signal)
+        .rob_head(rob_head),
+        .full(rob_full)
     );
     
     rrat rrat_i (
@@ -516,8 +514,7 @@ import rv32i_types::*;
         .global_branch_signal(global_branch_signal)
     );
 
-    reservation_station reservation_stations_i
-    (
+    reservation_station reservation_stations_i (
         .clk(clk),
         .rst(rst),
         .dispatch_valid(regf_we_dispatch),
