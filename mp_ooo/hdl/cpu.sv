@@ -128,7 +128,7 @@ import rv32i_types::*;
     logic  [31:0]                    dispatch_inst;
     logic                            dispatch_regf_we;
 
-    logic   [5:0]   queue_mem_idx;
+    logic   [5:0]   queue_mem_idx, dispatch_mem_idx;
     
     // assign mem_addr = '0;   
     // assign load_rmask = '0; 

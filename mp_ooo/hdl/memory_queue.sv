@@ -93,7 +93,7 @@ import rv32i_types::*;
             if (addr_valid_next) begin
                 mem[mem_idx_in_next].addr_ready <= 1'b1; 
                 mem[mem_idx_in_next].addr <= addr_next;
-                mem[mem_idx_in_next].store_wdata = store_wdata;
+                mem[mem_idx_in_next].store_wdata <= store_wdata;
             end
   
             tail_reg <= tail_next;
