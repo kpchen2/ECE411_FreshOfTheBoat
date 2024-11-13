@@ -360,7 +360,8 @@ import rv32i_types::*;
         .enqueue_in(enqueue),
         .rdata_out(phys_reg),
         .dequeue_in(dequeue),
-        .empty_out(is_free_list_empty)
+        .empty_out(is_free_list_empty),
+        .global_branch_signal(global_branch_signal)
     );
 
     phys_regfile phys_regfile_i (
@@ -403,7 +404,8 @@ import rv32i_types::*;
         .rob_idx_br(branch_rob_entry),
         .pd_s_br(branch_pd),
         .rd_s_br(branch_rd),
-        .cdb_br(cdb_br)
+        .cdb_br(cdb_br),
+        .global_branch_signal(global_branch_signal)
     );
 
     reservation_station reservation_stations_i

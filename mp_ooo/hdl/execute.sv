@@ -36,7 +36,9 @@ import rv32i_types::*;
     input   logic   [5:0]   pd_s_br,
     input   logic   [4:0]   rd_s_br,
     output  cdb_t           cdb_br,
-    output  logic           busy_br
+    output  logic           busy_br,
+
+    input   logic           global_branch_signal
 );
 
     logic   valid_add, valid_mul, valid_div, valid_br;
@@ -129,7 +131,8 @@ import rv32i_types::*;
         .rd_v(rd_v_mul),
         .start(start_mul),
         .valid(valid_mul),
-        .hold(mul_1 || mul_2 || mul_3 || mul_4)
+        .hold(mul_1 || mul_2 || mul_3 || mul_4),
+        .global_branch_signal(global_branch_signal)
     );
 
     fu_div_rem fu_div_i (
@@ -141,7 +144,8 @@ import rv32i_types::*;
         .rd_v(rd_v_div),
         .start(start_div),
         .valid(valid_div),
-        .hold(div_1 || div_2 || div_3 || div_4)
+        .hold(div_1 || div_2 || div_3 || div_4),
+        .global_branch_signal(global_branch_signal)
     );
 
     fu_br fu_br_i (
