@@ -239,6 +239,8 @@ import rv32i_types::*;
                 end
             end
 
+            tail_next = global_branch_signal ? head_next : tail_next;
+
             full = (tail_next[ADDR_WIDTH - 1:0] == head_next[ADDR_WIDTH - 1:0]) && (tail_next[ADDR_WIDTH] != head_next[ADDR_WIDTH]);    // logic if queue full
         end
     end
