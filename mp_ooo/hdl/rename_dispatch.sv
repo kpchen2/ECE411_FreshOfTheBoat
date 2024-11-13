@@ -8,7 +8,7 @@ import rv32i_types::*;
     input                   rst,
     input   logic   [31:0]  inst,
     input   logic   [31:0]  prog,
-    input   logic           rob_full, rs_full_add, rs_full_mul, rs_full_div, // May need to make multiple RS_full flags due to there being multiple stations
+    input   logic           rob_full, rs_full_add, rs_full_mul, rs_full_div, rs_full_br, // May need to make multiple RS_full flags due to there being multiple stations
 
     input   logic           is_iqueue_empty,
     // to and from free list
@@ -35,7 +35,9 @@ import rv32i_types::*;
     output  logic   [4:0]                   dispatch_rs1_s,    
     output  logic   [4:0]                   dispatch_rs2_s,    
     output  logic   [31:0]                  dispatch_inst,     
-    output  logic                           dispatch_regf_we  
+    output  logic                           dispatch_regf_we,
+    input   logic                           global_branch_signal,
+    input   logic   [31:0]                  global_branch_addr
 );
 
     // decode_info_t decode_info;
@@ -83,10 +85,12 @@ import rv32i_types::*;
             rs_signal = 2'b01;
         end else if (inst[6:0] == op_b_reg && inst[31:25] == 7'b0000001 && (inst[14:12] == mult_div_f3_div || inst[14:12] == mult_div_f3_divu || inst[14:12] == mult_div_f3_rem || inst[14:12] == mult_div_f3_remu)) begin
             rs_signal = 2'b10;
+        end else if (inst[6:0] inside {op_b_jal, op_b_jalr, op_b_br}) begin
+            rs_signal = 2'b11;
         end
 
         // if free list empty, instruction queue empty, ROB full, corresponding RS full, don't process instruction
-        if (!is_free_list_empty_reg && !is_iqueue_empty_reg && !rob_full_reg && !((rs_full_add && (rs_signal == 2'b00)) || (rs_full_mul && (rs_signal == 2'b01)) || (rs_full_div && (rs_signal == 2'b10)))) begin
+        if (!is_free_list_empty_reg && !is_iqueue_empty_reg && !rob_full_reg && !((rs_full_add && (rs_signal == 2'b00)) || (rs_full_mul && (rs_signal == 2'b01)) || (rs_full_div && (rs_signal == 2'b10)) || (rs_full_br && (rs_signal == 2'b11)))) begin
         // if (!is_free_list_empty && !is_iqueue_empty && !rob_full && !rs_full_add && !rs_full_mul && !rs_full_div) begin
             dequeue = 1'b1;
             decode_info.funct3 = inst[14:12];
@@ -103,21 +107,22 @@ import rv32i_types::*;
             decode_info.inst   = inst;
             regf_we = 1'b1;
             order_next = order + 64'd1;
-            rd = decode_info.rd_s;
+            rd = (inst[6:0] == op_b_br) ? '0 : decode_info.rd_s;
             rs1 = decode_info.rs1_s;
             rs2 = decode_info.rs2_s;
 
             dispatch_inst = inst;
-            dispatch_pc_rdata = prog;
+            dispatch_pc_rdata = prog - 4;
             dispatch_order = order;
-            dispatch_pc_wdata = prog + 32'd4;
+            dispatch_pc_wdata = global_branch_signal ? global_branch_addr : prog;
             dispatch_rs1_s = inst[19:15];
             dispatch_rs2_s = inst[24:20];
             dispatch_regf_we = regf_we;
 
+            decode_info.pc = prog - 4;
         end
 
-        pd = phys_reg;
+        pd = (inst[6:0] == op_b_br) ? '0 : phys_reg;
     end
 
 endmodule : rename_dispatch
