@@ -87,7 +87,7 @@ import rv32i_types::*;
     logic [4:0] divide_rd;
     logic [4:0] branch_rd;
 
-    logic   [1:0]   rs_signal;
+    logic   [2:0]   rs_signal;
 
     logic           rs_add_full, rs_mul_full, rs_div_full, rs_br_full;
 
@@ -115,7 +115,7 @@ import rv32i_types::*;
     logic  [31:0]                    dispatch_inst;
     logic                            dispatch_regf_we;
 
-    logic           global_branch_signal;
+    logic           global_branch_signal, global_branch_signal_reg;
     logic   [31:0]  global_branch_addr;
 
 
@@ -129,11 +129,13 @@ import rv32i_types::*;
             initial_flag_reg <= '1;
             dfp_read_reg <= '0;
             order  <= '0;
+            global_branch_signal_reg <= '0;
         end else begin
             pc <= pc_next;
             initial_flag_reg <= initial_flag;
             dfp_read_reg <= dfp_read;
             order <= order_next;
+            global_branch_signal_reg <= global_branch_signal;
         end
     end
 
@@ -200,7 +202,7 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
         .wdata_in(ufp_rdata),
-        .enqueue_in(ufp_resp),
+        .enqueue_in((global_branch_signal || global_branch_signal_reg) ? '0 : ufp_resp),
         .rdata_out(inst),
         .dequeue_in(dequeue),
         .full_out(full_stall),
@@ -213,7 +215,7 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
         .wdata_in(pc),
-        .enqueue_in(ufp_resp),
+        .enqueue_in((global_branch_signal || global_branch_signal_reg) ? '0 : ufp_resp),
         .rdata_out(prog),
         .dequeue_in(dequeue),
         .full_out(full_garbage),
