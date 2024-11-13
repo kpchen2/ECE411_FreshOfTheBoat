@@ -171,12 +171,6 @@ import rv32i_types::*;
                 mem[br_rob_idx_in_next].rvfi.monitor_pc_wdata <= global_branch_signal ? global_branch_addr : mem[br_rob_idx_in_next].rvfi.monitor_pc_wdata;
             end
 
-            if (global_branch_signal) begin
-                for (int i = 0; i < QUEUE_DEPTH; i++) begin
-                    mem[i] <= '0;
-                end
-            end
-
             // if (global_branch_signal) begin
             //     for (int i = 0; i < QUEUE_DEPTH; i++) begin
             //         mem[i] <= '0;
