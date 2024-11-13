@@ -12,6 +12,7 @@ import rv32i_types::*;
     output  logic   [31:0]  rs1_v_add, rs2_v_add, rs1_v_mul, rs2_v_mul, rs1_v_div, rs2_v_div, rs1_v_mem, rs2_v_mem, rs1_v_br, rs2_v_br,
     input   logic   [4:0]   arch_s1_add, arch_s2_add,
     input   logic   [4:0]   arch_s1_br, arch_s2_br,
+    input   logic   [4:0]   arch_s1_mem, arch_s2_mem,
     input   logic   [4:0]   arch_rd_add, arch_rd_mul, arch_rd_div, arch_rd_br
 );
 
@@ -30,6 +31,10 @@ import rv32i_types::*;
 
         if (!rst && (regf_we_mul && (rd_mul != 0))) begin
             data[rd_mul] <= (arch_rd_mul != 0) ? rd_v_mul : '0;
+        end
+
+        if (!rst && (regf_we_mem && (rd_mem != 0))) begin
+            data[rd_mem] <= (arch_rd_mem != 0) ? rd_v_mem : '0;
         end
 
         if (!rst && (regf_we_div && (rd_div != 0))) begin
@@ -107,6 +112,9 @@ import rv32i_types::*;
 
         rs1_v_add = (arch_s1_add != 0) ? data[rs1_add] : '0;
         rs2_v_add = (arch_s2_add != 0) ? data[rs2_add] : '0;
+
+        rs1_v_mem = (arch_s1_mem != 0) ? data[rs1_mem] : '0;
+        rs2_v_mem = (arch_s2_mem != 0) ? data[rs2_mem] : '0;
 
         rs1_v_br = (arch_s1_br != 0) ? data[rs1_br] : '0;
         rs2_v_br = (arch_s2_br != 0) ? data[rs2_br] : '0;
