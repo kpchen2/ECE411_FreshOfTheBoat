@@ -108,9 +108,9 @@ import rv32i_types::*;
             rs2 = decode_info.rs2_s;
 
             dispatch_inst = inst;
-            dispatch_pc_rdata = prog;
+            dispatch_pc_rdata = prog - 32'd4;
             dispatch_order = order;
-            dispatch_pc_wdata = prog + 32'd4;
+            dispatch_pc_wdata = prog;
             dispatch_rs1_s = inst[19:15];
             dispatch_rs2_s = inst[24:20];
             dispatch_regf_we = regf_we;
