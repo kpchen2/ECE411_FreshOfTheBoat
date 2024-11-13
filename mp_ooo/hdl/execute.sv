@@ -45,7 +45,8 @@ import rv32i_types::*;
     input   logic   [5:0]   rob_idx_mem,
     input   logic   [5:0]   pd_s_mem,
     input   logic   [4:0]   rd_s_mem,
-    output  cdb_t           cdb_mem,
+    // output  cdb_t           cdb_mem,
+    output  logic           addr_valid,
     output  logic           busy_mem,
     output logic    [31:0]  store_wdata,
     output logic    [31:0]  calculated_address
@@ -226,14 +227,15 @@ import rv32i_types::*;
         cdb_br.pc_select = pc_select;
         cdb_br.pc_branch = pc_branch;
 
-        cdb_mem.rob_idx = rob_idx_mem;
-        cdb_mem.pd_s = pd_s_mem;
-        cdb_mem.rd_s = rd_s_mem;
-        cdb_mem.rd_v = '0; // 0 for now because we don't know value until we send to cache
-        cdb_mem.valid = valid_mem;
-        cdb_mem.inst = decode_info_mem.inst;
-        cdb_mem.pc_select = pc_select;
-        cdb_mem.pc_branch = pc_branch;
+        // cdb_mem.rob_idx = rob_idx_mem;
+        // cdb_mem.pd_s = pd_s_mem;
+        // cdb_mem.rd_s = rd_s_mem;
+        // cdb_mem.rd_v = '0; // 0 for now because we don't know value until we send to cache
+        // cdb_mem.valid = valid_mem;
+        // cdb_mem.inst = decode_info_mem.inst;
+        // cdb_mem.pc_select = pc_select;
+        // cdb_mem.pc_branch = pc_branch;
+        addr_valid = valid_mem;
 
         // cdb_add = global_branch_signal ? '0 : cdb_add;
         // cdb_br = global_branch_signal ? '0 : cdb_br;

@@ -85,30 +85,29 @@ import rv32i_types::*;
     decode_info_t mem_decode_info;
     decode_info_t branch_decode_info;
     
-    logic    add_fu_ready;
-    logic multiply_fu_ready;
-    logic divide_fu_ready;
-    logic mem_fu_ready;
-    logic branch_fu_ready;
+    logic   add_fu_ready;
+    logic   multiply_fu_ready;
+    logic   divide_fu_ready;
+    logic   mem_fu_ready;
+    logic   branch_fu_ready;
 
-    logic [5:0] add_rob_entry;
-    logic [5:0] multiply_rob_entry;
-    logic [5:0] divide_rob_entry;
-    logic [5:0] mem_rob_entry;
-    logic [5:0] branch_rob_entry; 
+    logic   [5:0]   add_rob_entry;
+    logic   [5:0]   multiply_rob_entry;
+    logic   [5:0]   divide_rob_entry;
+    logic   [5:0]   mem_rob_entry;
+    logic   [5:0]   branch_rob_entry; 
 
-    logic [5:0] add_pd;
-    logic [5:0] multiply_pd;
-    logic [5:0] divide_pd;
-    logic [5:0] mem_pd;
-    logic [5:0] branch_pd;
+    logic   [5:0]   add_pd;
+    logic   [5:0]   multiply_pd;
+    logic   [5:0]   divide_pd;
+    logic   [5:0]   mem_pd;
+    logic   [5:0]   branch_pd;
 
-    logic [4:0] add_rd;
-    logic [4:0] multiply_rd;
-    logic [4:0] divide_rd;
-    logic [4:0] branch_rd;
-    logic [4:0] mem_rd;
-
+    logic   [4:0]   add_rd;
+    logic   [4:0]   multiply_rd;
+    logic   [4:0]   divide_rd;
+    logic   [4:0]   branch_rd;
+    logic   [4:0]   mem_rd;
 
     logic   [2:0]   rs_signal;
 
@@ -128,7 +127,6 @@ import rv32i_types::*;
 
     logic full_garbage;
     logic empty_garbage;
-
     
     logic [31:0] prog;
 
@@ -142,7 +140,7 @@ import rv32i_types::*;
 
     logic   [5:0]   queue_mem_idx, dispatch_mem_idx;
 
-    logic           mem_output_valid;
+    // logic           mem_output_valid;
     logic   [5:0]   mem_rob_idx_in;
     logic   [5:0]   res_dispatch_mem_idx, fu_mem_idx;
     // assign mem_addr = '0;   
@@ -150,12 +148,14 @@ import rv32i_types::*;
     // assign store_wmask = '0;
     // assign store_wdata = '0;
     logic [31:0]    calculated_address;
-     // do this for now, NEED RELEVANT MEM DATA LATER
+    // do this for now, NEED RELEVANT MEM DATA LATER
 
     logic           global_branch_signal, global_branch_signal_reg;
     logic   [31:0]  global_branch_addr;
 
     logic   [5:0]   rrat[32];
+    logic           mem_queue_full;
+
     assign global_branch_signal = cdb_br.pc_select;
     assign global_branch_addr = cdb_br.pc_branch;
 
@@ -185,7 +185,6 @@ import rv32i_types::*;
             initial_flag = '1;
             ufp_rmask = '0;
             // bmem_read = '0;
-            
 
         end else begin
             // bmem_read = (!dfp_read_reg && dfp_read) ? '1 : '0;          // bmem_read high on rising dfp_read edge (DOESN'T MATCH TIMING DIAGRAM)
@@ -255,18 +254,18 @@ import rv32i_types::*;
         .phys_reg_in(pd_dispatch),          // FROM RENAME DISPATCH
         .enqueue_valid(regf_we_dispatch),   // FROM RENAME DISPATCH
         .rob_num(rob_num),
-        .addr(calculated_address),                            // FROM ADDER
-        .addr_valid(cdb_mem.valid),                      // FROM ADDER
-        .mem_idx_in(fu_mem_idx),                      // FROM ADDER
-        .store_wdata(fu_mem_store_wdata),                     // FROM ADDER/REGFILE
+        .addr(calculated_address),          // FROM ADDER
+        .addr_valid(addr_valid),            // FROM ADDER
+        .mem_idx_in(fu_mem_idx),            // FROM ADDER
+        .store_wdata(fu_mem_store_wdata),   // FROM ADDER/REGFILE
         .commited_rob(rob_head),
         .data_in(load_rdata),
         .data_valid(d_ufp_resp),
         
-        .phys_reg_out(),                    // OUTPUT SOMEWHERE
-        .output_valid(mem_output_valid),    // OUTPUT SOMEWHERE
-        .data_out(),                        // OUTPUT SOMEWHERE
-        .full(),
+        .phys_reg_out(cdb_mem.pd_s),        // OUTPUT RD_S
+        .output_valid(cdb_mem.valid),       // OUTPUT SOMEWHERE
+        .data_out(cdb_mem.rd_v),            // OUTPUT RD_V
+        .full(mem_queue_full),
         .mem_idx_out(queue_mem_idx),        // OUTPUT TO RENAME DISPATCH
         .d_addr(mem_addr),
         .d_rmask(load_rmask),
@@ -462,7 +461,7 @@ import rv32i_types::*;
         .rob_head(rob_head),
         .full(rob_full),
 
-        .mem_output_valid(mem_output_valid),
+        .mem_output_valid(cdb_mem.valid),
         .mem_rob_idx_in(mem_rob_idx_in)
     );
     
@@ -503,7 +502,6 @@ import rv32i_types::*;
     );
 
     logic   start_add, start_mul, start_div, start_br , start_mem;
-
     logic   busy_add, busy_mul, busy_div, busy_br, busy_mem;
 
     execute execute_i (
@@ -511,7 +509,7 @@ import rv32i_types::*;
         .rst(rst),
         .rs1_v_add(rs1_v_add), .rs2_v_add(rs2_v_add), .rs1_v_mul(rs1_v_mul), .rs2_v_mul(rs2_v_mul), .rs1_v_div(rs1_v_div), .rs2_v_div(rs2_v_div), .rs1_v_br(rs1_v_br), .rs2_v_br(rs2_v_br), .rs1_v_mem(rs1_v_mem), .rs2_v_mem(rs2_v_mem),
         .decode_info_add(add_decode_info), .decode_info_mul(multiply_decode_info), .decode_info_div(divide_decode_info), .decode_info_br(branch_decode_info), .decode_info_mem(mem_decode_info),
-        .start_add(start_add), .start_mul(start_mul), .start_div(start_div), .start_br(start_br) , .start_mem(start_mem),
+        .start_add(start_add), .start_mul(start_mul), .start_div(start_div), .start_br(start_br), .start_mem(start_mem),
         .busy_add(busy_add), .busy_mul(busy_mul), .busy_div(busy_div), .busy_br(busy_br), .busy_mem(busy_mem),
         .rob_idx_add(add_rob_entry),
         .pd_s_add(add_pd),
@@ -532,7 +530,8 @@ import rv32i_types::*;
         .rob_idx_mem(mem_rob_entry),
         .pd_s_mem(mem_pd),
         .rd_s_mem(mem_rd),
-        .cdb_mem(cdb_mem),
+        // .cdb_mem(cdb_mem),
+        .addr_valid(addr_valid),
         // .global_branch_signal(global_branch_signal),
         .mem_idx_in(res_dispatch_mem_idx),
         .mem_idx_out(fu_mem_idx),
