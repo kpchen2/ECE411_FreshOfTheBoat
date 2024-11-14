@@ -256,7 +256,7 @@ import rv32i_types::*;
         .dfp_write(dfp_write),
         .dfp_rdata(cache_wdata),
         .dfp_wdata(dfp_wdata),      // FILL WHEN WE WANT TO WRITE
-        .dfp_resp(cache_valid)
+        .dfp_resp(dfp_resp)
     );
 
     cache cache_d (

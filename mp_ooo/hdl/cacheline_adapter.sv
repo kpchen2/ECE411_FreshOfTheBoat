@@ -89,8 +89,6 @@ import rv32i_types::*;
         endcase    
     end
 
-    
-
     always_comb begin
         if (rst || !bmem_rvalid) begin
             cache_wdata = '0;
