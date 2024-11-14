@@ -186,6 +186,8 @@ import rv32i_types::*;
     /* valid address for load store queue */
     logic           addr_valid;
 
+    logic   [31:0]  fu_rs1_v_mem, fu_rs2_v_mem;
+
     assign global_branch_signal = cdb_br.pc_select;
     assign global_branch_addr = cdb_br.pc_branch;
 
@@ -290,6 +292,8 @@ import rv32i_types::*;
         .addr_valid(addr_valid),            // FROM ADDER
         .mem_idx_in(fu_mem_idx),            // FROM ADDER
         .store_wdata(fu_mem_store_wdata),   // FROM ADDER/REGFILE
+        .rs1_rdata(fu_rs1_v_mem),
+        .rs2_rdata(fu_rs2_v_mem),
         .commited_rob(rob_head),
         .data_in(load_rdata),
         .data_valid(d_ufp_resp),
@@ -480,15 +484,15 @@ import rv32i_types::*;
         .branch_pc_branch(cdb_br.pc_branch),
         .branch_pc_select(cdb_br.pc_select),
 
-        .mem_rs1_rdata(rs1_v_mem),
-        .mem_rs2_rdata(rs2_v_mem),
+        .mem_rs1_rdata(cdb_mem.rs1_rdata),
+        .mem_rs2_rdata(cdb_mem.rs2_rdata),
         .mem_rd_wdata(cdb_mem.rd_v),
 
-        .monitor_mem_addr(cdb_mem.addr),      // SET
-        .monitor_mem_rmask(cdb_mem.rmask),     // SET
-        .monitor_mem_wmask(cdb_mem.wmask),     // SET
-        .monitor_mem_rdata(cdb_mem.rdata),     // SET
-        .monitor_mem_wdata(cdb_mem.wdata),     // SET
+        .monitor_mem_addr(cdb_mem.addr),
+        .monitor_mem_rmask(cdb_mem.rmask),
+        .monitor_mem_wmask(cdb_mem.wmask),
+        .monitor_mem_rdata(cdb_mem.rdata),
+        .monitor_mem_wdata(cdb_mem.wdata),
         .rob_out(rob_entry),
         .dequeue_valid(rob_valid),
         .rob_num(rob_num),
@@ -570,7 +574,9 @@ import rv32i_types::*;
         .mem_idx_in(res_dispatch_mem_idx),
         .mem_idx_out(fu_mem_idx),
         .store_wdata(fu_mem_store_wdata),
-        .calculated_address(calculated_address)
+        .calculated_address(calculated_address),
+        .fu_rs1_v_mem(fu_rs1_v_mem),
+        .fu_rs2_v_mem(fu_rs2_v_mem)
     );
 
     reservation_station reservation_stations_i (
