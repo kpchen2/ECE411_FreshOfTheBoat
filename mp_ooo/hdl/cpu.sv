@@ -155,6 +155,7 @@ import rv32i_types::*;
 
     logic   [5:0]   rrat[32];
     logic           mem_queue_full;
+    logic           addr_valid;
 
     assign global_branch_signal = cdb_br.pc_select;
     assign global_branch_addr = cdb_br.pc_branch;
@@ -249,11 +250,13 @@ import rv32i_types::*;
     memory_queue memory_queue_i (
         .clk(clk),
         .rst(rst),
+        .inst(dispatch_inst),
         .opcode(decode_info.opcode),
         .funct3(decode_info.funct3),
         .phys_reg_in(pd_dispatch),          // FROM RENAME DISPATCH
         .enqueue_valid(regf_we_dispatch),   // FROM RENAME DISPATCH
         .rob_num(rob_num),
+        .rd_dispatch(rd_dispatch),
         .addr(calculated_address),          // FROM ADDER
         .addr_valid(addr_valid),            // FROM ADDER
         .mem_idx_in(fu_mem_idx),            // FROM ADDER
@@ -262,10 +265,11 @@ import rv32i_types::*;
         .data_in(load_rdata),
         .data_valid(d_ufp_resp),
         
-        .phys_reg_out(cdb_mem.pd_s),        // OUTPUT RD_S
-        .output_valid(cdb_mem.valid),       // OUTPUT SOMEWHERE
-        .data_out(cdb_mem.rd_v),            // OUTPUT RD_V
+        // .phys_reg_out(cdb_mem.pd_s),        // OUTPUT RD_S
+        // .output_valid(cdb_mem.valid),       // OUTPUT SOMEWHERE
+        // .data_out(cdb_mem.rd_v),            // OUTPUT RD_V
         .full(mem_queue_full),
+        .cdb_mem(cdb_mem),
         .mem_idx_out(queue_mem_idx),        // OUTPUT TO RENAME DISPATCH
         .d_addr(mem_addr),
         .d_rmask(load_rmask),
@@ -459,10 +463,10 @@ import rv32i_types::*;
         .dequeue_valid(rob_valid),
         .rob_num(rob_num),
         .rob_head(rob_head),
-        .full(rob_full),
+        .full(rob_full)
 
-        .mem_output_valid(cdb_mem.valid),
-        .mem_rob_idx_in(mem_rob_idx_in)
+        // .mem_output_valid(cdb_mem.valid),
+        // .mem_rob_idx_in(mem_rob_idx_in)
     );
     
     rrat rrat_i (

@@ -39,6 +39,7 @@ import rv32i_types::*;
     // to and from memory queue
     input   logic   [5:0]   mem_idx_in,
     output  logic   [5:0]   mem_idx_out,
+    
     input   logic   [31:0]  global_branch_addr,
     input   logic           global_branch_signal
 );

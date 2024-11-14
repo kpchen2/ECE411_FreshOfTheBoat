@@ -75,11 +75,11 @@ import rv32i_types::*;
 
     // branch signals
     output  logic                               global_branch_signal,
-    output  logic   [31:0]                      global_branch_addr,
+    output  logic   [31:0]                      global_branch_addr
 
     // memory inputs
-    input   logic                               mem_output_valid,
-    input   logic   [$clog2(QUEUE_DEPTH)-1:0]   mem_rob_idx_in
+    // input   logic                               mem_output_valid,
+    // input   logic   [$clog2(QUEUE_DEPTH)-1:0]   mem_rob_idx_in
 );
 
     localparam ADDR_WIDTH = $clog2(QUEUE_DEPTH);
@@ -110,8 +110,6 @@ import rv32i_types::*;
     logic   [$clog2(QUEUE_DEPTH)-1:0]   mem_rob_idx_in_next;
 
     logic   [5:0]                       phys_reg_in_next;
-    logic                               mem_output_valid_next;
-    logic   [$clog2(QUEUE_DEPTH)-1:0]   mem_rob_idx_in_next;
 
     always_ff @ (posedge clk) begin
         enqueue_reg <= enqueue_next;
@@ -205,10 +203,10 @@ import rv32i_types::*;
             //     end
             // end
             // mem instruction done
-            if (mem_output_valid_next) begin
-                mem[mem_rob_idx_in_next].commit <= '1;
-                // SET RVFI SIGNALS FOR MEM INSTRUCTIONS
-            end
+            // if (mem_output_valid_next) begin
+            //     mem[mem_rob_idx_in_next].commit <= '1;
+            //     // SET RVFI SIGNALS FOR MEM INSTRUCTIONS
+            // end
 
             tail_reg <= tail_next;
             head_reg <= head_next;
@@ -244,9 +242,6 @@ import rv32i_types::*;
         dequeue_valid = '0;
 
         phys_reg_in_next = phys_reg_in;
-
-        mem_output_valid_next = mem_output_valid;
-        mem_rob_idx_in_next = mem_rob_idx_in;
         
         if (!rst) begin
             full = (tail_reg[ADDR_WIDTH - 1:0] == head_reg[ADDR_WIDTH - 1:0]) && (tail_reg[ADDR_WIDTH] != head_reg[ADDR_WIDTH]);    // logic if queue full

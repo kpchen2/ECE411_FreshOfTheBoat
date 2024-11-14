@@ -122,7 +122,7 @@ package rv32i_types;
     typedef struct packed {
         logic [5:0] ps1;
         logic [5:0] ps2;
-        logic [5:0]  pd;
+        logic [5:0] pd;
         logic [4:0] rd;
         logic [5:0] rob_entry;
     } cdb_rs_output;
@@ -154,12 +154,15 @@ package rv32i_types;
         logic           valid;
         logic           addr_ready;
         logic   [31:0]  addr;
+        logic   [31:0]  inst;
         logic   [6:0]   opcode;
         logic   [2:0]   funct3;
         logic   [1:0]   shift_bits;
         logic   [5:0]   pd_s;
         logic   [5:0]   rob_num;
         logic   [31:0]  store_wdata;
+        
+        logic   [4:0]   rd_s;
     } lsq_entry_t;
     
     typedef struct packed {
