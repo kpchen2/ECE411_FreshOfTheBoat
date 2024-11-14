@@ -25,6 +25,7 @@ import rv32i_types::*;
     output  logic   [PHYS_REG_BITS-1:0]     ps1_out, ps2_out,
     output  logic                           ps1_valid_out, ps2_valid_out,
     output  logic                           regf_we,
+    output  logic                           mem_regf_we,
     input   logic   [PHYS_REG_BITS-1:0]     rob_num,     // USE THIS SOMEWHERE,
     output  logic   [PHYS_REG_BITS-1:0]     rob_num_out,
     output  decode_info_t                   decode_info,
@@ -69,6 +70,7 @@ import rv32i_types::*;
         rs_signal = 3'b000;
         decode_info = '0;
         regf_we = 1'b0;
+        mem_regf_we = 1'b0;
 
         ps1_out = ps1;
         ps2_out = ps2;
@@ -84,6 +86,7 @@ import rv32i_types::*;
         dispatch_rs1_s = '0;
         dispatch_rs2_s = '0; 
         dispatch_regf_we = '0;
+
 
         if (inst[6:0] == op_b_reg && inst[31:25] == 7'b0000001 && (inst[14:12] inside { mult_div_f3_mul, mult_div_f3_mulh, mult_div_f3_mulhsu, mult_div_f3_mulhu})) begin
         // if (inst[6:0] == op_b_reg && inst[31:25] == 7'b0000001 && (inst[14:12] == mult_div_f3_mul || inst[14:12] == mult_div_f3_mulh || inst[14:12] == mult_div_f3_mulhsu || inst[14:12] == mult_div_f3_mulhu)) begin
@@ -113,6 +116,10 @@ import rv32i_types::*;
             decode_info.rs2_s  = inst[24:20];
             decode_info.inst   = inst;
             regf_we = 1'b1;
+            if (rs_signal == 3'b100 && rs_full_mem)
+            begin
+                mem_regf_we = 1'b1;
+            end
             order_next = order + 64'd1;
             rd = (inst[6:0] == op_b_br) ? '0 : decode_info.rd_s;
             rs1 = decode_info.rs1_s;

@@ -67,6 +67,11 @@ import rv32i_types::*;
     logic   [5:0]   pd_dispatch, ps1, ps2;
     logic           ps1_valid, ps2_valid;
     logic           regf_we_dispatch;
+
+    /* specifically for memory instructions */
+    logic           mem_regf_we_dispatch; 
+    /*                                      */ 
+
     logic   [5:0]   rob_num, rob_num_out, rob_head;
     logic   [4:0]   rd_rob;
     logic   [5:0]   pd_rob;
@@ -278,7 +283,7 @@ import rv32i_types::*;
         .opcode(decode_info.opcode),
         .funct3(decode_info.funct3),
         .phys_reg_in(pd_dispatch),          // FROM RENAME DISPATCH
-        .enqueue_valid(regf_we_dispatch),   // FROM RENAME DISPATCH
+        .enqueue_valid(mem_regf_we_dispatch),   // FROM RENAME DISPATCH
         .rob_num(rob_num),
         .rd_dispatch(rd_dispatch),
         .addr(calculated_address),          // FROM ADDER
@@ -391,6 +396,7 @@ import rv32i_types::*;
         .ps1_valid_out(ps1_valid_out),
         .ps2_valid_out(ps2_valid_out),
         .regf_we(regf_we_dispatch),
+        .mem_regf_we(mem_regf_we_dispatch),
         .rob_num(rob_num),
         .rob_num_out(rob_num_out),
         .decode_info(decode_info),
