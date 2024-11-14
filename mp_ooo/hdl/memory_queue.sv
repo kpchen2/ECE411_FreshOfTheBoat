@@ -58,6 +58,7 @@ import rv32i_types::*;
     lsq_entry_t     mem [QUEUE_DEPTH];     // extra bit for validity | QUEUE_DEPTH entries with each entry begin DATA_WIDTH+1 size
     lsq_entry_t     enqueue_mem_next;
     lsq_entry_t     dequeue_mem_next;
+    lsq_entry_t     cache_mem_next;
 
     logic           enqueue_reg;
     logic           dequeue_reg;
@@ -68,6 +69,7 @@ import rv32i_types::*;
     logic           enqueue_valid_next, data_valid_next, addr_valid_next;
     logic   [5:0]   mem_idx_in_next;
     logic   [31:0]  addr_next, store_wdata_next;
+    logic           accessing_cache;
 
     // assign data_out = data_in;                  // output cache data same cycle
     // assign mem_idx_out = tail_reg[5:0] + 1'b1;  // output mem_idx to rename/dispatch
@@ -100,6 +102,10 @@ import rv32i_types::*;
                 mem[mem_idx_in_next].shift_bits <= addr_next[1:0];
                 mem[mem_idx_in_next].store_wdata <= store_wdata_next;
             end
+            if (accessing_cache) begin
+                mem[head_next[ADDR_WIDTH - 1:0]+1'b1].rmask <= cache_mem_next.rmask;
+                mem[head_next[ADDR_WIDTH - 1:0]+1'b1].wmask <= cache_mem_next.wmask;
+            end
   
             tail_reg <= tail_next;
             head_reg <= head_next;
@@ -111,6 +117,7 @@ import rv32i_types::*;
         head_next = head_reg;
         enqueue_mem_next = '0;
         dequeue_mem_next = '0;
+        cache_mem_next = '0;
 
         // phys_reg_out = '0;
         // data_out = '0;
@@ -130,6 +137,7 @@ import rv32i_types::*;
         mem_idx_out = tail_reg[5:0];
         addr_next = addr;
         store_wdata_next = store_wdata;
+        accessing_cache = '0;
         
         if (!rst) begin
             full = (tail_reg[ADDR_WIDTH - 1:0] == head_reg[ADDR_WIDTH - 1:0]) && (tail_reg[ADDR_WIDTH] != head_reg[ADDR_WIDTH]);    // logic if queue full
@@ -146,6 +154,9 @@ import rv32i_types::*;
                 cdb_mem.rd_v    = data_in;
                 cdb_mem.valid   = '1;
                 cdb_mem.inst    = dequeue_mem_next.inst;
+                cdb_mem.addr    = dequeue_mem_next.addr;
+                cdb_mem.rmask   = dequeue_mem_next.rmask;
+                cdb_mem.wmask   = dequeue_mem_next.wmask;
 
                 // phys_reg_out = dequeue_mem_next.pd_s;
                 // data_out = data_in;
@@ -159,6 +170,9 @@ import rv32i_types::*;
                     load_f3_lw : cdb_mem.rd_v = data_in;
                     default    : cdb_mem.rd_v = 'x;
                 endcase
+
+                cdb_mem.rdata   = (dequeue_mem_next.opcode == op_b_load) ? cdb_mem.rd_v : '0;
+                cdb_mem.wdata   = (dequeue_mem_next.opcode == op_b_store) ? cdb_mem.rd_v : '0;
 
             // ready to access cache
             end else if (mem[head_reg[5:0]+1'b1].valid == 1'b1 && mem[head_reg[5:0]+1'b1].addr_ready == 1'b1) begin
@@ -186,7 +200,11 @@ import rv32i_types::*;
                     endcase
                 end
 
+                cache_mem_next.rmask = d_rmask;
+                cache_mem_next.wmask = d_wmask;
+
                 d_addr[1:0] = 2'b0;
+                accessing_cache = '1;
             end
             
             if (enqueue_valid) begin
