@@ -136,7 +136,7 @@ import rv32i_types::*;
             initial_flag_reg <= initial_flag;
             dfp_read_reg <= dfp_read;
             order <= order_next;
-            global_branch_signal_reg <= global_branch_signal;
+            global_branch_signal_reg <= (ufp_rmask == '0) ? global_branch_signal_reg : global_branch_signal;
         end
     end
 
@@ -203,7 +203,7 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
         .wdata_in(ufp_rdata),
-        .enqueue_in((global_branch_signal || global_branch_signal_reg) ? '0 : ufp_resp),
+        .enqueue_in((global_branch_signal_reg) ? '0 : ufp_resp),
         .rdata_out(inst),
         .dequeue_in(dequeue),
         .full_out(full_stall),
@@ -216,7 +216,7 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
         .wdata_in(pc),
-        .enqueue_in((global_branch_signal || global_branch_signal_reg) ? '0 : ufp_resp),
+        .enqueue_in((global_branch_signal_reg) ? '0 : ufp_resp),
         .rdata_out(prog),
         .dequeue_in(dequeue),
         .full_out(full_garbage),
@@ -260,9 +260,7 @@ import rv32i_types::*;
         .dispatch_rs1_s(dispatch_rs1_s),
         .dispatch_rs2_s(dispatch_rs2_s),
         .dispatch_inst(dispatch_inst),
-        .dispatch_regf_we(dispatch_regf_we),
-        .global_branch_signal(global_branch_signal),
-        .global_branch_addr(global_branch_addr)
+        .dispatch_regf_we(dispatch_regf_we)
     );
 
     rat rat_i (
@@ -361,7 +359,7 @@ import rv32i_types::*;
         .rdata_out(phys_reg),
         .dequeue_in(dequeue),
         .empty_out(is_free_list_empty),
-        .global_branch_signal(global_branch_signal)
+        .global_branch_signal(global_branch_signal_reg)
     );
 
     phys_regfile phys_regfile_i (

@@ -35,9 +35,7 @@ import rv32i_types::*;
     output  logic   [4:0]                   dispatch_rs1_s,    
     output  logic   [4:0]                   dispatch_rs2_s,    
     output  logic   [31:0]                  dispatch_inst,     
-    output  logic                           dispatch_regf_we,
-    input   logic                           global_branch_signal,
-    input   logic   [31:0]                  global_branch_addr
+    output  logic                           dispatch_regf_we
 );
 
     // decode_info_t decode_info;
@@ -116,7 +114,7 @@ import rv32i_types::*;
             dispatch_inst = inst;
             dispatch_pc_rdata = prog - 32'd4;
             dispatch_order = order;
-            dispatch_pc_wdata = global_branch_signal ? global_branch_addr : prog;
+            dispatch_pc_wdata = prog;
             dispatch_rs1_s = inst[19:15];
             dispatch_rs2_s = inst[24:20];
             dispatch_regf_we = regf_we;
