@@ -78,9 +78,9 @@ import rv32i_types::*;
             ps2_valid = '1;
         end else begin
             ps1 = (decode_info.opcode == op_b_jal) ? '0 : rat[rs1];
-            ps2 = (decode_info.opcode inside {op_b_imm, op_b_lui, op_b_jal, op_b_jalr, op_b_load}) ? rat[rs1] : rat[rs2];
+            ps2 = (decode_info.opcode inside {op_b_imm, op_b_lui, op_b_auipc,  op_b_jal, op_b_jalr, op_b_load}) ? rat[rs1] : rat[rs2];
             ps1_valid = (decode_info.opcode == op_b_jal) ? 1'b1 : valid[rs1];
-            ps2_valid = (decode_info.opcode inside {op_b_imm, op_b_lui, op_b_jal, op_b_jalr, op_b_load}) ? '1 : valid[rs2];
+            ps2_valid = (decode_info.opcode inside {op_b_imm, op_b_lui, op_b_auipc, op_b_jal, op_b_jalr, op_b_load}) ? '1 : valid[rs2];
         end
 
         valid_next[0] = 1'b1;
