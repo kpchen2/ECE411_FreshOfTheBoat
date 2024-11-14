@@ -56,7 +56,7 @@ import rv32i_types::*;
     logic   [5:0]   old_pd;
     logic           enqueue;
     logic   [5:0]   phys_reg;
-    logic           dequeue;
+    logic           dequeue, dequeue_fl;
     logic           is_free_list_empty;
 
     cdb_t           cdb_add, cdb_mul, cdb_div, cdb_br;
@@ -136,7 +136,7 @@ import rv32i_types::*;
             initial_flag_reg <= initial_flag;
             dfp_read_reg <= dfp_read;
             order <= order_next;
-            global_branch_signal_reg <= (ufp_resp == '0) ? global_branch_signal_reg : global_branch_signal;
+            global_branch_signal_reg <= (ufp_resp == '0 && global_branch_signal == '0) ? global_branch_signal_reg : global_branch_signal;
         end
     end
 
@@ -236,6 +236,7 @@ import rv32i_types::*;
         .is_free_list_empty(is_free_list_empty),
         // .order(order),
         .dequeue(dequeue),
+        .dequeue_fl(dequeue_fl),
         // .order_next(order_next),
         .rd(rd_dispatch),
         .rs1(rs1),
@@ -359,7 +360,7 @@ import rv32i_types::*;
         .wdata_in(old_pd),
         .enqueue_in(enqueue),
         .rdata_out(phys_reg),
-        .dequeue_in(dequeue),
+        .dequeue_in(dequeue_fl),
         .empty_out(is_free_list_empty),
         .global_branch_signal(global_branch_signal_reg)
     );

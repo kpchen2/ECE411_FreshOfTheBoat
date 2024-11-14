@@ -28,11 +28,12 @@ import rv32i_types::*;
 
     always_comb begin
         rrat_next = rrat;
-        rrat_out = rrat;
 
         old_pd = regf_we ? rrat_next[rd] : '0;
         rrat_next[rd] = regf_we ? pd : rrat_next[rd];
         enqueue = (old_pd != 0) ? regf_we : 1'b0;
+
+        rrat_out = rrat_next;
     end
 
     always_ff @(posedge clk) begin
