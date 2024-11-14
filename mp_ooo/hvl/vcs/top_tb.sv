@@ -14,7 +14,7 @@ module top_tb;
 
     bit rst;
 
-    int timeout = 10000000; // in cycles, change according to your needs
+    int timeout = 1000000; // in cycles, change according to your needs
 
     mem_itf_banked mem_itf(.*);
     dram_w_burst_frfcfs_controller mem(.itf(mem_itf));
