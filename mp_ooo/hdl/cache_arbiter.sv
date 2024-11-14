@@ -44,7 +44,9 @@ module cache_arbiter
     logic [31:0] d_dfp_addr_next;
 
     logic d_dfp_read_reg;
+    logic   d_dfp_read_reg2;
     logic d_dfp_write_reg;
+    logic   d_dfp_write_reg2;
     logic [31:0] d_dfp_addr_reg;
     logic [255:0] full_burst_reg;
     logic [255:0] full_burst_next;
@@ -61,7 +63,9 @@ module cache_arbiter
         begin
             state <= idle;
             d_dfp_read_reg <= 1'b0;
+            d_dfp_read_reg2 <= '0;
             d_dfp_write_reg <= 1'b0;
+            d_dfp_write_reg2 <= '0;
             i_dfp_read_reg <= 1'b0;
             i_dfp_read_reg2 <= '0;
             i_dfp_addr_reg <= 32'h1eceb000;
@@ -72,7 +76,9 @@ module cache_arbiter
         begin
             state <= state_next;
             d_dfp_read_reg <= d_dfp_read_next;
+            d_dfp_read_reg2 <= d_dfp_read_reg;
             d_dfp_write_reg <= d_dfp_write_next;
+            d_dfp_write_reg2 <= d_dfp_write_reg;
             i_dfp_read_reg <= i_dfp_read_next;
             i_dfp_read_reg2 <= i_dfp_read_reg;
             i_dfp_addr_reg <= i_dfp_addr_next;
@@ -83,7 +89,9 @@ module cache_arbiter
         begin
             state <= state;
             d_dfp_read_reg <= d_dfp_read_reg;
+            d_dfp_read_reg2 <= d_dfp_read_reg2;
             d_dfp_write_reg <= d_dfp_write_reg;
+            d_dfp_write_reg2 <= d_dfp_write_reg2;
             i_dfp_read_reg <= i_dfp_read_reg;
             i_dfp_read_reg2 <= i_dfp_read_reg2;
             i_dfp_addr_reg <= i_dfp_addr_reg;
@@ -228,7 +236,7 @@ module cache_arbiter
                 d_dfp_rdata = '0;
                 i_dfp_resp = 1'b0;
                 i_dfp_rdata = '0;
-                bmem_read = (d_dfp_read_reg) ? '1 : '0;
+                bmem_read = (d_dfp_read_reg && !d_dfp_read_reg2) ? '1 : '0;
                 bmem_addr = d_dfp_addr_reg;
                 mem_valid = d_dfp_write_reg;
                 full_burst = full_burst_reg;
