@@ -116,7 +116,7 @@ import rv32i_types::*;
             decode_info.rs2_s  = inst[24:20];
             decode_info.inst   = inst;
             regf_we = 1'b1;
-            if (rs_signal == 3'b100 && rs_full_mem)
+            if (rs_signal == 3'b100 && !rs_full_mem)
             begin
                 mem_regf_we = 1'b1;
             end

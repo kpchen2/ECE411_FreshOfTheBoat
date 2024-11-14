@@ -70,7 +70,7 @@ import rv32i_types::*;
     logic   [31:0]  addr_next, store_wdata_next;
 
     // assign data_out = data_in;                  // output cache data same cycle
-    assign mem_idx_out = tail_reg[5:0] + 1'b1;  // output mem_idx to rename/dispatch
+    // assign mem_idx_out = tail_reg[5:0] + 1'b1;  // output mem_idx to rename/dispatch
 
     always_ff @ (posedge clk) begin
         enqueue_reg <= enqueue_valid;
@@ -127,6 +127,7 @@ import rv32i_types::*;
         data_valid_next = data_valid;
         addr_valid_next = addr_valid;
         mem_idx_in_next = mem_idx_in;
+        mem_idx_out = tail_reg[5:0];
         addr_next = addr;
         store_wdata_next = store_wdata;
         
