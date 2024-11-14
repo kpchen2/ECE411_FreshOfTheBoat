@@ -484,11 +484,11 @@ import rv32i_types::*;
         .mem_rs2_rdata(rs2_v_mem),
         .mem_rd_wdata(cdb_mem.rd_v),
 
-        .monitor_mem_addr('0),      // SET
-        .monitor_mem_rmask('0),     // SET
-        .monitor_mem_wmask('0),     // SET
-        .monitor_mem_rdata('0),     // SET
-        .monitor_mem_wdata('0),     // SET
+        .monitor_mem_addr(cdb_mem.addr),      // SET
+        .monitor_mem_rmask(cdb_mem.rmask),     // SET
+        .monitor_mem_wmask(cdb_mem.wmask),     // SET
+        .monitor_mem_rdata(cdb_mem.rdata),     // SET
+        .monitor_mem_wdata(cdb_mem.wdata),     // SET
         .rob_out(rob_entry),
         .dequeue_valid(rob_valid),
         .rob_num(rob_num),
