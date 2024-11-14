@@ -136,7 +136,7 @@ import rv32i_types::*;
         addr_next = addr;
         store_wdata_next = store_wdata;
 
-        mem_idx_out = tail_reg[5:0];
+        mem_idx_out = tail_reg[5:0] + 1'b1;
         accessing_cache = '0;
         
         if (!rst) begin

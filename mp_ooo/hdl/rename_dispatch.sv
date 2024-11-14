@@ -106,7 +106,7 @@ import rv32i_types::*;
             decode_info.funct3 = inst[14:12];
             decode_info.funct7 = inst[31:25];
             decode_info.opcode = inst[6:0];
-            decode_info.i_imm  = {{21{inst[31]}}, inst[30:20]};
+            decode_info.i_imm  = decode_info.opcode == op_b_store ? {{21{inst[31]}}, inst[30:25], inst[11:7]} : {{21{inst[31]}}, inst[30:20]};
             decode_info.s_imm  = {{21{inst[31]}}, inst[30:25], inst[11:7]};
             decode_info.b_imm  = {{20{inst[31]}}, inst[7], inst[30:25], inst[11:8], 1'b0};
             decode_info.u_imm  = {inst[31:12], 12'h000};
