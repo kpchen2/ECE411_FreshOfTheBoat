@@ -42,9 +42,9 @@ import rv32i_types::*;
     // input   logic           global_branch_signal,
 
     // MEM PORTS
-    input   logic   [5:0]   rob_idx_mem,
-    input   logic   [5:0]   pd_s_mem,
-    input   logic   [4:0]   rd_s_mem,
+    // input   logic   [5:0]   rob_idx_mem,
+    // input   logic   [5:0]   pd_s_mem,
+    // input   logic   [4:0]   rd_s_mem,
     // output  cdb_t           cdb_mem,
     output  logic           addr_valid,
     output  logic           busy_mem,
