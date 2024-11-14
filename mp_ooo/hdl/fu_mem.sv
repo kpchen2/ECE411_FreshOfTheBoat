@@ -2,7 +2,7 @@ module fu_mem
 import rv32i_types::*;
 (
     input logic [31:0] rs1_v, rs2_v,
-    input decode_info_t decode_info,
+    // input decode_info_t decode_info,
     input   logic   start,
     output logic addr_valid,
     output logic busy,

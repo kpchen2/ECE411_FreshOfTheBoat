@@ -590,7 +590,7 @@ import rv32i_types::*;
         .multiply_fu_busy(busy_mul),
         .divide_fu_busy(busy_div),
         .branch_fu_busy('0),
-        .mem_fu_busy(busy_mem),
+        .mem_fu_busy('0), // WAS SET TO BUSY_MEM perhaps don't need?
 
         // .add_regf_we(),
         // .multiply_regf_we(),

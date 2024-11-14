@@ -174,7 +174,7 @@ import rv32i_types::*;
 
     fu_mem fu_mem_i(
         .rs1_v(rs1_v_mem), .rs2_v(rs2_v_mem),
-       .decode_info(decode_info_mem),
+    //    .decode_info(decode_info_mem),
         .start(start_mem),
         .addr_valid(valid_mem),
         .busy(busy_mem),
