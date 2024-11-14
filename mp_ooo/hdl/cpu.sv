@@ -256,7 +256,7 @@ import rv32i_types::*;
         .dfp_write(dfp_write),
         .dfp_rdata(cache_wdata),
         .dfp_wdata(dfp_wdata),      // FILL WHEN WE WANT TO WRITE
-        .dfp_resp(cache_valid)
+        .dfp_resp(dfp_resp)
     );
 
     cache cache_d (
@@ -498,9 +498,6 @@ import rv32i_types::*;
         .rob_num(rob_num),
         .rob_head(rob_head),
         .full(rob_full)
-
-        // .mem_output_valid(cdb_mem.valid),
-        // .mem_rob_idx_in(mem_rob_idx_in)
     );
     
     rrat rrat_i (

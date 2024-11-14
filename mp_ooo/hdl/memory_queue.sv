@@ -136,7 +136,7 @@ import rv32i_types::*;
         addr_next = addr;
         store_wdata_next = store_wdata;
 
-        mem_idx_out = tail_reg[5:0];
+        mem_idx_out = tail_reg[5:0] + 1'b1;
         accessing_cache = '0;
         
         if (!rst) begin
@@ -157,18 +157,24 @@ import rv32i_types::*;
                 cdb_mem.rmask   = dequeue_mem_next.rmask;
                 cdb_mem.wmask   = dequeue_mem_next.wmask;
                 cdb_mem.rdata   = (dequeue_mem_next.opcode == op_b_load)  ? data_in : '0;
-                cdb_mem.wdata   = (dequeue_mem_next.opcode == op_b_store) ? data_in : '0;
+                cdb_mem.wdata   = (dequeue_mem_next.opcode == op_b_store) ? dequeue_mem_next.store_wdata : '0;
                 cdb_mem.rs1_rdata = dequeue_mem_next.rs1_rdata;
                 cdb_mem.rs2_rdata = dequeue_mem_next.rs2_rdata;
-                
-                unique case (mem[head_reg[5:0]+1'b1].funct3)
-                    load_f3_lb : cdb_mem.rd_v = {{24{data_in[7 +8 *mem[head_reg[5:0]+1'b1].shift_bits]}}   , data_in[8 *mem[head_reg[5:0]+1'b1].shift_bits    +: 8 ]};
-                    load_f3_lbu: cdb_mem.rd_v = {{24{1'b0}}                                                , data_in[8 *mem[head_reg[5:0]+1'b1].shift_bits    +: 8 ]};
-                    load_f3_lh : cdb_mem.rd_v = {{16{data_in[15+16*mem[head_reg[5:0]+1'b1].shift_bits[1]]}}, data_in[16*mem[head_reg[5:0]+1'b1].shift_bits[1] +: 16]};
-                    load_f3_lhu: cdb_mem.rd_v = {{16{1'b0}}                                                , data_in[16*mem[head_reg[5:0]+1'b1].shift_bits[1] +: 16]};
-                    load_f3_lw : cdb_mem.rd_v = data_in;
-                    default    : cdb_mem.rd_v = 'x;
-                endcase
+
+                if (dequeue_mem_next.opcode == op_b_load) begin
+                    unique case (mem[head_reg[5:0]+1'b1].funct3)
+                        // rd_v = rd_wdata
+                        load_f3_lb : cdb_mem.rd_v = {{24{data_in[7 +8 *mem[head_reg[5:0]+1'b1].shift_bits]}}   , data_in[8 *mem[head_reg[5:0]+1'b1].shift_bits    +: 8 ]};
+                        load_f3_lbu: cdb_mem.rd_v = {{24{1'b0}}                                                , data_in[8 *mem[head_reg[5:0]+1'b1].shift_bits    +: 8 ]};
+                        load_f3_lh : cdb_mem.rd_v = {{16{data_in[15+16*mem[head_reg[5:0]+1'b1].shift_bits[1]]}}, data_in[16*mem[head_reg[5:0]+1'b1].shift_bits[1] +: 16]};
+                        load_f3_lhu: cdb_mem.rd_v = {{16{1'b0}}                                                , data_in[16*mem[head_reg[5:0]+1'b1].shift_bits[1] +: 16]};
+                        load_f3_lw : cdb_mem.rd_v = data_in;
+                        default    : cdb_mem.rd_v = 'x;
+                    endcase
+                end else begin
+                    cdb_mem.rd_s = '0;
+                    cdb_mem.rd_v = '0;
+                end
 
             // ready to access cache
             end else if (mem[head_reg[5:0]+1'b1].valid == 1'b1 && mem[head_reg[5:0]+1'b1].addr_ready == 1'b1) begin

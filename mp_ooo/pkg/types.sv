@@ -94,6 +94,7 @@ package rv32i_types;
         logic [4:0] rd;
         logic [5:0] rob_entry;
         decode_info_t decode_info;
+        logic   [5:0]   mem_idx;
     } mem_reservation_station_data;
 
     typedef struct packed {

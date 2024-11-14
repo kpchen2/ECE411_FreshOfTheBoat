@@ -264,7 +264,7 @@ import rv32i_types::*;
                     enqueue_mem_next.valid = 1'b1;
                     enqueue_mem_next.commit = 1'b0;
                     // enqueue_mem_next.pd = phys_reg_in;
-                    enqueue_mem_next.rvfi.monitor_rd_addr = arch_reg_in;
+                    enqueue_mem_next.rvfi.monitor_rd_addr = (inst[6:0] == op_b_store) ? '0 : arch_reg_in;
                     enqueue_mem_next.rvfi.monitor_pc_rdata = pc_rdata;
                     enqueue_mem_next.rvfi.monitor_pc_wdata = pc_wdata;
                     enqueue_mem_next.rvfi.monitor_order = order;

@@ -102,7 +102,7 @@ import rv32i_types::*;
     logic   regf_we_add_reg, regf_we_mul_reg, regf_we_div_reg, regf_we_br_reg, regf_we_mem_reg;
 
     //actual registers
-    assign mem_idx_out = mem_idx_in;
+    // assign mem_idx_out = mem_idx_in;
     
     always_ff @(posedge clk) begin
         if (rst) begin
@@ -487,6 +487,7 @@ import rv32i_types::*;
                 mem_reservation_station_entry_next.decode_info = decode_info_in;
                 mem_reservation_station_entry_next.ps1_v = ((regf_we_add && cdb_ps_id_add == ps1) || (regf_we_mul && cdb_ps_id_multiply == ps1) || (regf_we_div && cdb_ps_id_divide == ps1) || (regf_we_br && cdb_ps_id_branch == ps1)|| (regf_we_mem && cdb_ps_id_mem == ps1)) ? '1 : dispatch_ps_ready1;
                 mem_reservation_station_entry_next.ps2_v = ((regf_we_add && cdb_ps_id_add == ps2) || (regf_we_mul && cdb_ps_id_multiply == ps2) || (regf_we_div && cdb_ps_id_divide == ps2) || (regf_we_br && cdb_ps_id_branch == ps2)|| (regf_we_mem && cdb_ps_id_mem == ps2)) ? '1 : dispatch_ps_ready2;
+                mem_reservation_station_entry_next.mem_idx = mem_idx_in;
                 
                 for (int unsigned i = 0; i < NUM_MEM_REGISTERS; i++)
                 begin
@@ -571,6 +572,9 @@ import rv32i_types::*;
 
         mem_ps2 = '0;
         mem_ps1 = '0;
+
+        mem_idx_out = '0;
+        
         if (~multiply_fu_busy && (num_issues <= 3'd5))
         begin
             for (int unsigned i = 0; i < NUM_MULTIPLY_REGISTERS; i++)
@@ -682,6 +686,7 @@ import rv32i_types::*;
                     remove_mem = 1'b1;
                     mem_ps1 = mem_reservation_station_entry_new.ps1;
                     mem_ps2 = mem_reservation_station_entry_new.ps2;
+                    mem_idx_out = mem_reservation_station_entry_new.mem_idx;
                     break;
                 end
             end
