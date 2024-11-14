@@ -109,7 +109,7 @@ import rv32i_types::*;
 
     logic  [31:0]                    dispatch_pc_rdata;
     logic  [31:0]                    dispatch_pc_wdata;
-    logic  [63:0]                    dispatch_order;
+    // logic  [63:0]                    dispatch_order;
     logic  [4:0]                     dispatch_rs1_s;
     logic  [4:0]                     dispatch_rs2_s;
     logic  [31:0]                    dispatch_inst;
@@ -136,7 +136,7 @@ import rv32i_types::*;
             initial_flag_reg <= initial_flag;
             dfp_read_reg <= dfp_read;
             order <= order_next;
-            global_branch_signal_reg <= (ufp_rmask == '0) ? global_branch_signal_reg : global_branch_signal;
+            global_branch_signal_reg <= (ufp_resp == '0) ? global_branch_signal_reg : global_branch_signal;
         end
     end
 
@@ -234,9 +234,9 @@ import rv32i_types::*;
         .is_iqueue_empty(iqueue_empty),
         .phys_reg(phys_reg),
         .is_free_list_empty(is_free_list_empty),
-        .order(order),
+        // .order(order),
         .dequeue(dequeue),
-        .order_next(order_next),
+        // .order_next(order_next),
         .rd(rd_dispatch),
         .rs1(rs1),
         .rs2(rs2),
@@ -256,7 +256,7 @@ import rv32i_types::*;
         .rs_signal(rs_signal),
         .dispatch_pc_rdata(dispatch_pc_rdata),
         .dispatch_pc_wdata(dispatch_pc_wdata),
-        .dispatch_order(dispatch_order),
+        // .dispatch_order(dispatch_order),
         .dispatch_rs1_s(dispatch_rs1_s),
         .dispatch_rs2_s(dispatch_rs2_s),
         .dispatch_inst(dispatch_inst),
@@ -290,7 +290,7 @@ import rv32i_types::*;
         .enqueue_valid(regf_we_dispatch),
         .pc_rdata(dispatch_pc_rdata),
         .pc_wdata(dispatch_pc_wdata),
-        .order(dispatch_order),
+        .order(order),
         .rs1_s(dispatch_rs1_s),
         .rs2_s(dispatch_rs2_s),
         .inst(dispatch_inst),
@@ -307,6 +307,8 @@ import rv32i_types::*;
         .br_rob_idx_in(cdb_br.rob_idx),
         .br_cdb_valid(cdb_br.valid),
         .br_inst(cdb_br.inst),
+
+        .order_next(order_next),
 
         .add_rs1_rdata(rs1_v_add),
         .add_rs2_rdata(rs2_v_add),

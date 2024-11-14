@@ -33,6 +33,8 @@ import rv32i_types::*;
     input   logic                               br_cdb_valid,
     input   logic   [31:0]                      br_inst,
 
+    output  logic   [63:0]                      order_next,
+
     input   logic  [31:0]                       add_rs1_rdata,
     input   logic  [31:0]                       add_rs2_rdata,
     input   logic  [31:0]                       add_rd_wdata,
@@ -200,6 +202,8 @@ import rv32i_types::*;
         dequeue_valid = '0;
 
         phys_reg_in_next = phys_reg_in;
+
+        order_next = order;
         
         if (!rst) begin
             full = (tail_reg[ADDR_WIDTH - 1:0] == head_reg[ADDR_WIDTH - 1:0]) && (tail_reg[ADDR_WIDTH] != head_reg[ADDR_WIDTH]);    // logic if queue full
@@ -212,6 +216,8 @@ import rv32i_types::*;
                 dequeue_mem_next = mem[head_reg[ADDR_WIDTH - 1:0]+1'b1];     // get current data out of the queue 
                 dequeue_mem_next.valid = 1'b0;                    // not valid anymore
                 dequeue_mem_next.rvfi.monitor_valid = 1'b1;
+                order_next = order_next + 64'd1;
+                dequeue_mem_next.rvfi.monitor_order = order;
                 rob_out = dequeue_mem_next;
             end
             
@@ -225,7 +231,7 @@ import rv32i_types::*;
                     enqueue_mem_next.rvfi.monitor_rd_addr = arch_reg_in;
                     enqueue_mem_next.rvfi.monitor_pc_rdata = pc_rdata;
                     enqueue_mem_next.rvfi.monitor_pc_wdata = pc_wdata;
-                    enqueue_mem_next.rvfi.monitor_order = order;
+                    // enqueue_mem_next.rvfi.monitor_order = order;
                     enqueue_mem_next.rvfi.monitor_rs1_addr = (inst[6:0] == op_b_lui) ? '0 : rs1_s;
                     enqueue_mem_next.rvfi.monitor_rs2_addr = (inst[6:0] == op_b_imm || inst[6:0] == op_b_lui) ? '0 : rs2_s;
                     enqueue_mem_next.rvfi.monitor_inst = inst;
