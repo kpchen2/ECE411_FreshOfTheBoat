@@ -280,7 +280,7 @@ import rv32i_types::*;
         .regf_we_dispatch(regf_we_dispatch),
         .regf_we_add(cdb_add.valid), .regf_we_mul(cdb_mul.valid), .regf_we_div(cdb_div.valid), .regf_we_br(cdb_br.valid),
         .decode_info(decode_info),
-        .global_branch_signal(global_branch_signal),
+        .global_branch_signal(global_branch_signal_reg),
         .rrat(rrat)
     );
 
