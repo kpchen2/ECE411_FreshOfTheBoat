@@ -44,7 +44,7 @@ import rv32i_types::*;
     0, 1, 1,
     0)
     U1 (.clk(clk),
-    .rst_n(~(rst || global_branch_signal)),
+    .rst_n(~(rst)),
     .hold(1'b0),
     .start(start),
     .a(a_final),
