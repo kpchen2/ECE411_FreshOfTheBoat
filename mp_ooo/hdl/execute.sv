@@ -49,7 +49,8 @@ import rv32i_types::*;
     output  logic           addr_valid,
     output  logic           busy_mem,
     output logic    [31:0]  store_wdata,
-    output logic    [31:0]  calculated_address
+    output logic    [31:0]  calculated_address,
+    output  logic   [31:0]  fu_rs1_v_mem, fu_rs2_v_mem
 );
 
     logic   valid_add, valid_mul, valid_div, valid_br, valid_mem;
@@ -182,8 +183,8 @@ import rv32i_types::*;
         .i_imm(decode_info_mem.i_imm),
         .dispatch_mem_idx(mem_idx_in),
         .mem_idx_out(mem_idx_out),
-        .store_wdata(store_wdata)
-
+        .store_wdata(store_wdata),
+        .fu_rs1_v_mem(fu_rs1_v_mem), .fu_rs2_v_mem(fu_rs2_v_mem)
     );
 
     always_comb 

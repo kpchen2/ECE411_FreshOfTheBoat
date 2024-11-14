@@ -10,10 +10,12 @@ import rv32i_types::*;
     input logic [31:0] i_imm,
     input logic [5:0] dispatch_mem_idx,
     output logic [5:0] mem_idx_out,
-    output logic [31:0] store_wdata
+    output logic [31:0] store_wdata,
+    output  logic   [31:0]  fu_rs1_v_mem, fu_rs2_v_mem
 );
 
-
+assign fu_rs1_v_mem = rs1_v;
+assign fu_rs2_v_mem = rs2_v;
 
 always_comb
 begin

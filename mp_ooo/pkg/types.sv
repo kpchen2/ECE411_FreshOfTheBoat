@@ -122,6 +122,8 @@ package rv32i_types;
         logic   [3:0]   wmask;
         logic   [31:0]  rdata;
         logic   [31:0]  wdata;
+        logic   [31:0]  rs1_rdata;
+        logic   [31:0]  rs2_rdata;
     } cdb_t;
 
     typedef struct packed {
@@ -172,6 +174,9 @@ package rv32i_types;
         logic   [3:0]   wmask;
         logic   [31:0]  rdata;
         logic   [31:0]  wdata;
+
+        logic   [31:0]  rs1_rdata;
+        logic   [31:0]  rs2_rdata;
     } lsq_entry_t;
     
     typedef struct packed {
