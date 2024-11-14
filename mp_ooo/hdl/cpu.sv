@@ -16,11 +16,10 @@ import rv32i_types::*;
 );
 
     logic   [31:0]  pc, pc_next;
+    logic           cache_valid; // If bursts are ready
+    logic   [255:0] cache_wdata; // bursts (equivalent to dfp_rdata for icache)
 
-    logic           cache_valid;
-    logic   [255:0] cache_wdata;
-
-    // dfp_rdata and dfp_resp from cacheline adapter
+    /* ufp signals to send to icache */
     logic   [31:0]  ufp_addr;
     logic   [3:0]   ufp_rmask;
     logic   [3:0]   ufp_wmask;
@@ -28,6 +27,7 @@ import rv32i_types::*;
     logic   [31:0]  ufp_wdata;
     logic           i_ufp_resp;
 
+    /* dfp signals to send to dcache */
     logic   [31:0]  dfp_addr;
     logic           dfp_read, dfp_read_reg;
     logic           dfp_write;
@@ -35,13 +35,7 @@ import rv32i_types::*;
     logic   [255:0] dfp_wdata;
     logic           dfp_resp;
 
-    logic   [31:0]  d_dfp_addr; // have to get from load
-    logic           d_dfp_read, d_dfp_read_reg; // have to get from load
-    logic           d_dfp_write;     // have to get from load
-    logic   [255:0] d_dfp_rdata;    // have to get from arbiter
-    logic   [255:0] d_dfp_wdata;    // have to get from store
-    logic           d_dfp_resp;     // have to get from arbiter
-
+    /* ufp signals to send to dcache from a load or store */
     logic   [31:0]  mem_addr;       // from a load or store
     logic   [3:0]   load_rmask;     // from a load 
     logic   [3:0]   store_wmask;    // from a store
@@ -49,13 +43,21 @@ import rv32i_types::*;
     logic   [31:0]  store_wdata;    // from a store
     logic           d_ufp_resp;     // data cache should output this
 
-    logic    [31:0] fu_mem_store_wdata;
+    /* dfp signals to send to dcache */
+    logic   [31:0]  d_dfp_addr; // have to get from load
+    logic           d_dfp_read, d_dfp_read_reg; // have to get from load
+    logic           d_dfp_write;     // have to get from load
+    logic   [255:0] d_dfp_rdata;    // have to get from arbiter
+    logic   [255:0] d_dfp_wdata;    // have to get from store
+    logic           d_dfp_resp;     // have to get from arbiter
+
+    logic    [31:0] fu_mem_store_wdata;             // if store inst and functional unit needs to output the data to store
     logic           initial_flag, initial_flag_reg;     // for initial read AND full_stall reads
     logic           full_stall;
     
-    logic   [31:0]  bmem_raddr_dummy;
-    logic   [255:0] full_burst;
-    logic           mem_valid;    
+    logic   [31:0]  bmem_raddr_dummy; // used to prevent warnings with bmem_raddr
+    logic   [255:0] full_burst;       // full burst of data to send to bmem (d_dfp_wdata for d cache)
+    logic           mem_valid;        // can write to memory
 
     /* CP2 SIGNALS */
     logic   [31:0]  inst;
@@ -76,60 +78,76 @@ import rv32i_types::*;
     logic           dequeue;
     logic           is_free_list_empty;
 
+    /* cdb propagations*/
     cdb_t           cdb_add, cdb_mul, cdb_div, cdb_mem, cdb_br;
     decode_info_t   decode_info ;
 
+    /* Decode info*/
     decode_info_t add_decode_info;
     decode_info_t multiply_decode_info;
     decode_info_t divide_decode_info;
     decode_info_t mem_decode_info;
     decode_info_t branch_decode_info;
     
+    /* Functional unit ready*/
     logic   add_fu_ready;
     logic   multiply_fu_ready;
     logic   divide_fu_ready;
     logic   mem_fu_ready;
     logic   branch_fu_ready;
 
+    /* rob entries*/
     logic   [5:0]   add_rob_entry;
     logic   [5:0]   multiply_rob_entry;
     logic   [5:0]   divide_rob_entry;
     logic   [5:0]   mem_rob_entry;
     logic   [5:0]   branch_rob_entry; 
 
+    /* physical destination registers*/
     logic   [5:0]   add_pd;
     logic   [5:0]   multiply_pd;
     logic   [5:0]   divide_pd;
     logic   [5:0]   mem_pd;
     logic   [5:0]   branch_pd;
 
+    /* architectural destination registers */
     logic   [4:0]   add_rd;
     logic   [4:0]   multiply_rd;
     logic   [4:0]   divide_rd;
     logic   [4:0]   branch_rd;
     logic   [4:0]   mem_rd;
 
+    /* reservation station select signal*/
     logic   [2:0]   rs_signal;
 
+    /*reservation station full signals*/
     logic           rs_add_full, rs_mul_full, rs_div_full, rs_mem_full, rs_br_full; 
 
+    /* physical register source and valids*/
     logic   [5:0]   ps1_out, ps2_out;
     logic           ps1_valid_out, ps2_valid_out;
 
+    /* rs1_v, rs2_v*/
     logic   [31:0]  rs1_v_add, rs1_v_mul, rs1_v_div, rs1_v_mem, rs1_v_br, rs2_v_add, rs2_v_mul, rs2_v_div, rs2_v_mem, rs2_v_br; 
-
+    
+    /* ps1, ps2*/
     logic   [5:0]   add_ps1, add_ps2, multiply_ps1, multiply_ps2, divide_ps1, divide_ps2, mem_ps1, mem_ps2, branch_ps1, branch_ps2; 
     
+    /* output rob entry, contains rvfi data*/
     rob_entry_t rob_entry;
 
+    /* order */
     logic [63:0] order;
     logic [63:0] order_next;
 
+    /* outputs from pc queue, doesn't mean anything*/
     logic full_garbage;
     logic empty_garbage;
     
+    /* pc for pc queue*/
     logic [31:0] prog;
-
+    
+    /* rvfi signals output from dispatch stage */
     logic   [31:0]  dispatch_pc_rdata;
     logic   [31:0]  dispatch_pc_wdata;
     logic   [63:0]  dispatch_order;
@@ -138,23 +156,29 @@ import rv32i_types::*;
     logic   [31:0]  dispatch_inst;
     logic           dispatch_regf_we;
 
+    /* load store queue, dispatch stage*/
     logic   [5:0]   queue_mem_idx, dispatch_mem_idx;
 
-    // logic           mem_output_valid;
+    /* rob idx for memory instructions (needed to know store) */
     logic   [5:0]   mem_rob_idx_in;
-    logic   [5:0]   res_dispatch_mem_idx, fu_mem_idx;
-    // assign mem_addr = '0;   
-    // assign load_rmask = '0; 
-    // assign store_wmask = '0;
-    // assign store_wdata = '0;
-    logic [31:0]    calculated_address;
-    // do this for now, NEED RELEVANT MEM DATA LATER
 
+    /* reservation station, memory functional unit */
+    logic   [5:0]   res_dispatch_mem_idx, fu_mem_idx;
+
+     /* calculated address */
+    logic [31:0]    calculated_address;
+    
+    /* branch enable, branch address */
     logic           global_branch_signal, global_branch_signal_reg;
     logic   [31:0]  global_branch_addr;
 
+    /* RRAT */
     logic   [5:0]   rrat[32];
+
+    /* memory queue full*/
     logic           mem_queue_full;
+
+    /* valid address for load store queue */
     logic           addr_valid;
 
     assign global_branch_signal = cdb_br.pc_select;
