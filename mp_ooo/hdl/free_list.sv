@@ -14,7 +14,8 @@ import rv32i_types::*;
     input logic dequeue_in,
 
     output logic empty_out,
-    input logic global_branch_signal
+    input logic global_branch_signal,
+    input   logic   [5:0]     rrat[32]
 );
 
     localparam ADDR_WIDTH = $clog2(QUEUE_DEPTH);
@@ -26,6 +27,7 @@ import rv32i_types::*;
     logic   [$clog2(QUEUE_DEPTH):0] head_next;    // combinational
 
     logic   [DATA_WIDTH:0] mem [QUEUE_DEPTH];     // extra bit is for validity
+    logic   [DATA_WIDTH:0] mem_next [QUEUE_DEPTH];
     logic   [DATA_WIDTH:0] enqueue_mem_next;
     logic   [DATA_WIDTH:0] dequeue_mem_next;
 
@@ -33,6 +35,12 @@ import rv32i_types::*;
 
     logic   enqueue_reg, enqueue_next;
     logic   dequeue_reg, dequeue_next;
+
+    logic   global_branch_signal_next;
+
+    logic   [63:0]  rrat_available;
+
+    int     counter;
 
     assign  empty_out = empty;
 
@@ -50,12 +58,16 @@ import rv32i_types::*;
             end
 
         end else begin
-            if (enqueue_next) begin
-                mem[tail_next[$clog2(QUEUE_DEPTH) - 1:0]] <= enqueue_mem_next;
-            end
-            
-            if (dequeue_next) begin
-                mem[head_next[$clog2(QUEUE_DEPTH) - 1:0]] <= dequeue_mem_next;
+            if (global_branch_signal_next) begin
+                mem <= mem_next;
+            end else begin
+                if (enqueue_next) begin
+                    mem[tail_next[$clog2(QUEUE_DEPTH) - 1:0]] <= enqueue_mem_next;
+                end
+                
+                if (dequeue_next) begin
+                    mem[head_next[$clog2(QUEUE_DEPTH) - 1:0]] <= dequeue_mem_next;
+                end
             end
 
             tail_reg <= tail_next;
@@ -71,6 +83,14 @@ import rv32i_types::*;
         dequeue_mem_next = '0;
         enqueue_next = enqueue_in;
         dequeue_next = dequeue_in;
+
+        global_branch_signal_next = global_branch_signal;
+
+        rrat_available = '1;
+
+        for (int i = 0; i < 32; i++) begin
+            rrat_available[rrat[i]] = 1'b0;
+        end
 
         if (rst) begin
             empty = '1;
@@ -98,6 +118,20 @@ import rv32i_types::*;
 
         // tail_next = global_branch_signal ? {1'b0, {$clog2(QUEUE_DEPTH){1'b1}}} : tail_next;
         head_next = global_branch_signal ? {~tail_next[5], tail_next[4:0]} : head_next;
+
+        for (int i = 0; i < 32; i++) begin
+            mem_next[i] = '0;
+        end
+
+        counter = '0;
+        if (global_branch_signal) begin
+            for (int i = 0; i < 64; i++) begin
+                if (rrat_available[i] == 1'b1) begin
+                    mem_next[counter] <= physicalIndexing'(i);
+                    counter = counter + 1'b1;
+                end
+            end
+        end
 
         empty = (tail_next[ADDR_WIDTH - 1:0] == head_next[ADDR_WIDTH - 1:0]) && (tail_next[ADDR_WIDTH] == head_next[ADDR_WIDTH]);   // logic if queue empty
     end
