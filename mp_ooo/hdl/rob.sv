@@ -67,7 +67,6 @@ import rv32i_types::*;
     output  logic   [$clog2(QUEUE_DEPTH)-1:0]   rob_num,
     output  logic                               full,
     output  logic                               global_branch_signal,
-    input   logic                               global_branch_signal_reg,
     output  logic   [31:0]                      global_branch_addr
 );
 
@@ -219,7 +218,7 @@ import rv32i_types::*;
             dequeue_valid = (mem[head_reg[5:0]+1'b1].valid == 1'b1 && mem[head_reg[5:0]+1'b1].commit == 1'b1);  // dequeue if tail's inst is valid and ready to commit
 
             // send dequeue inst same cycle; update queue next cycle
-            if (dequeue_valid) begin
+            if (dequeue_valid && head_reg != tail_reg) begin
                 head_next = head_reg + 1'd1;
                 dequeue_mem_next = mem[head_reg[ADDR_WIDTH - 1:0]+1'b1];     // get current data out of the queue 
                 dequeue_mem_next.valid = 1'b0;                    // not valid anymore
@@ -256,7 +255,8 @@ import rv32i_types::*;
                 end
             end
 
-            tail_next = (global_branch_signal) ? head_next : tail_next;
+            tail_next = (global_branch_signal) ? head_next + 1'b1 : tail_next;
+            head_next = (global_branch_signal) ? head_next + 1'b1 : head_next;
 
             full = (tail_next[ADDR_WIDTH - 1:0] == head_next[ADDR_WIDTH - 1:0]) && (tail_next[ADDR_WIDTH] != head_next[ADDR_WIDTH]);    // logic if queue full
         end

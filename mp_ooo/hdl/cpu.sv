@@ -339,7 +339,6 @@ import rv32i_types::*;
         .rob_num(rob_num),
         .full(rob_full),
         .global_branch_signal(global_branch_signal),
-        .global_branch_signal_reg(global_branch_signal_reg),
         .global_branch_addr(global_branch_addr)
     );
     
@@ -362,7 +361,7 @@ import rv32i_types::*;
         .rdata_out(phys_reg),
         .dequeue_in(dequeue_fl),
         .empty_out(is_free_list_empty),
-        .global_branch_signal(global_branch_signal_reg)
+        .global_branch_signal(global_branch_signal)
     );
 
     phys_regfile phys_regfile_i (

@@ -117,7 +117,7 @@ import rv32i_types::*;
         .rs2_v(rs2_v_add),
         .decode_info(decode_info_add),     // PHYS REGFILE
         .rd_v(rd_v_add),
-        .start(start_add),
+        .start(~global_branch_signal && start_add),
         .valid(valid_add),
         .busy(busy_add)
     );
@@ -129,7 +129,7 @@ import rv32i_types::*;
         .rs2_v(rs2_v_mul),
         .decode_info(decode_info_mul),     // PHYS REGFILE
         .rd_v(rd_v_mul),
-        .start(start_mul),
+        .start(~global_branch_signal && start_mul),
         .valid(valid_mul),
         .hold(mul_1 || mul_2 || mul_3 || mul_4),
         .global_branch_signal(global_branch_signal)
@@ -142,7 +142,7 @@ import rv32i_types::*;
         .rs2_v(rs2_v_div),
         .decode_info(decode_info_div),     // PHYS REGFILE
         .rd_v(rd_v_div),
-        .start(start_div),
+        .start(~global_branch_signal && start_div),
         .valid(valid_div),
         .hold(div_1 || div_2 || div_3 || div_4),
         .global_branch_signal(global_branch_signal)
@@ -153,7 +153,7 @@ import rv32i_types::*;
         .rs2_v(rs2_v_br),
         .decode_info(decode_info_br),     // PHYS REGFILE
         .rd_v(rd_v_br),
-        .start(start_br),
+        .start(~global_branch_signal && start_br),
         .valid(valid_br),
         .busy(busy_br),
         .pc_select(pc_select),
