@@ -1,60 +1,74 @@
 .section .data
 data:
-    .word 0x1eceb923
-    .word 0xcafebabe
-    .word 0xabcdaba0
-    .word 0x12345678
-    .word 0x87654321
-    .word 0xbabecafe
-    .word 0xbabababa
-    .word 0xdeadbeef
-    .word 0x12345678
-    .word 0xabcdef00
-    .word 0x55555555
+    
+    .word 0x01928500 # 31:0
+    .word 0x01928501 # 63:32
+    .word 0x01928502 # 95:64
+    .word 0x01928503 # 127:96
+    .word 0x01928504 # 159:128
+    .word 0x01928505 # 191:160
+    .word 0x01928506 # 223:192
+    .word 0x01928507 # 255:224
+    .word 0x01928508
+    .word 0x01928509
+    .word 0x0192850a
+    .word 0x0192850b
+    .word 0x0192850c
+    .word 0x0192850d
+    .word 0x0192850e
+    .word 0x0192850f
+    .word 0x01928510
+    .word 0x01928511
+    .word 0x01928512
+    .word 0x01928513
     .byte 0xff                # Extra byte for lbu
     .half 0x1234             # Extra half-word for lhu
 
 .section .text
 .globl _start
 _start:
-    auipc x1, 0              # Load PC-relative address into x1
+    auipc x1, 0              # Load PC-relative address into x1 0
     
-    addi x1, x1, 0x600       # Adjust address to point to data section
+    addi x1, x1, 0x600       # Adjust address to point to data section 4
     
+    addi x1, x1, 0x600       # Adjust address to point to data section 4
+
+    addi x1, x1, 0x400       # Adjust address to point to data section 4
+
     # Load and Store operations
-    lw x2, 0(x1)             # Load data[0] into x2
+    lw x2, 0(x1)             # Load data[0] into x2 8
     
-    sw x2, 16(x1)            # Store it to data[4]
+    sw x2, 16(x1)            # Store it to data[4] 1eceb00c
 
-    lw x3, 4(x1)             # Load data[1] into x3
+    lw x3, 4(x1)             # Load data[1] into x3 1eceb010
     
-    sw x3, 20(x1)            # Store it to data[5]
-    
-    
-    
-    
-    
-
-    lw x4, 8(x1)             # Load data[2] into x4
-    
-    
-    
-    
-    
-    sw x4, 24(x1)            # Store it to data[6]
+    sw x3, 20(x1)            # Store it to data[5] 1eceb014
     
     
     
     
     
 
-    lw x6, 12(x1)            # Load data[3] into x6
+    lw x4, 8(x1)             # Load data[2] into x4 1eceb018
     
     
     
     
     
-    sw x6, 28(x1)            # Store it to data[7]
+    sw x4, 24(x1)            # Store it to data[6] 1eceb01c
+    
+    
+    
+    
+    
+
+    lw x6, 12(x1)            # Load data[3] into x6 1eceb020
+    
+    
+    
+    
+    
+    sw x6, 28(x1)            # Store it to data[7] 1eceb024
     
     
     
@@ -62,20 +76,20 @@ _start:
     
 
     # Load byte and store byte
-    lbu x7, 64(x1)           # Load byte into x7
+    lbu x7, 64(x1)           # Load byte into x7 1eceb028 
     
     
     
     
     
-    sb x7, 44(x1)            # Store byte into data[11]
+    sb x7, 44(x1)            # Store byte into data[11] 1eceb02c
     
     
     
     
     
 
-    lbu x8, 65(x1)           # Load another byte into x8
+    lbu x8, 65(x1)           # Load another byte into x8 1eceb030
     
     
     
