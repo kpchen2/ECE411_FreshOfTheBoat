@@ -141,11 +141,11 @@ import rv32i_types::*;
                 mem[add_rob_idx_in_next].rvfi.monitor_rs1_rdata <= add_rs1_rdata;
                 mem[add_rob_idx_in_next].rvfi.monitor_rs2_rdata <= add_rs2_rdata;
                 mem[add_rob_idx_in_next].rvfi.monitor_rd_wdata <= (add_inst == 32'h13) ? '0 : add_rd_wdata;
-                mem[add_rob_idx_in_next].rvfi.monitor_mem_addr <= monitor_mem_addr;
-                mem[add_rob_idx_in_next].rvfi.monitor_mem_rmask <= monitor_mem_rmask;
-                mem[add_rob_idx_in_next].rvfi.monitor_mem_wmask <= monitor_mem_wmask;
-                mem[add_rob_idx_in_next].rvfi.monitor_mem_rdata <= monitor_mem_rdata;
-                mem[add_rob_idx_in_next].rvfi.monitor_mem_wdata <= monitor_mem_wdata;
+                mem[add_rob_idx_in_next].rvfi.monitor_mem_addr <= '0;
+                mem[add_rob_idx_in_next].rvfi.monitor_mem_rmask <= '0;
+                mem[add_rob_idx_in_next].rvfi.monitor_mem_wmask <= '0;
+                mem[add_rob_idx_in_next].rvfi.monitor_mem_rdata <= '0;
+                mem[add_rob_idx_in_next].rvfi.monitor_mem_wdata <= '0;
             end
             // mul instruction done
             if (mul_cdb_valid_next) begin
@@ -153,11 +153,11 @@ import rv32i_types::*;
                 mem[mul_rob_idx_in_next].rvfi.monitor_rs1_rdata <= multiply_rs1_rdata;
                 mem[mul_rob_idx_in_next].rvfi.monitor_rs2_rdata <= multiply_rs2_rdata;
                 mem[mul_rob_idx_in_next].rvfi.monitor_rd_wdata <= (mul_inst == 32'h13) ? '0 : multiply_rd_wdata;
-                mem[mul_rob_idx_in_next].rvfi.monitor_mem_addr <= monitor_mem_addr;
-                mem[mul_rob_idx_in_next].rvfi.monitor_mem_rmask <= monitor_mem_rmask;
-                mem[mul_rob_idx_in_next].rvfi.monitor_mem_wmask <= monitor_mem_wmask;
-                mem[mul_rob_idx_in_next].rvfi.monitor_mem_rdata <= monitor_mem_rdata;
-                mem[mul_rob_idx_in_next].rvfi.monitor_mem_wdata <= monitor_mem_wdata;
+                mem[mul_rob_idx_in_next].rvfi.monitor_mem_addr <= '0;
+                mem[mul_rob_idx_in_next].rvfi.monitor_mem_rmask <= '0;
+                mem[mul_rob_idx_in_next].rvfi.monitor_mem_wmask <= '0;
+                mem[mul_rob_idx_in_next].rvfi.monitor_mem_rdata <= '0;
+                mem[mul_rob_idx_in_next].rvfi.monitor_mem_wdata <= '0;
             end
             // div instruction done
             if (div_cdb_valid_next) begin
@@ -165,11 +165,11 @@ import rv32i_types::*;
                 mem[div_rob_idx_in_next].rvfi.monitor_rs1_rdata <= divide_rs1_rdata;
                 mem[div_rob_idx_in_next].rvfi.monitor_rs2_rdata <= divide_rs2_rdata;
                 mem[div_rob_idx_in_next].rvfi.monitor_rd_wdata <= (div_inst == 32'h13) ? '0 : divide_rd_wdata;
-                mem[div_rob_idx_in_next].rvfi.monitor_mem_addr <= monitor_mem_addr;
-                mem[div_rob_idx_in_next].rvfi.monitor_mem_rmask <= monitor_mem_rmask;
-                mem[div_rob_idx_in_next].rvfi.monitor_mem_wmask <= monitor_mem_wmask;
-                mem[div_rob_idx_in_next].rvfi.monitor_mem_rdata <= monitor_mem_rdata;
-                mem[div_rob_idx_in_next].rvfi.monitor_mem_wdata <= monitor_mem_wdata;
+                mem[div_rob_idx_in_next].rvfi.monitor_mem_addr <= '0;
+                mem[div_rob_idx_in_next].rvfi.monitor_mem_rmask <= '0;
+                mem[div_rob_idx_in_next].rvfi.monitor_mem_wmask <= '0;
+                mem[div_rob_idx_in_next].rvfi.monitor_mem_rdata <= '0;
+                mem[div_rob_idx_in_next].rvfi.monitor_mem_wdata <= '0;
             end
             // br instruction done
             if (br_cdb_valid_next) begin
@@ -177,11 +177,11 @@ import rv32i_types::*;
                 mem[br_rob_idx_in_next].rvfi.monitor_rs1_rdata <= branch_rs1_rdata;
                 mem[br_rob_idx_in_next].rvfi.monitor_rs2_rdata <= branch_rs2_rdata;
                 mem[br_rob_idx_in_next].rvfi.monitor_rd_wdata <= (br_inst == 32'h13) ? '0 : branch_rd_wdata;
-                mem[br_rob_idx_in_next].rvfi.monitor_mem_addr <= monitor_mem_addr;
-                mem[br_rob_idx_in_next].rvfi.monitor_mem_rmask <= monitor_mem_rmask;
-                mem[br_rob_idx_in_next].rvfi.monitor_mem_wmask <= monitor_mem_wmask;
-                mem[br_rob_idx_in_next].rvfi.monitor_mem_rdata <= monitor_mem_rdata;
-                mem[br_rob_idx_in_next].rvfi.monitor_mem_wdata <= monitor_mem_wdata;
+                mem[br_rob_idx_in_next].rvfi.monitor_mem_addr <= '0;
+                mem[br_rob_idx_in_next].rvfi.monitor_mem_rmask <= '0;
+                mem[br_rob_idx_in_next].rvfi.monitor_mem_wmask <= '0;
+                mem[br_rob_idx_in_next].rvfi.monitor_mem_rdata <= '0;
+                mem[br_rob_idx_in_next].rvfi.monitor_mem_wdata <= '0;
                 mem[br_rob_idx_in_next].rvfi.monitor_pc_wdata <= global_branch_signal ? global_branch_addr : mem[br_rob_idx_in_next].rvfi.monitor_pc_wdata;
             end
 
