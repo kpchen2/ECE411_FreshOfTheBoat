@@ -107,6 +107,7 @@ import rv32i_types::*;
             if (accessing_cache) begin
                 mem[head_next[ADDR_WIDTH - 1:0]+1'b1].rmask <= cache_mem_next.rmask;
                 mem[head_next[ADDR_WIDTH - 1:0]+1'b1].wmask <= cache_mem_next.wmask;
+                mem[head_next[ADDR_WIDTH - 1:0]+1'b1].wdata <= cache_mem_next.wdata;
             end
   
             tail_reg <= tail_next;
@@ -157,7 +158,7 @@ import rv32i_types::*;
                 cdb_mem.rmask   = dequeue_mem_next.rmask;
                 cdb_mem.wmask   = dequeue_mem_next.wmask;
                 cdb_mem.rdata   = (dequeue_mem_next.opcode == op_b_load)  ? data_in : '0;
-                cdb_mem.wdata   = (dequeue_mem_next.opcode == op_b_store) ? dequeue_mem_next.store_wdata : '0;
+                cdb_mem.wdata   = (dequeue_mem_next.opcode == op_b_store) ? dequeue_mem_next.wdata : '0;
                 cdb_mem.rs1_rdata = dequeue_mem_next.rs1_rdata;
                 cdb_mem.rs2_rdata = dequeue_mem_next.rs2_rdata;
 
@@ -206,6 +207,7 @@ import rv32i_types::*;
 
                 cache_mem_next.rmask = d_rmask;
                 cache_mem_next.wmask = d_wmask;
+                cache_mem_next.wdata = d_wdata;
 
                 d_addr[1:0] = 2'b0;
                 accessing_cache = '1;
