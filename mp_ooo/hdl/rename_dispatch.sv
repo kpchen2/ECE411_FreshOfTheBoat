@@ -100,7 +100,6 @@ import rv32i_types::*;
             rs_signal = 3'b011;
         end else if (inst[6:0] inside {op_b_load, op_b_store}) begin
             rs_signal = 3'b100;
-            rs_signal = 3'b010;
         end else if (inst[6:0] inside {op_b_jal, op_b_jalr, op_b_br}) begin
             rs_signal = 3'b011;
         end
