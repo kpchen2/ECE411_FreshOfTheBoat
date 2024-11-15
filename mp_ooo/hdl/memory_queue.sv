@@ -181,7 +181,7 @@ import rv32i_types::*;
             end else if (mem[head_reg[5:0]+1'b1].valid == 1'b1 && mem[head_reg[5:0]+1'b1].addr_ready == 1'b1) begin
                 d_addr = mem[head_reg[5:0]+1'b1].addr;
                 
-                if (mem[head_reg[5:0]+1'b1].opcode == op_b_load) begin
+                if (mem[head_reg[5:0]+1'b1].opcode == op_b_load && mem[head_reg[5:0]+1'b1].rob_num == commited_rob) begin
                     unique case (mem[head_reg[5:0]+1'b1].funct3)
                         load_f3_lb, load_f3_lbu: d_rmask = 4'b0001 << d_addr[1:0];
                         load_f3_lh, load_f3_lhu: d_rmask = 4'b0011 << d_addr[1:0];

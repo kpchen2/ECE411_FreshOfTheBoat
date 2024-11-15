@@ -93,15 +93,12 @@ import rv32i_types::*;
         if (inst[6:0] == op_b_reg && inst[31:25] == 7'b0000001 && (inst[14:12] inside { mult_div_f3_mul, mult_div_f3_mulh, mult_div_f3_mulhsu, mult_div_f3_mulhu})) begin
         // if (inst[6:0] == op_b_reg && inst[31:25] == 7'b0000001 && (inst[14:12] == mult_div_f3_mul || inst[14:12] == mult_div_f3_mulh || inst[14:12] == mult_div_f3_mulhsu || inst[14:12] == mult_div_f3_mulhu)) begin
             rs_signal = 3'b001;
-            rs_signal = 3'b001;
         end else if (inst[6:0] == op_b_reg && inst[31:25] == 7'b0000001 && (inst[14:12] == mult_div_f3_div || inst[14:12] == mult_div_f3_divu || inst[14:12] == mult_div_f3_rem || inst[14:12] == mult_div_f3_remu)) begin
             rs_signal = 3'b010;
         end else if (inst[6:0] inside {op_b_jal, op_b_jalr, op_b_br}) begin
             rs_signal = 3'b011;
         end else if (inst[6:0] inside {op_b_load, op_b_store}) begin
             rs_signal = 3'b100;
-        end else if (inst[6:0] inside {op_b_jal, op_b_jalr, op_b_br}) begin
-            rs_signal = 3'b011;
         end
 
         // if free list empty, instruction queue empty, ROB full, corresponding RS full, don't process instruction
