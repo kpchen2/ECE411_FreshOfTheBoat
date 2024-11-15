@@ -13,11 +13,9 @@ import rv32i_types::*;
 
     input   logic   regf_we_dispatch,
     input   logic   regf_we_add, regf_we_mul, regf_we_div, regf_we_br, regf_we_mem,
-    input   decode_info_t   decode_info
+    input   decode_info_t   decode_info,
     // input   logic   [PHYS_REG_BITS-1:0] rrat[32],
     // input   logic   global_branch_signal
-    input   logic   regf_we_add, regf_we_mul, regf_we_div, regf_we_br,
-    input   decode_info_t   decode_info,
     input   logic   global_branch_signal,
     input   logic   [PHYS_REG_BITS-1:0]     rrat[32]
 );

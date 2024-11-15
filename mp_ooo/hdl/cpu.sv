@@ -190,8 +190,8 @@ import rv32i_types::*;
 
     logic           d_cache_valid;
 
-    assign global_branch_signal = cdb_br.pc_select;
-    assign global_branch_addr = cdb_br.pc_branch;
+    // assign global_branch_signal = cdb_br.pc_select;
+    // assign global_branch_addr = cdb_br.pc_branch;
 
     always_ff @(posedge clk) begin
 
@@ -210,7 +210,7 @@ import rv32i_types::*;
             initial_flag_reg <= initial_flag;
             dfp_read_reg <= dfp_read;
             order <= order_next;
-            global_branch_signal_reg <= (ufp_resp == '0 && global_branch_signal == '0) ? global_branch_signal_reg : global_branch_signal;
+            global_branch_signal_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? global_branch_signal_reg : global_branch_signal;
             global_branch_signal_reg <= global_branch_signal;
         end
     end
@@ -360,13 +360,10 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
         .wdata_in(ufp_rdata),
-        .enqueue_in((global_branch_signal_reg) ? '0 : ufp_resp),
-        .enqueue_in((global_branch_signal || global_branch_signal_reg) ? '0 : i_ufp_resp),
+        .enqueue_in((global_branch_signal_reg) ? '0 : i_ufp_resp),
         .rdata_out(inst),
         .dequeue_in(dequeue),
         .full_out(full_stall),
-        .empty_out(iqueue_empty),
-        .global_branch_signal(global_branch_signal)
         .empty_out(iqueue_empty),
         .global_branch_signal(global_branch_signal)
     );
@@ -376,13 +373,10 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
         .wdata_in(pc),
-        .enqueue_in((global_branch_signal_reg) ? '0 : ufp_resp),
-        .enqueue_in((global_branch_signal || global_branch_signal_reg) ? '0 : i_ufp_resp),
+        .enqueue_in((global_branch_signal_reg) ? '0 : i_ufp_resp),
         .rdata_out(prog),
         .dequeue_in(dequeue),
         .full_out(full_garbage),
-        .empty_out(empty_garbage),
-        .global_branch_signal(global_branch_signal)
         .empty_out(empty_garbage),
         .global_branch_signal(global_branch_signal)
     );
@@ -400,7 +394,7 @@ import rv32i_types::*;
         // .order(order),
         .dequeue(dequeue),
         .dequeue_free_list(dequeue_free_list),
-        .order_next(order_next),
+        // .order_next(order_next),
         .rd(rd_dispatch),
         .rs1(rs1),
         .rs2(rs2),
@@ -446,9 +440,9 @@ import rv32i_types::*;
         .ps2_valid(ps2_valid),
         .regf_we_dispatch(regf_we_dispatch),
         .regf_we_add(cdb_add.valid), .regf_we_mul(cdb_mul.valid), .regf_we_div(cdb_div.valid), .regf_we_br(cdb_br.valid), .regf_we_mem(cdb_mem.valid),
-        .decode_info(decode_info)
-        // .rrat(rrat),
-        // .global_branch_signal(global_branch_signal)
+        .decode_info(decode_info),
+        .rrat(rrat),
+        .global_branch_signal(global_branch_signal_reg)
     );
 
     rob rob_i (
@@ -473,9 +467,6 @@ import rv32i_types::*;
         .div_rob_idx_in(cdb_div.rob_idx),
         .div_cdb_valid(cdb_div.valid),
         .div_inst(cdb_div.inst),
-        .br_rob_idx_in(cdb_br.rob_idx),
-        .br_cdb_valid(cdb_br.valid),
-        .br_inst(cdb_br.inst),
         .br_rob_idx_in(cdb_br.rob_idx),
         .br_cdb_valid(cdb_br.valid),
         .br_inst(cdb_br.inst),
@@ -529,8 +520,6 @@ import rv32i_types::*;
         .enqueue(enqueue),
         .old_pd(old_pd),
         .rrat_out(rrat)
-        .old_pd(old_pd),
-        .rrat_out(rrat)
     );
 
     free_list free_list_i (
@@ -541,7 +530,7 @@ import rv32i_types::*;
         .rdata_out(phys_reg),
         .dequeue_in(dequeue_free_list),
         .empty_out(is_free_list_empty),
-        .global_branch_signal(global_branch_signal)
+        .global_branch_signal(global_branch_signal_reg)
     );
 
     phys_regfile phys_regfile_i (
@@ -595,12 +584,7 @@ import rv32i_types::*;
         .store_wdata(fu_mem_store_wdata),
         .calculated_address(calculated_address),
         .fu_rs1_v_mem(fu_rs1_v_mem),
-        .fu_rs2_v_mem(fu_rs2_v_mem)
-        .cdb_div(cdb_div),
-        .rob_idx_br(branch_rob_entry),
-        .pd_s_br(branch_pd),
-        .rd_s_br(branch_rd),
-        .cdb_br(cdb_br),
+        .fu_rs2_v_mem(fu_rs2_v_mem),
         .global_branch_signal(global_branch_signal)
     );
 
@@ -687,7 +671,8 @@ import rv32i_types::*;
         .regf_we_br(cdb_br.valid),
         .regf_we_mem(cdb_mem.valid),
         .mem_idx_in(dispatch_mem_idx),
-        .mem_idx_out(res_dispatch_mem_idx)
+        .mem_idx_out(res_dispatch_mem_idx),
+        .global_branch_signal(global_branch_signal)
     );
 
 endmodule : cpu

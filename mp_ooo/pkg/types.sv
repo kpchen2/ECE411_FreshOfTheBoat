@@ -47,7 +47,6 @@ package rv32i_types;
 
         logic   [31:0]  pc;
 
-        logic   [31:0]  pc;
     } decode_info_t;
 
     typedef struct packed {

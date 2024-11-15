@@ -12,9 +12,6 @@ import rv32i_types::*;
 
     input logic [5:0] mem_idx_in,
     output logic [5:0] mem_idx_out,
-    input   logic   [31:0]  rs1_v_add, rs2_v_add, rs1_v_mul, rs2_v_mul, rs1_v_div, rs2_v_div, rs1_v_br, rs2_v_br,
-    input   decode_info_t   decode_info_add, decode_info_mul, decode_info_div, decode_info_br,
-    input   logic           start_add, start_mul, start_div, start_br,
 
     // ADD PORTS
     input   logic   [5:0]   rob_idx_add,
@@ -44,15 +41,8 @@ import rv32i_types::*;
     output  cdb_t           cdb_br,
     output  logic           busy_br,
 
-    input   logic           global_branch_signal
-    output  logic           busy_div,
+    input   logic           global_branch_signal,
 
-    // BR PORTS
-    input   logic   [5:0]   rob_idx_br,
-    input   logic   [5:0]   pd_s_br,
-    input   logic   [4:0]   rd_s_br,
-    output  cdb_t           cdb_br,
-    output  logic           busy_br,
     // input   logic           global_branch_signal,
 
     // MEM PORTS
@@ -68,18 +58,15 @@ import rv32i_types::*;
 );
 
     logic   valid_add, valid_mul, valid_div, valid_br, valid_mem;
-    logic   valid_add, valid_mul, valid_div, valid_br;
+    
     // cdb_t   cdb_add, cdb_mul, cdb_div;
 
     logic   [5:0]   rob_add_reg, rob_mul_reg, rob_div_reg,  rob_br_reg, rob_mem_reg;
     logic   [5:0]   pd_add_reg, pd_mul_reg, pd_div_reg,     pd_br_reg, pd_mem_reg;
     logic   [4:0]   rd_add_reg, rd_mul_reg, rd_div_reg,     rd_br_reg, rd_mem_reg;
-    logic   [5:0]   rob_add_reg, rob_mul_reg, rob_div_reg, rob_br_reg;
-    logic   [5:0]   pd_add_reg, pd_mul_reg, pd_div_reg, pd_br_reg;
-    logic   [4:0]   rd_add_reg, rd_mul_reg, rd_div_reg, rd_br_reg;
+    
 
     logic   [31:0]  rd_v_add, rd_v_mul, rd_v_div, rd_v_br;//, rd_v_mem;
-    logic   [31:0]  rd_v_add, rd_v_mul, rd_v_div, rd_v_br;
 
     logic           mul_1, mul_2, mul_3, mul_4;
     logic           div_1, div_2, div_3, div_4;
@@ -87,8 +74,6 @@ import rv32i_types::*;
     logic           pc_select;
     logic   [31:0]  pc_branch;
 
-    logic           pc_select;
-    logic   [31:0]  pc_branch;
 
     // logic           busy_add;
 
@@ -100,9 +85,7 @@ import rv32i_types::*;
             rob_br_reg <= '0;
             pd_br_reg <= '0;
             rd_br_reg <= '0;
-            rob_br_reg <= '0;
-            pd_br_reg <= '0;
-            rd_br_reg <= '0;
+           
             rob_mul_reg <= '0;
             pd_mul_reg <= '0;
             rd_mul_reg <= '0;
@@ -171,8 +154,8 @@ import rv32i_types::*;
         .rd_v(rd_v_mul),
         .start(~global_branch_signal && start_mul),
         .valid(valid_mul),
-        .hold(mul_1 || mul_2 || mul_3 || mul_4),
-        .global_branch_signal(global_branch_signal)
+        .hold(mul_1 || mul_2 || mul_3 || mul_4)
+        // .global_branch_signal(global_branch_signal)
     );
 
     fu_div_rem fu_div_i (
@@ -184,8 +167,8 @@ import rv32i_types::*;
         .rd_v(rd_v_div),
         .start(~global_branch_signal && start_div),
         .valid(valid_div),
-        .hold(div_1 || div_2 || div_3 || div_4),
-        .global_branch_signal(global_branch_signal)
+        .hold(div_1 || div_2 || div_3 || div_4)
+        // .global_branch_signal(global_branch_signal)
     );
 
     fu_br fu_br_i (
@@ -200,22 +183,10 @@ import rv32i_types::*;
         .pc_branch(pc_branch)
     );
 
-    fu_br fu_br_i (
-        .rs1_v(rs1_v_br),
-        .rs2_v(rs2_v_br),
-        .decode_info(decode_info_br),     // PHYS REGFILE
-        .rd_v(rd_v_br),
-        .start(start_br),
-        .valid(valid_br),
-        .busy(busy_br),
-        .pc_select(pc_select),
-        .pc_branch(pc_branch)
-    );
-
     fu_mem fu_mem_i(
         .rs1_v(rs1_v_mem), .rs2_v(rs2_v_mem),
     //    .decode_info(decode_info_mem),
-        .start(start_mem),
+        .start(~global_branch_signal && start_mem),
         .addr_valid(valid_mem),
         .busy(busy_mem),
         .mem_addr(calculated_address),

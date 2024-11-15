@@ -15,11 +15,8 @@ import rv32i_types::*;
     input   logic   [5:0]   phys_reg,
     input   logic           is_free_list_empty,
     // input logic [63:0] order,
-    input   logic   [63:0]  order,
     output  logic           dequeue,
     output  logic           dequeue_free_list,
-    output  logic   [63:0]  order_next,
-    output  logic           dequeue_fl,
     // output logic [63:0] order_next,
     // to and from RAT
     output  logic   [4:0]                   rd, rs1, rs2,
@@ -33,7 +30,6 @@ import rv32i_types::*;
     input   logic   [PHYS_REG_BITS-1:0]     rob_num,     // USE THIS SOMEWHERE,
     output  logic   [PHYS_REG_BITS-1:0]     rob_num_out,
     output  decode_info_t                   decode_info,
-    output  logic   [2:0]                   rs_signal,
     output  logic   [2:0]                   rs_signal,
     output  logic   [31:0]                  dispatch_pc_rdata,
     output  logic   [31:0]                  dispatch_pc_wdata,
@@ -113,8 +109,7 @@ import rv32i_types::*;
         if (!is_free_list_empty_reg && !is_iqueue_empty_reg && !rob_full_reg && !((rs_full_add && (rs_signal == 3'b000)) || (rs_full_mul && (rs_signal == 3'b001)) || (rs_full_div && (rs_signal == 3'b010)) || (rs_full_br && (rs_signal == 3'b011)) || (rs_full_mem && (rs_signal == 3'b100)))) begin
         // if (!is_free_list_empty && !is_iqueue_empty && !rob_full && !rs_full_add && !rs_full_mul && !rs_full_div) begin
             dequeue = 1'b1;
-            dequeue_fl = ((inst[6:0] == op_b_br) || (inst == 32'h13 || inst == 0)) ? 1'b0 : 1'b1; // also if store
-            dequeue_free_list = (inst[6:0] == op_b_store) ? 1'b0 : 1'b1;
+            dequeue_free_list = ((inst[6:0] == op_b_br) || (inst == 32'h13 || inst == 0) || inst[6:0] == op_b_store) ? 1'b0 : 1'b1; // also if store
             decode_info.funct3 = inst[14:12];
             decode_info.funct7 = inst[31:25];
             decode_info.opcode = inst[6:0];
@@ -138,16 +133,12 @@ import rv32i_types::*;
                 mem_regf_we = 1'b1;
             end
 
-            order_next = order + 64'd1;
             rd = (inst[6:0] == op_b_br) ? '0 : decode_info.rd_s;
             rs1 = decode_info.rs1_s;
             rs2 = decode_info.rs2_s;
 
             dispatch_inst = inst;
             dispatch_pc_rdata = prog - 32'd4;
-            dispatch_pc_rdata = prog - 4;
-            dispatch_order = order;
-            dispatch_pc_wdata = prog;
             dispatch_pc_wdata = global_branch_signal ? global_branch_addr : prog;
             dispatch_rs1_s = inst[19:15];
             dispatch_rs2_s = inst[24:20];
@@ -156,8 +147,8 @@ import rv32i_types::*;
             decode_info.pc = prog - 4;
         end
 
-        pd = ((inst[6:0] == op_b_br) || (inst == 32'h13 || inst == 0)) ? '0 : phys_reg;
-        pd = (inst[6:0] == op_b_br || inst[6:0] == op_b_store) ? '0 : phys_reg;
+        pd = ((inst[6:0] == op_b_br) || (inst == 32'h13 || inst == 0) || inst[6:0] == op_b_store) ? '0 : phys_reg;
+        // pd = (inst[6:0] == op_b_br || inst[6:0] == op_b_store) ? '0 : phys_reg;
     end
 
 endmodule : rename_dispatch

@@ -34,9 +34,6 @@ import rv32i_types::*;
     input   logic   [31:0]                      br_inst,
 
     output  logic   [63:0]                      order_next,
-    input   logic   [$clog2(QUEUE_DEPTH)-1:0]   br_rob_idx_in,
-    input   logic                               br_cdb_valid,
-    input   logic   [31:0]                      br_inst,
     input   logic   [$clog2(QUEUE_DEPTH)-1:0]   mem_rob_idx_in,
     input   logic                               mem_cdb_valid,
     input   logic   [31:0]                      mem_inst,
@@ -295,8 +292,8 @@ import rv32i_types::*;
                     enqueue_mem_next.rvfi.monitor_pc_rdata = pc_rdata;
                     enqueue_mem_next.rvfi.monitor_pc_wdata = pc_wdata;
                     // enqueue_mem_next.rvfi.monitor_order = order;
-                    enqueue_mem_next.rvfi.monitor_rs1_addr = (inst[6:0] == op_b_lui || inst[6:0] == op_b_auipc || inst[6:0] == op_b_auipc || inst[6:0] == op_b_jal) ? '0 : rs1_s;
-                    enqueue_mem_next.rvfi.monitor_rs2_addr = (inst[6:0] == op_b_imm || inst[6:0] == op_b_lui || inst[6:0] == op_b_auipc || inst[6:0] == op_b_load || inst[6:0] == op_b_auipc || inst[6:0] == op_b_jal || inst[6:0] == op_b_jalr) ? '0 : rs2_s;
+                    enqueue_mem_next.rvfi.monitor_rs1_addr = (inst[6:0] == op_b_lui || inst[6:0] == op_b_auipc || inst[6:0] == op_b_jal) ? '0 : rs1_s;
+                    enqueue_mem_next.rvfi.monitor_rs2_addr = (inst[6:0] == op_b_imm || inst[6:0] == op_b_lui || inst[6:0] == op_b_auipc || inst[6:0] == op_b_load || inst[6:0] == op_b_jal || inst[6:0] == op_b_jalr) ? '0 : rs2_s;
                     enqueue_mem_next.rvfi.monitor_inst = inst;
                     enqueue_mem_next.rvfi.monitor_regf_we = regf_we;            
                     

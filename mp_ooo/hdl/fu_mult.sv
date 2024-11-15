@@ -11,8 +11,8 @@ import rv32i_types::*;
     output  logic   [31:0]  rd_v,
     input   logic           start,
     output  logic           valid,
-    input   logic           hold,
-    input   logic           global_branch_signal
+    input   logic           hold
+    // input   logic           global_branch_signal
 );
 
     logic   [31:0]  a;

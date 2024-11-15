@@ -9,7 +9,6 @@ import rv32i_types::*;
         
         input logic dispatch_valid,
         input logic [2:0] rs_select  , // select rs, inherit from dispatch, 
-        input logic [2:0] rs_select  , // select rs, inherit from dispatch, 
         input logic dispatch_ps_ready1   , // if the ps is ready
         input logic dispatch_ps_ready2,     // if the ps is ready
         input logic [5:0] ps1      , // ps1, inherited from rename/dispatch
@@ -56,7 +55,6 @@ import rv32i_types::*;
 
         output logic [4:0] add_rd,
         output logic [4:0] multiply_rd,
-        output logic [4:0] multiply_rd,
         output logic [4:0] divide_rd,
         output logic [4:0] mem_rd,
         output logic [4:0] branch_rd,
@@ -97,7 +95,6 @@ import rv32i_types::*;
         input  logic       regf_we_br,
         input  logic       global_branch_signal,
         input  logic       regf_we_mem,
-        input  logic       regf_we_br,
         input  logic [5:0]  mem_idx_in,
         output logic [5:0]  mem_idx_out
 
@@ -169,7 +166,6 @@ import rv32i_types::*;
     logic mem_fu_full;
 
 
-    logic [2:0] rs_select_reg; // reg equivalent of rs_select
     logic [2:0] rs_select_reg; // reg equivalent of rs_select
     logic [5:0] cdb_ps_id_add_reg;  //reg equivalent of cdb_ps_id_add
     logic [5:0] cdb_ps_id_multiply_reg;
@@ -328,19 +324,7 @@ import rv32i_types::*;
                 end
             end
 
-            for (int i = 0; i < NUM_BRANCH_REGISTERS; i++)
-            begin
-                // if ((regf_we_div && divide_reservation_station[i].ps1 == cdb_ps_id_divide_reg) || (regf_we_mul && divide_reservation_station[i].ps1 == cdb_ps_id_multiply_reg) || (regf_we_add && divide_reservation_station[i].ps1 == cdb_ps_id_add_reg) || (regf_we_div && divide_reservation_station[i].ps1 == cdb_ps_id_divide) || (regf_we_mul && divide_reservation_station[i].ps1 == cdb_ps_id_multiply))
-                if (branch_reservation_station[i].busy && ((regf_we_div_reg && branch_reservation_station[i].ps1 == cdb_ps_id_divide_reg) || (regf_we_mul_reg && branch_reservation_station[i].ps1 == cdb_ps_id_multiply_reg) || (branch_reservation_station[i].ps1 == cdb_ps_id_add_reg) || (branch_reservation_station[i].ps1 == cdb_ps_id_branch_reg) || (branch_reservation_station[i].ps1 == cdb_ps_id_mem_reg)))
-                begin
-                    branch_reservation_station[i].ps1_v <= 1'b1;
-                end
-                // if ((regf_we_div && divide_reservation_station[i].ps2 == cdb_ps_id_divide_reg) || (regf_we_mul && divide_reservation_station[i].ps2 == cdb_ps_id_multiply_reg) || (regf_we_add && divide_reservation_station[i].ps2 == cdb_ps_id_add_reg) || (regf_we_div && divide_reservation_station[i].ps2 == cdb_ps_id_divide) || (regf_we_mul && divide_reservation_station[i].ps2 == cdb_ps_id_multiply))
-                if (branch_reservation_station[i].busy && ((regf_we_div_reg && branch_reservation_station[i].ps2 == cdb_ps_id_divide_reg) || (regf_we_mul_reg && branch_reservation_station[i].ps2 == cdb_ps_id_multiply_reg) || (branch_reservation_station[i].ps2 == cdb_ps_id_add_reg) || (branch_reservation_station[i].ps2 == cdb_ps_id_branch_reg) || (branch_reservation_station[i].ps2 == cdb_ps_id_mem_reg)))
-                begin
-                    branch_reservation_station[i].ps2_v <= 1'b1;
-                end
-            end
+           
             
             for (int i = 0; i < NUM_MEM_REGISTERS; i++)
             begin
@@ -355,7 +339,7 @@ import rv32i_types::*;
                     mem_reservation_station[i].ps2_v <= 1'b1;
                 end
             end 
-            end
+            
 
             for (int i = 0; i < NUM_BRANCH_REGISTERS; i++)
             begin
@@ -388,6 +372,10 @@ import rv32i_types::*;
                 begin
                     branch_reservation_station[i] <= '0;
                 end
+                for (int i = 0 ; i < NUM_MEM_REGISTERS; i++)
+                begin
+                    mem_reservation_station[i] <= '0;
+                end
             end
         end
     end
@@ -413,7 +401,6 @@ import rv32i_types::*;
         /* * * * * * * We selected Add RS * * * * * * */
         if (dispatch_valid)
         begin
-            if (rs_select == 3'd0) 
             if (rs_select == 3'd0) 
             begin
                 insert_add = 1'b1;
@@ -442,7 +429,6 @@ import rv32i_types::*;
         /* * * * * * * We selected Multiply RS * * * * * * */
 
             else if (rs_select == 3'd1) 
-            else if (rs_select == 3'd1) 
             begin
                 insert_multiply = 1'b1;
                 multiply_reservation_station_entry_next.busy = 1'b1; // mark as busy
@@ -469,7 +455,6 @@ import rv32i_types::*;
                 end
             end
 
-            else if (rs_select == 3'd2) 
             else if (rs_select == 3'd2) 
             begin
                 insert_divide = 1'b1;
