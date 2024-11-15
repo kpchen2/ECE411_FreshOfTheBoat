@@ -1,9 +1,9 @@
 # AG Report mp_ooo_comp 2024-11-14T23:59:59-06:00 cp3_ddl2
-Report generated at 2024-11-15T11:17:00-06:00, using commit ``70f7803a7ded6e9d48d51940f9511919b83c945b``
+Report generated at 2024-11-15T15:14:58-06:00, using commit ``70f7803a7ded6e9d48d51940f9511919b83c945b``
 
-Autograder Run ID: 9605329f-6323-4c29-8cae-ab359ce6abaf
+Autograder Run ID: 2da044be-52e9-4557-9bcf-4df869b78bc4
 
-Autograder Job ID: cb5d0b02-ced0-4bfe-a58d-061552a0f570
+Autograder Job ID: 99ffb34a-6100-4623-9e76-d87837a0bdd4
 
 |Tests|Result|IPC|Delay (μs)|Power (mW)|
 |---|---|---|---|---|
@@ -24,27 +24,27 @@ f<sub>max</sub> (MHz)|```100.00```|
 
  ``` 
  make clean
-make[1]: Entering directory '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram'
+make[1]: Entering directory '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram'
 rm -rf output
 mkdir output
 touch output/.gitkeep
-make[1]: Leaving directory '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram'
+make[1]: Leaving directory '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram'
 python3 sram.py
 sync
 make 
-make[1]: Entering directory '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram'
+make[1]: Entering directory '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram'
 make clean
-make[2]: Entering directory '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram'
+make[2]: Entering directory '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram'
 rm -rf output
 mkdir output
 touch output/.gitkeep
-make[2]: Leaving directory '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram'
+make[2]: Leaving directory '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram'
 python3 sram.py
 sync
 make mp_cache_tag_array mp_cache_data_array
-make[2]: Entering directory '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram'
+make[2]: Entering directory '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram'
 source /srv/ece411ag/OpenRAM/miniconda/bin/activate ;\
-python3 /srv/ece411ag/OpenRAM/compiler/../sram_compiler.py /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.py
+python3 /srv/ece411ag/OpenRAM/compiler/../sram_compiler.py /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.py
 |==============================================================================|
 |=========                      OpenRAM v1.2.48                       =========|
 |=========                                                            =========|
@@ -56,7 +56,7 @@ python3 /srv/ece411ag/OpenRAM/compiler/../sram_compiler.py /tmp/cb5d0b02-ced0-4b
 |=========        Development help: openram-dev-group@ucsc.edu        =========|
 |=========                See LICENSE for license info                =========|
 |==============================================================================|
-** Start: 11/15/2024 11:17:06
+** Start: 11/15/2024 15:15:04
 Technology: freepdk45
 Total size: 384 bits
 Word size: 24
@@ -72,47 +72,47 @@ Characterization is disabled (using analytical delay models) (analytical_delay=F
 Only generating nominal corner timing.
 Words per row: None
 Output files are: 
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.lvs
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.sp
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.v
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.lib
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.py
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.html
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.log
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.lef
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.gds
-** Submodules: 1.1 seconds
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.lvs
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.sp
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.v
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.lib
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.py
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.html
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.log
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.lef
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.gds
+** Submodules: 1.6 seconds
 ** Placement: 0.0 seconds
 ** Routing: 0.0 seconds
 ** Verification: 0.0 seconds
-** SRAM creation: 1.2 seconds
-SP: Writing to /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.sp
+** SRAM creation: 1.6 seconds
+SP: Writing to /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.sp
 ** Spice writing: 0.1 seconds
 DELAY: Writing stimulus...
 ** DELAY: 0.2 seconds
-GDS: Writing to /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.gds
-** GDS: 0.6 seconds
-LEF: Writing to /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.lef
+GDS: Writing to /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.gds
+** GDS: 0.7 seconds
+LEF: Writing to /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.lef
 ** LEF: 0.0 seconds
-LVS: Writing to /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.lvs.sp
+LVS: Writing to /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.lvs.sp
 ** LVS writing: 0.0 seconds
 LIB: Characterizing... 
 ** Characterization: 0.2 seconds
-Config: Writing to /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.py
+Config: Writing to /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.py
 ** Config: 0.0 seconds
-Datasheet: Writing to /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.html
+Datasheet: Writing to /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.html
 ** Datasheet: 0.0 seconds
-Verilog: Writing to /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.v
+Verilog: Writing to /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.v
 ** Verilog: 0.0 seconds
-Extended Config: Writing to /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array_extended.py
+Extended Config: Writing to /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array_extended.py
 ** Extended Config: 0.0 seconds
-** End: 2.3 seconds
-sed -i -E 's/falling_edge/rising_edge/g' /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array_TT_1p0V_25C.lib
+** End: 3.0 seconds
+sed -i -E 's/falling_edge/rising_edge/g' /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array_TT_1p0V_25C.lib
 source /srv/ece411ag/OpenRAM/miniconda/bin/activate ;\
-python3 /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/area.py /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.gds > /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.area.txt
+python3 /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/area.py /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.gds > /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array.area.txt
 cat ./output/mp_cache_tag_array/mp_cache_tag_array.area.txt | xargs -I {} sed -i -E 's/area : .*/area : {}/g' output/mp_cache_tag_array/mp_cache_tag_array_TT_1p0V_25C.lib
-cd /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_tag_array ;\
-lc_shell -x 'read_lib /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array_TT_1p0V_25C.lib; write_lib mp_cache_tag_array_TT_1p0V_25C_lib; exit' ;\
+cd /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_tag_array ;\
+lc_shell -x 'read_lib /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array_TT_1p0V_25C.lib; write_lib mp_cache_tag_array_TT_1p0V_25C_lib; exit' ;\
 rm -f lc*.log lc*.txt
 
                              Library Compiler (TM)
@@ -127,7 +127,7 @@ rm -f lc*.log lc*.txt
             or distribution of this software is strictly prohibited.
  
 Initializing...
-Reading '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array_TT_1p0V_25C.lib' ...
+Reading '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array_TT_1p0V_25C.lib' ...
 Warning: Line 1, The 'internal_power_calculation' attribute in char_config group is required for NLPM library. 
 	No default can be applied to this attribute. (LBDB-366)
 Information: Line 74, Cell 'mp_cache_tag_array', The cell 'mp_cache_tag_array' contiains memory/memory_read/memory_write groups which are deprecated, use the is_memory_cell attribute instead. (LIBG-280)
@@ -140,7 +140,7 @@ Thank you for using Library Compiler.
 
 Thank you...
 source /srv/ece411ag/OpenRAM/miniconda/bin/activate ;\
-python3 /srv/ece411ag/OpenRAM/compiler/../sram_compiler.py /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_data_array/mp_cache_data_array.py
+python3 /srv/ece411ag/OpenRAM/compiler/../sram_compiler.py /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_data_array/mp_cache_data_array.py
 |==============================================================================|
 |=========                      OpenRAM v1.2.48                       =========|
 |=========                                                            =========|
@@ -152,7 +152,7 @@ python3 /srv/ece411ag/OpenRAM/compiler/../sram_compiler.py /tmp/cb5d0b02-ced0-4b
 |=========        Development help: openram-dev-group@ucsc.edu        =========|
 |=========                See LICENSE for license info                =========|
 |==============================================================================|
-** Start: 11/15/2024 11:17:14
+** Start: 11/15/2024 15:15:13
 Technology: freepdk45
 Total size: 4096 bits
 Word size: 256
@@ -169,47 +169,47 @@ Characterization is disabled (using analytical delay models) (analytical_delay=F
 Only generating nominal corner timing.
 Words per row: None
 Output files are: 
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_data_array/mp_cache_data_array.lvs
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_data_array/mp_cache_data_array.sp
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_data_array/mp_cache_data_array.v
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_data_array/mp_cache_data_array.lib
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_data_array/mp_cache_data_array.py
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_data_array/mp_cache_data_array.html
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_data_array/mp_cache_data_array.log
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_data_array/mp_cache_data_array.lef
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_data_array/mp_cache_data_array.gds
-** Submodules: 17.8 seconds
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_data_array/mp_cache_data_array.lvs
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_data_array/mp_cache_data_array.sp
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_data_array/mp_cache_data_array.v
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_data_array/mp_cache_data_array.lib
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_data_array/mp_cache_data_array.py
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_data_array/mp_cache_data_array.html
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_data_array/mp_cache_data_array.log
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_data_array/mp_cache_data_array.lef
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_data_array/mp_cache_data_array.gds
+** Submodules: 20.1 seconds
 ** Placement: 1.4 seconds
 ** Routing: 0.0 seconds
 ** Verification: 0.0 seconds
-** SRAM creation: 19.2 seconds
-SP: Writing to /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_data_array/mp_cache_data_array.sp
+** SRAM creation: 21.5 seconds
+SP: Writing to /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_data_array/mp_cache_data_array.sp
 ** Spice writing: 0.7 seconds
 DELAY: Writing stimulus...
 ** DELAY: 0.9 seconds
-GDS: Writing to /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_data_array/mp_cache_data_array.gds
-** GDS: 3.2 seconds
-LEF: Writing to /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_data_array/mp_cache_data_array.lef
+GDS: Writing to /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_data_array/mp_cache_data_array.gds
+** GDS: 3.4 seconds
+LEF: Writing to /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_data_array/mp_cache_data_array.lef
 ** LEF: 0.0 seconds
-LVS: Writing to /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_data_array/mp_cache_data_array.lvs.sp
+LVS: Writing to /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_data_array/mp_cache_data_array.lvs.sp
 ** LVS writing: 0.2 seconds
 LIB: Characterizing... 
-** Characterization: 1.1 seconds
-Config: Writing to /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_data_array/mp_cache_data_array.py
+** Characterization: 1.4 seconds
+Config: Writing to /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_data_array/mp_cache_data_array.py
 ** Config: 0.0 seconds
-Datasheet: Writing to /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_data_array/mp_cache_data_array.html
+Datasheet: Writing to /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_data_array/mp_cache_data_array.html
 ** Datasheet: 0.0 seconds
-Verilog: Writing to /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_data_array/mp_cache_data_array.v
+Verilog: Writing to /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_data_array/mp_cache_data_array.v
 ** Verilog: 0.0 seconds
-Extended Config: Writing to /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_data_array/mp_cache_data_array_extended.py
+Extended Config: Writing to /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_data_array/mp_cache_data_array_extended.py
 ** Extended Config: 0.0 seconds
-** End: 25.5 seconds
-sed -i -E 's/falling_edge/rising_edge/g' /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_data_array/mp_cache_data_array_TT_1p0V_25C.lib
+** End: 28.3 seconds
+sed -i -E 's/falling_edge/rising_edge/g' /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_data_array/mp_cache_data_array_TT_1p0V_25C.lib
 source /srv/ece411ag/OpenRAM/miniconda/bin/activate ;\
-python3 /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/area.py /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_data_array/mp_cache_data_array.gds > /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_data_array/mp_cache_data_array.area.txt
+python3 /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/area.py /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_data_array/mp_cache_data_array.gds > /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_data_array/mp_cache_data_array.area.txt
 cat ./output/mp_cache_data_array/mp_cache_data_array.area.txt | xargs -I {} sed -i -E 's/area : .*/area : {}/g' output/mp_cache_data_array/mp_cache_data_array_TT_1p0V_25C.lib
-cd /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_data_array ;\
-lc_shell -x 'read_lib /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_data_array/mp_cache_data_array_TT_1p0V_25C.lib; write_lib mp_cache_data_array_TT_1p0V_25C_lib; exit' ;\
+cd /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_data_array ;\
+lc_shell -x 'read_lib /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_data_array/mp_cache_data_array_TT_1p0V_25C.lib; write_lib mp_cache_data_array_TT_1p0V_25C_lib; exit' ;\
 rm -f lc*.log lc*.txt
 
                              Library Compiler (TM)
@@ -224,7 +224,7 @@ rm -f lc*.log lc*.txt
             or distribution of this software is strictly prohibited.
  
 Initializing...
-Reading '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_data_array/mp_cache_data_array_TT_1p0V_25C.lib' ...
+Reading '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_data_array/mp_cache_data_array_TT_1p0V_25C.lib' ...
 Warning: Line 1, The 'internal_power_calculation' attribute in char_config group is required for NLPM library. 
 	No default can be applied to this attribute. (LBDB-366)
 Information: Line 82, Cell 'mp_cache_data_array', The cell 'mp_cache_data_array' contiains memory/memory_read/memory_write groups which are deprecated, use the is_memory_cell attribute instead. (LIBG-280)
@@ -232,12 +232,12 @@ Technology library 'mp_cache_data_array_TT_1p0V_25C_lib' read successfully
 Wrote the 'mp_cache_data_array_TT_1p0V_25C_lib' library to 'mp_cache_data_array_TT_1p0V_25C_lib.db' successfully
 Maximum memory usage for this session: 87.27 MB
 CPU usage for this session:      2 seconds (  0.00 hours)
-Elapsed time for this session:      2 seconds (  0.00 hours)
+Elapsed time for this session:      3 seconds (  0.00 hours)
 Thank you for using Library Compiler.
 
 Thank you...
-make[2]: Leaving directory '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram'
-make[1]: Leaving directory '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram'
+make[2]: Leaving directory '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram'
+make[1]: Leaving directory '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram'
  
  ``` 
 
@@ -249,9 +249,9 @@ make[1]: Leaving directory '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram'
 0
 mkdir -p vcs
 python3 ../bin/rvfi_reference.py
-cd vcs && vcs /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../pkg/types.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/rrat.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/rob.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/reservation_station.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/rename_dispatch.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/rat.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/queue.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/provided_cache.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/phys_regfile.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/fu_mult.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/fu_div_rem.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/fu_add.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/free_list.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/execute.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/cpu.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/cacheline_adapter.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/valid_array.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/stage2.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/stage1.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/lru_array.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/cache.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common/dram_w_burst_frfcfs_controller.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common/rvfimon.v /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common/mon_itf.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common/mem_itf.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common/monitor.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/vcs/top_tb.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../sram/output/mp_cache_data_array/mp_cache_data_array.v /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../sram/output/mp_cache_tag_array/mp_cache_tag_array.v /srv/software/Synopsys-2021_x86_64/icc/R-2020.09-SP4/dw/sim_ver/DW_mult_seq.v /srv/software/Synopsys-2021_x86_64/icc/R-2020.09-SP4/dw/sim_ver/DW_div_seq.v -full64 -lca -sverilog -timescale=1ps/1ps -debug_acc+all -kdb -fsdb -suppress=LCA_FEATURES_ENABLED -msg_config=../vcs_warn.config -xprop=../xprop.config -xprop=flowctrl +incdir+/srv/software/Synopsys-2021_x86_64/icc/R-2020.09-SP4/dw/sim_ver +define+DW_SUPPRESS_WARN +incdir+/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/vcs +incdir+/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common -l compile.log -top top_tb -o top_tb
+cd vcs && vcs /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../pkg/types.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/valid_array.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/stage2.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/stage1.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/lru_array.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/cache.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/rrat.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/rob.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/reservation_station.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/rename_dispatch.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/rat.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/queue.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/provided_cache.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/phys_regfile.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/fu_mult.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/fu_div_rem.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/fu_add.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/free_list.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/execute.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/cpu.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/cacheline_adapter.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common/dram_w_burst_frfcfs_controller.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common/rvfimon.v /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common/mon_itf.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common/mem_itf.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common/monitor.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/vcs/top_tb.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../sram/output/mp_cache_data_array/mp_cache_data_array.v /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../sram/output/mp_cache_tag_array/mp_cache_tag_array.v /srv/software/Synopsys-2021_x86_64/icc/R-2020.09-SP4/dw/sim_ver/DW_mult_seq.v /srv/software/Synopsys-2021_x86_64/icc/R-2020.09-SP4/dw/sim_ver/DW_div_seq.v -full64 -lca -sverilog -timescale=1ps/1ps -debug_acc+all -kdb -fsdb -suppress=LCA_FEATURES_ENABLED -msg_config=../vcs_warn.config -xprop=../xprop.config -xprop=flowctrl +incdir+/srv/software/Synopsys-2021_x86_64/icc/R-2020.09-SP4/dw/sim_ver +define+DW_SUPPRESS_WARN +incdir+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/vcs +incdir+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common -l compile.log -top top_tb -o top_tb
                          Chronologic VCS (TM)
-      Version R-2020.12-SP1-1_Full64 -- Fri Nov 15 11:17:49 2024
+      Version R-2020.12-SP1-1_Full64 -- Fri Nov 15 15:15:51 2024
 
                     Copyright (c) 1991 - 2021 Synopsys, Inc.
    This software and the associated documentation are proprietary to Synopsys,
@@ -260,37 +260,37 @@ cd vcs && vcs /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../pkg/types.sv 
             or distribution of this software is strictly prohibited.
 
 Reading Config file '../xprop.config'
-Parsing design file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../pkg/types.sv'
-Parsing design file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/rrat.sv'
-Parsing design file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/rob.sv'
-Parsing design file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/reservation_station.sv'
-Parsing design file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/rename_dispatch.sv'
-Parsing design file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/rat.sv'
-Parsing design file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/queue.sv'
-Parsing design file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/provided_cache.sv'
-Parsing design file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/phys_regfile.sv'
-Parsing design file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/fu_mult.sv'
-Parsing design file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/fu_div_rem.sv'
-Parsing design file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/fu_add.sv'
-Parsing design file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/free_list.sv'
-Parsing design file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/execute.sv'
-Parsing design file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/cpu.sv'
-Parsing design file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/cacheline_adapter.sv'
-Parsing design file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/valid_array.sv'
-Parsing design file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/stage2.sv'
-Parsing design file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/stage1.sv'
-Parsing design file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/lru_array.sv'
-Parsing design file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/cache.sv'
-Parsing design file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common/dram_w_burst_frfcfs_controller.sv'
-Parsing design file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common/rvfimon.v'
-Parsing design file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common/mon_itf.sv'
-Parsing design file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common/mem_itf.sv'
-Parsing design file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common/monitor.sv'
-Parsing design file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/vcs/top_tb.sv'
-Parsing included file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common/rvfi_reference.svh'.
-Back to file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/vcs/top_tb.sv'.
-Parsing design file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../sram/output/mp_cache_data_array/mp_cache_data_array.v'
-Parsing design file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../sram/output/mp_cache_tag_array/mp_cache_tag_array.v'
+Parsing design file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../pkg/types.sv'
+Parsing design file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/valid_array.sv'
+Parsing design file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/stage2.sv'
+Parsing design file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/stage1.sv'
+Parsing design file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/lru_array.sv'
+Parsing design file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/cache.sv'
+Parsing design file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/rrat.sv'
+Parsing design file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/rob.sv'
+Parsing design file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/reservation_station.sv'
+Parsing design file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/rename_dispatch.sv'
+Parsing design file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/rat.sv'
+Parsing design file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/queue.sv'
+Parsing design file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/provided_cache.sv'
+Parsing design file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/phys_regfile.sv'
+Parsing design file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/fu_mult.sv'
+Parsing design file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/fu_div_rem.sv'
+Parsing design file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/fu_add.sv'
+Parsing design file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/free_list.sv'
+Parsing design file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/execute.sv'
+Parsing design file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/cpu.sv'
+Parsing design file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/cacheline_adapter.sv'
+Parsing design file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common/dram_w_burst_frfcfs_controller.sv'
+Parsing design file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common/rvfimon.v'
+Parsing design file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common/mon_itf.sv'
+Parsing design file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common/mem_itf.sv'
+Parsing design file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common/monitor.sv'
+Parsing design file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/vcs/top_tb.sv'
+Parsing included file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common/rvfi_reference.svh'.
+Back to file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/vcs/top_tb.sv'.
+Parsing design file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../sram/output/mp_cache_data_array/mp_cache_data_array.v'
+Parsing design file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../sram/output/mp_cache_tag_array/mp_cache_tag_array.v'
 Parsing design file '/srv/software/Synopsys-2021_x86_64/icc/R-2020.09-SP4/dw/sim_ver/DW_mult_seq.v'
 Parsing design file '/srv/software/Synopsys-2021_x86_64/icc/R-2020.09-SP4/dw/sim_ver/DW_div_seq.v'
 Parsing included file '/srv/software/Synopsys-2021_x86_64/icc/R-2020.09-SP4/dw/sim_ver/DW_div_function.inc'.
@@ -302,6 +302,9 @@ Notice: Ports coerced to inout, use -notice for details
 Starting vcs inline pass...
 72 modules and 0 UDP read.
 recompiling package rv32i_types
+recompiling module valid_array
+recompiling module stage_2
+recompiling module stage_1
 recompiling module rrat
 recompiling module rob
 recompiling module reservation_station
@@ -314,9 +317,6 @@ recompiling module fu_div_rem
 recompiling module free_list
 recompiling module execute
 recompiling module cpu
-recompiling module valid_array
-recompiling module stage_2
-recompiling module stage_1
 recompiling module riscv_formal_monitor_rv32imc
 recompiling module riscv_formal_monitor_rv32imc_rob
 recompiling module riscv_formal_monitor_rv32imc_isa_spec
@@ -375,79 +375,79 @@ recompiling module mp_cache_tag_array
 recompiling module DW_mult_seq
 recompiling module DW_div_seq
 All of 72 modules done
-make[1]: Entering directory '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/vcs/csrc'
-make[1]: Leaving directory '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/vcs/csrc'
-/srv/software/Synopsys-2021_x86_64/vcs-mx/O-2018.09-SP2-3/bin/vcs: line 31361: 16861 Segmentation fault      (core dumped) ${TOOL_HOME}/bin/cfs_ident_exec -f ${XML_INPUT_EXE} -o "${fsearchDir}/idents_tapi.xml" -o_SrcFile "${dirSrcFiles}/src_files_c" ${all_dyn_libs} > tapi_xml_writer.log
-make[1]: Entering directory '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/vcs/csrc'
+make[1]: Entering directory '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/vcs/csrc'
+make[1]: Leaving directory '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/vcs/csrc'
+/srv/software/Synopsys-2021_x86_64/vcs-mx/O-2018.09-SP2-3/bin/vcs: line 31361: 16860 Segmentation fault      (core dumped) ${TOOL_HOME}/bin/cfs_ident_exec -f ${XML_INPUT_EXE} -o "${fsearchDir}/idents_tapi.xml" -o_SrcFile "${dirSrcFiles}/src_files_c" ${all_dyn_libs} > tapi_xml_writer.log
+make[1]: Entering directory '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/vcs/csrc'
 rm -f _cuarc*.so _csrc*.so pre_vcsobj_*.so share_vcsobj_*.so
 if [ -x ../top_tb ]; then chmod a-x ../top_tb; fi
-g++  -o ../top_tb      -rdynamic  -Wl,-rpath='$ORIGIN'/top_tb.daidir -Wl,-rpath=./top_tb.daidir -Wl,-rpath=/srv/software/Synopsys-2021_x86_64/vcs/R-2020.12-SP1-1/linux64/lib -L/srv/software/Synopsys-2021_x86_64/vcs/R-2020.12-SP1-1/linux64/lib  -Wl,-rpath-link=./  /usr/lib64/libnuma.so.1   objs/amcQw_d.o   _12866_archive_1.so  SIM_l.o      rmapats_mop.o rmapats.o rmar.o rmar_nd.o  rmar_llvm_0_1.o rmar_llvm_0_0.o           -lvirsim -lerrorinf -lsnpsmalloc -lvfs    -lvcsnew -lsimprofile -luclinative /srv/software/Synopsys-2021_x86_64/vcs/R-2020.12-SP1-1/linux64/lib/vcs_tls.o   -Wl,-whole-archive  -lvcsucli    -Wl,-no-whole-archive        _vcs_pli_stub_.o   /srv/software/Synopsys-2021_x86_64/vcs/R-2020.12-SP1-1/linux64/lib/vcs_save_restore_new.o /srv/software/Synopsys-2021_x86_64/verdi/R-2020.12-SP1-1/share/PLI/VCS/LINUX64/pli.a -ldl  -lc -lm -lpthread -ldl 
+g++  -o ../top_tb      -rdynamic  -Wl,-rpath='$ORIGIN'/top_tb.daidir -Wl,-rpath=./top_tb.daidir -Wl,-rpath=/srv/software/Synopsys-2021_x86_64/vcs/R-2020.12-SP1-1/linux64/lib -L/srv/software/Synopsys-2021_x86_64/vcs/R-2020.12-SP1-1/linux64/lib  -Wl,-rpath-link=./  /usr/lib64/libnuma.so.1   objs/amcQw_d.o   _11521_archive_1.so  SIM_l.o      rmapats_mop.o rmapats.o rmar.o rmar_nd.o  rmar_llvm_0_1.o rmar_llvm_0_0.o           -lvirsim -lerrorinf -lsnpsmalloc -lvfs    -lvcsnew -lsimprofile -luclinative /srv/software/Synopsys-2021_x86_64/vcs/R-2020.12-SP1-1/linux64/lib/vcs_tls.o   -Wl,-whole-archive  -lvcsucli    -Wl,-no-whole-archive        _vcs_pli_stub_.o   /srv/software/Synopsys-2021_x86_64/vcs/R-2020.12-SP1-1/linux64/lib/vcs_save_restore_new.o /srv/software/Synopsys-2021_x86_64/verdi/R-2020.12-SP1-1/share/PLI/VCS/LINUX64/pli.a -ldl  -lc -lm -lpthread -ldl 
 ../top_tb up to date
-make[1]: Leaving directory '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/vcs/csrc'
-CPU time: 4.178 seconds to compile + .706 seconds to elab + .449 seconds to link
+make[1]: Leaving directory '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/vcs/csrc'
+CPU time: 4.374 seconds to compile + .645 seconds to elab + .466 seconds to link
 Verdi KDB elaboration done and the database successfully generated: 0 error(s), 0 warning(s)
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/rrat.sv:36 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/rob.sv:85 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/rob.sv:173 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/reservation_station.sv:75 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/reservation_station.sv:135 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/reservation_station.sv:257 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/reservation_station.sv:391 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/reservation_station.sv:415 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/reservation_station.sv:438 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/reservation_station.sv:~476 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/reservation_station.sv:~480 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/reservation_station.sv:~484 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/reservation_station.sv:~488 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/reservation_station.sv:~492 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/reservation_station.sv:~496 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/rename_dispatch.sv:46 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/rename_dispatch.sv:81 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/rename_dispatch.sv:89 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/rat.sv:43 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/rat.sv:47 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/rat.sv:51 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/rat.sv:56 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/rat.sv:62 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/rat.sv:77 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/queue.sv:41 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/queue.sv:76 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/queue.sv:84 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/queue.sv:96 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/phys_regfile.sv:19 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/phys_regfile.sv:54 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/fu_mult.sv:43 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/fu_mult.sv:66 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/fu_mult.sv:100 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/fu_div_rem.sv:29 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/fu_div_rem.sv:66 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/fu_div_rem.sv:100 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/fu_div_rem.sv:130 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/fu_add.sv:35 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/fu_add.sv:49 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/fu_add.sv:68 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/free_list.sv:38 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/free_list.sv:74 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/free_list.sv:80 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/free_list.sv:92 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/execute.sv:49 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/execute.sv:64 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/execute.sv:76 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/cpu.sv:114 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/cpu.sv:133 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/cacheline_adapter.sv:16 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/cacheline_adapter.sv:27 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/valid_array.sv:24 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/valid_array.sv:38 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/stage2.sv:51 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/stage1.sv:54 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/lru_array.sv:33 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/lru_array.sv:55 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../sram/output/mp_cache_data_array/mp_cache_data_array.v:41 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../sram/output/mp_cache_data_array/mp_cache_data_array.v:52 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../sram/output/mp_cache_tag_array/mp_cache_tag_array.v:37 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../sram/output/mp_cache_tag_array/mp_cache_tag_array.v:47 YES
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hdl/cache.sv:54 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/valid_array.sv:24 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/valid_array.sv:38 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/stage2.sv:51 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/stage1.sv:54 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/lru_array.sv:33 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/lru_array.sv:55 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/rrat.sv:36 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/rob.sv:85 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/rob.sv:173 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/reservation_station.sv:75 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/reservation_station.sv:135 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/reservation_station.sv:257 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/reservation_station.sv:391 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/reservation_station.sv:415 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/reservation_station.sv:438 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/reservation_station.sv:~476 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/reservation_station.sv:~480 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/reservation_station.sv:~484 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/reservation_station.sv:~488 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/reservation_station.sv:~492 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/reservation_station.sv:~496 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/rename_dispatch.sv:46 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/rename_dispatch.sv:81 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/rename_dispatch.sv:89 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/rat.sv:43 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/rat.sv:47 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/rat.sv:51 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/rat.sv:56 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/rat.sv:62 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/rat.sv:77 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/queue.sv:41 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/queue.sv:76 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/queue.sv:84 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/queue.sv:96 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/phys_regfile.sv:19 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/phys_regfile.sv:54 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/fu_mult.sv:43 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/fu_mult.sv:66 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/fu_mult.sv:100 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/fu_div_rem.sv:29 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/fu_div_rem.sv:66 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/fu_div_rem.sv:100 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/fu_div_rem.sv:130 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/fu_add.sv:35 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/fu_add.sv:49 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/fu_add.sv:68 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/free_list.sv:38 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/free_list.sv:74 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/free_list.sv:80 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/free_list.sv:92 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/execute.sv:49 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/execute.sv:64 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/execute.sv:76 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/cpu.sv:114 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/cpu.sv:133 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/cacheline_adapter.sv:16 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/cacheline_adapter.sv:27 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../sram/output/mp_cache_data_array/mp_cache_data_array.v:41 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../sram/output/mp_cache_data_array/mp_cache_data_array.v:52 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../sram/output/mp_cache_tag_array/mp_cache_tag_array.v:37 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../sram/output/mp_cache_tag_array/mp_cache_tag_array.v:47 YES
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hdl/cache.sv:54 YES
 ==================================================
 X P R O P   S T A T I S T I C S
 instrumentable assignments:    814
@@ -495,8 +495,8 @@ INFO:    SpyGlass will run goal(s) 'lint/lint_turbo_rtl'.
 
  Auto-compiling gates libraries
 
-        "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../sram/output/mp_cache_data_array/mp_cache_data_array_TT_1p0V_25C_lib.db"
-        "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../sram/output/mp_cache_tag_array/mp_cache_tag_array_TT_1p0V_25C_lib.db"
+        "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../sram/output/mp_cache_data_array/mp_cache_data_array_TT_1p0V_25C_lib.db"
+        "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../sram/output/mp_cache_tag_array/mp_cache_tag_array_TT_1p0V_25C_lib.db"
     to
         "./spyglass-1/spyglass_cache/autogenerated_sglib/aggregate.sglib" ...done
 
@@ -543,7 +543,7 @@ Checking Rule SGDC_force_ta05 (Rule 14 of total 325) .... done (Time = 0.00s, Me
 Checking Rule SGDC_require_path03 (Rule 15 of total 325) .... done (Time = 0.00s, Memory = -24.0K)
 Checking Rule SGDC_require_value03 (Rule 16 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
 Checking Rule SGDC_voltagedomain05 (Rule 17 of total 325) .... done (Time = 0.00s, Memory = -32.0K)
-Checking Rule SGDC_voltagedomain06 (Rule 18 of total 325) .... done (Time = 0.00s, Memory = 8.0K)
+Checking Rule SGDC_voltagedomain06 (Rule 18 of total 325) .... done (Time = 0.01s, Memory = 8.0K)
 Checking Rule SGDC_voltagedomain07 (Rule 19 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
 Checking Rule SGDC_powerdomainoutputs02 (Rule 20 of total 325) .... done (Time = 0.00s, Memory = 8.0K)
 Checking Rule SGDC_supply01 (Rule 21 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -598,29 +598,29 @@ Checking Rule Av_sanity01 (Rule 69 of total 325) .... done (Time = 0.00s, Memory
 Checking Rule STARC05-2.1.6.5 (Rule 70 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
 Checking Rule ReportStopSummary (Rule 71 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
 Checking Rule ReportIgnoreSummary (Rule 72 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
- Analyzing source file "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../pkg/types.sv" ....
- Analyzing source file "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/rrat.sv" ....
- Analyzing source file "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/rob.sv" ....
- Analyzing source file "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/reservation_station.sv" ....
- Analyzing source file "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/rename_dispatch.sv" ....
- Analyzing source file "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/rat.sv" ....
- Analyzing source file "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/queue.sv" ....
- Analyzing source file "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/provided_cache.sv" ....
- Analyzing source file "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/phys_regfile.sv" ....
- Analyzing source file "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/fu_mult.sv" ....
- Analyzing source file "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/fu_div_rem.sv" ....
- Analyzing source file "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/fu_add.sv" ....
- Analyzing source file "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/free_list.sv" ....
- Analyzing source file "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/execute.sv" ....
- Analyzing source file "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/cpu.sv" ....
- Analyzing source file "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/cacheline_adapter.sv" ....
- Analyzing source file "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/valid_array.sv" ....
- Analyzing source file "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/stage2.sv" ....
- Analyzing source file "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/stage1.sv" ....
- Analyzing source file "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/lru_array.sv" ....
- Analyzing source file "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/cache.sv" ....
+ Analyzing source file "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../pkg/types.sv" ....
+ Analyzing source file "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/valid_array.sv" ....
+ Analyzing source file "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/stage2.sv" ....
+ Analyzing source file "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/stage1.sv" ....
+ Analyzing source file "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/lru_array.sv" ....
+ Analyzing source file "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/cache.sv" ....
+ Analyzing source file "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/rrat.sv" ....
+ Analyzing source file "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/rob.sv" ....
+ Analyzing source file "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/reservation_station.sv" ....
+ Analyzing source file "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/rename_dispatch.sv" ....
+ Analyzing source file "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/rat.sv" ....
+ Analyzing source file "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/queue.sv" ....
+ Analyzing source file "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/provided_cache.sv" ....
+ Analyzing source file "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/phys_regfile.sv" ....
+ Analyzing source file "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/fu_mult.sv" ....
+ Analyzing source file "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/fu_div_rem.sv" ....
+ Analyzing source file "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/fu_add.sv" ....
+ Analyzing source file "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/free_list.sv" ....
+ Analyzing source file "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/execute.sv" ....
+ Analyzing source file "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/cpu.sv" ....
+ Analyzing source file "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/cacheline_adapter.sv" ....
  Elaborating Top Verilog Design Unit 'cpu' ..... done
-Checking Rule ElabSummary (Rule 73 of total 325) .... done (Time = 0.01s, Memory = 8.0K)
+Checking Rule ElabSummary (Rule 73 of total 325) .... done (Time = 0.00s, Memory = 8.0K)
 Checking Rule ReportCheckDataSummary (Rule 74 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
 Checking Rule IgnoredLibCells (Rule 75 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
  Reading waiver file "./spyglass-1/cpu/lint/lint_turbo_rtl/spyglass_spysch/constraint/spg_autogenerated_waivers.sgdc" ...
@@ -646,7 +646,7 @@ Checking Rule SGDC_waive26 (Rule 89 of total 325) .... done (Time = 0.00s, Memor
 Checking Rule SGDC_waive27 (Rule 90 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
 Checking Rule SGDC_waive29 (Rule 91 of total 325) .... done (Time = 0.00s, Memory = 8.0K)
 Checking Rule STARC05-2.1.4.5 (Rule 92 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-Checking Rule STARC05-2.3.1.5b (Rule 93 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+Checking Rule STARC05-2.3.1.5b (Rule 93 of total 325) .... done (Time = 0.01s, Memory = 0.0K)
 Checking Rule STARC05-2.3.3.1 (Rule 94 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
 Checking Rule STARC05-2.3.3.1 (Rule 95 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
 Checking Rule STARC05-2.11.3.1 (Rule 96 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -668,7 +668,7 @@ Checking Rule W467 (Rule 111 of total 325) .... done (Time = 0.00s, Memory = 0.0
 Checking Rule Prereqs_RegInputOutputs (Rule 112 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
 Checking Rule PragmaComments-ML (Rule 113 of total 325) .... done (Time = 0.00s, Memory = 8.0K)
 Checking Rule PragmaComments-ML (Rule 114 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-Checking Rule CheckDelayTimescale-ML (Rule 115 of total 325) .... done (Time = 0.01s, Memory = 0.0K)
+Checking Rule CheckDelayTimescale-ML (Rule 115 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
 Checking Rule Prereqs_CheckTimeUnitandPrecision-ML (Rule 116 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
 Checking ELABDU Rules for designUnit cpu
     Checking Rule Prereqs_InferLatch (Rule 117 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -695,12 +695,12 @@ Checking ELABDU Rules for designUnit cpu
     Checking Rule W216 (Rule 138 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W218 (Rule 139 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W224 (Rule 140 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W263 (Rule 141 of total 325) .... done (Time = 0.01s, Memory = 0.0K)
+    Checking Rule W263 (Rule 141 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W289 (Rule 142 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W337 (Rule 143 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W416 (Rule 144 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W352 (Rule 145 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W362 (Rule 146 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W362 (Rule 146 of total 325) .... done (Time = 0.01s, Memory = 0.0K)
     Checking Rule W415a (Rule 147 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W486 (Rule 148 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W499 (Rule 149 of total 325) .... done (Time = 0.00s, Memory = 16.0K)
@@ -720,7 +720,7 @@ Checking ELABDU Rules for designUnit cpu
     Checking Rule W505 (Rule 163 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W505 (Rule 164 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W528 (Rule 165 of total 325) .... done (Time = 0.01s, Memory = 32.0K)
-    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.00s, Memory = 608.0K)
+    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.01s, Memory = 608.0K)
     Checking Rule Prereqs_Usage (Rule 167 of total 325) .... done (Time = 0.00s, Memory = -40.0K)
     Checking Rule Prereqs_ConstantInput-ML (Rule 168 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule ReportPortInfo-ML (Rule 169 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -731,6 +731,66 @@ Checking ELABDU Rules for designUnit cpu
     Checking Rule Postreqs_Usage_ML (Rule 174 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule NoXInCase-ML (Rule 175 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
 Checking ELABDU Rules for designUnit cache
+    Checking Rule Prereqs_InferLatch (Rule 117 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule STARC05-2.1.5.3 (Rule 118 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule STARC05-2.2.3.3 (Rule 119 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule STARC05-2.3.1.6 (Rule 120 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule STARC05-2.10.2.3 (Rule 121 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule STARC05-2.10.3.2a (Rule 122 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule STARC05-2.11.3.1 (Rule 123 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule STARC05-2.1.3.1 (Rule 124 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule STARC05-2.10.1.4a (Rule 125 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule STARC05-2.10.1.4b (Rule 126 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule sim_race02 (Rule 127 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W110 (Rule 128 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W122 (Rule 129 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W496a (Rule 130 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W496b (Rule 131 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W19 (Rule 132 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W66 (Rule 133 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W116 (Rule 134 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W123 (Rule 135 of total 325) .... done (Time = 0.00s, Memory = 16.0K)
+    Checking Rule W156 (Rule 136 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W215 (Rule 137 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W216 (Rule 138 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W218 (Rule 139 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W224 (Rule 140 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W263 (Rule 141 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W289 (Rule 142 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W337 (Rule 143 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W416 (Rule 144 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W352 (Rule 145 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W362 (Rule 146 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W415a (Rule 147 of total 325) .... done (Time = 0.00s, Memory = 8.0K)
+    Checking Rule W486 (Rule 148 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W499 (Rule 149 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W502 (Rule 150 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W116 (Rule 151 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W122 (Rule 152 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W123 (Rule 153 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W156 (Rule 154 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W71 (Rule 155 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W240 (Rule 156 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W240 (Rule 157 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W287a (Rule 158 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W293 (Rule 159 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W398 (Rule 160 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W424 (Rule 161 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W467 (Rule 162 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W505 (Rule 163 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W505 (Rule 164 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W528 (Rule 165 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.01s, Memory = 608.0K)
+    Checking Rule Prereqs_Usage (Rule 167 of total 325) .... done (Time = 0.00s, Memory = -16.0K)
+    Checking Rule Prereqs_ConstantInput-ML (Rule 168 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule ReportPortInfo-ML (Rule 169 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule Prereqs_ReportPortInfo-ML (Rule 170 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule Prereqs_ReportPortInfo-ML (Rule 171 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule NoAssignX-ML (Rule 172 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule ParamWidthMismatch-ML (Rule 173 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule Postreqs_Usage_ML (Rule 174 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule NoXInCase-ML (Rule 175 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+Checking ELABDU Rules for designUnit stage_1
     Checking Rule Prereqs_InferLatch (Rule 117 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule STARC05-2.1.5.3 (Rule 118 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule STARC05-2.2.3.3 (Rule 119 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -780,67 +840,7 @@ Checking ELABDU Rules for designUnit cache
     Checking Rule W505 (Rule 163 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W505 (Rule 164 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W528 (Rule 165 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.00s, Memory = 608.0K)
-    Checking Rule Prereqs_Usage (Rule 167 of total 325) .... done (Time = 0.00s, Memory = -16.0K)
-    Checking Rule Prereqs_ConstantInput-ML (Rule 168 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule ReportPortInfo-ML (Rule 169 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule Prereqs_ReportPortInfo-ML (Rule 170 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule Prereqs_ReportPortInfo-ML (Rule 171 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule NoAssignX-ML (Rule 172 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule ParamWidthMismatch-ML (Rule 173 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule Postreqs_Usage_ML (Rule 174 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule NoXInCase-ML (Rule 175 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-Checking ELABDU Rules for designUnit stage_1
-    Checking Rule Prereqs_InferLatch (Rule 117 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule STARC05-2.1.5.3 (Rule 118 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule STARC05-2.2.3.3 (Rule 119 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule STARC05-2.3.1.6 (Rule 120 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule STARC05-2.10.2.3 (Rule 121 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule STARC05-2.10.3.2a (Rule 122 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule STARC05-2.11.3.1 (Rule 123 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule STARC05-2.1.3.1 (Rule 124 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule STARC05-2.10.1.4a (Rule 125 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule STARC05-2.10.1.4b (Rule 126 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule sim_race02 (Rule 127 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W110 (Rule 128 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W122 (Rule 129 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W496a (Rule 130 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W496b (Rule 131 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W19 (Rule 132 of total 325) .... done (Time = 0.01s, Memory = 0.0K)
-    Checking Rule W66 (Rule 133 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W116 (Rule 134 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W123 (Rule 135 of total 325) .... done (Time = 0.00s, Memory = 16.0K)
-    Checking Rule W156 (Rule 136 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W215 (Rule 137 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W216 (Rule 138 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W218 (Rule 139 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W224 (Rule 140 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W263 (Rule 141 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W289 (Rule 142 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W337 (Rule 143 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W416 (Rule 144 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W352 (Rule 145 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W362 (Rule 146 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W415a (Rule 147 of total 325) .... done (Time = 0.00s, Memory = 8.0K)
-    Checking Rule W486 (Rule 148 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W499 (Rule 149 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W502 (Rule 150 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W116 (Rule 151 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W122 (Rule 152 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W123 (Rule 153 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W156 (Rule 154 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W71 (Rule 155 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W240 (Rule 156 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W240 (Rule 157 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W287a (Rule 158 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W293 (Rule 159 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W398 (Rule 160 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W424 (Rule 161 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W467 (Rule 162 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W505 (Rule 163 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W505 (Rule 164 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W528 (Rule 165 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.00s, Memory = 608.0K)
+    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.01s, Memory = 608.0K)
     Checking Rule Prereqs_Usage (Rule 167 of total 325) .... done (Time = 0.00s, Memory = -16.0K)
     Checking Rule Prereqs_ConstantInput-ML (Rule 168 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule ReportPortInfo-ML (Rule 169 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -900,7 +900,7 @@ Checking ELABDU Rules for designUnit stage_2
     Checking Rule W505 (Rule 163 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W505 (Rule 164 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W528 (Rule 165 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.00s, Memory = 608.0K)
+    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.01s, Memory = 608.0K)
     Checking Rule Prereqs_Usage (Rule 167 of total 325) .... done (Time = 0.00s, Memory = -16.0K)
     Checking Rule Prereqs_ConstantInput-ML (Rule 168 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule ReportPortInfo-ML (Rule 169 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -941,7 +941,7 @@ Checking ELABDU Rules for designUnit lru_array
     Checking Rule W416 (Rule 144 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W352 (Rule 145 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W362 (Rule 146 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W415a (Rule 147 of total 325) .... done (Time = 0.01s, Memory = 0.0K)
+    Checking Rule W415a (Rule 147 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W486 (Rule 148 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W499 (Rule 149 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W502 (Rule 150 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -960,7 +960,7 @@ Checking ELABDU Rules for designUnit lru_array
     Checking Rule W505 (Rule 163 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W505 (Rule 164 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W528 (Rule 165 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.00s, Memory = 608.0K)
+    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.01s, Memory = 608.0K)
     Checking Rule Prereqs_Usage (Rule 167 of total 325) .... done (Time = 0.00s, Memory = -16.0K)
     Checking Rule Prereqs_ConstantInput-ML (Rule 168 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule ReportPortInfo-ML (Rule 169 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -1020,13 +1020,13 @@ Checking ELABDU Rules for designUnit valid_array
     Checking Rule W505 (Rule 163 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W505 (Rule 164 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W528 (Rule 165 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.00s, Memory = 608.0K)
+    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.01s, Memory = 608.0K)
     Checking Rule Prereqs_Usage (Rule 167 of total 325) .... done (Time = 0.00s, Memory = -16.0K)
     Checking Rule Prereqs_ConstantInput-ML (Rule 168 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule ReportPortInfo-ML (Rule 169 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule Prereqs_ReportPortInfo-ML (Rule 170 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule Prereqs_ReportPortInfo-ML (Rule 171 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule NoAssignX-ML (Rule 172 of total 325) .... done (Time = 0.01s, Memory = 0.0K)
+    Checking Rule NoAssignX-ML (Rule 172 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule ParamWidthMismatch-ML (Rule 173 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule Postreqs_Usage_ML (Rule 174 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule NoXInCase-ML (Rule 175 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -1080,7 +1080,7 @@ Checking ELABDU Rules for designUnit cacheline_adapter
     Checking Rule W505 (Rule 163 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W505 (Rule 164 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W528 (Rule 165 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.00s, Memory = 608.0K)
+    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.01s, Memory = 608.0K)
     Checking Rule Prereqs_Usage (Rule 167 of total 325) .... done (Time = 0.00s, Memory = -16.0K)
     Checking Rule Prereqs_ConstantInput-ML (Rule 168 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule ReportPortInfo-ML (Rule 169 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -1121,7 +1121,7 @@ Checking ELABDU Rules for designUnit queue
     Checking Rule W416 (Rule 144 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W352 (Rule 145 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W362 (Rule 146 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W415a (Rule 147 of total 325) .... done (Time = 0.00s, Memory = 40.0K)
+    Checking Rule W415a (Rule 147 of total 325) .... done (Time = 0.01s, Memory = 40.0K)
     Checking Rule W486 (Rule 148 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W499 (Rule 149 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W502 (Rule 150 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -1140,7 +1140,7 @@ Checking ELABDU Rules for designUnit queue
     Checking Rule W505 (Rule 163 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W505 (Rule 164 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W528 (Rule 165 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.00s, Memory = 608.0K)
+    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.01s, Memory = 608.0K)
     Checking Rule Prereqs_Usage (Rule 167 of total 325) .... done (Time = 0.00s, Memory = -16.0K)
     Checking Rule Prereqs_ConstantInput-ML (Rule 168 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule ReportPortInfo-ML (Rule 169 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -1164,7 +1164,7 @@ Checking ELABDU Rules for designUnit rename_dispatch
     Checking Rule sim_race02 (Rule 127 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W110 (Rule 128 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W122 (Rule 129 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W496a (Rule 130 of total 325) .... done (Time = 0.01s, Memory = 0.0K)
+    Checking Rule W496a (Rule 130 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W496b (Rule 131 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W19 (Rule 132 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W66 (Rule 133 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -1172,7 +1172,7 @@ Checking ELABDU Rules for designUnit rename_dispatch
     Checking Rule W123 (Rule 135 of total 325) .... done (Time = 0.00s, Memory = 16.0K)
     Checking Rule W156 (Rule 136 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W215 (Rule 137 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W216 (Rule 138 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W216 (Rule 138 of total 325) .... done (Time = 0.01s, Memory = 0.0K)
     Checking Rule W218 (Rule 139 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W224 (Rule 140 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W263 (Rule 141 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -1200,7 +1200,7 @@ Checking ELABDU Rules for designUnit rename_dispatch
     Checking Rule W505 (Rule 163 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W505 (Rule 164 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W528 (Rule 165 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.00s, Memory = 608.0K)
+    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.01s, Memory = 608.0K)
     Checking Rule Prereqs_Usage (Rule 167 of total 325) .... done (Time = 0.00s, Memory = -16.0K)
     Checking Rule Prereqs_ConstantInput-ML (Rule 168 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule ReportPortInfo-ML (Rule 169 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -1260,7 +1260,7 @@ Checking ELABDU Rules for designUnit rat
     Checking Rule W505 (Rule 163 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W505 (Rule 164 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W528 (Rule 165 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.00s, Memory = 608.0K)
+    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.01s, Memory = 608.0K)
     Checking Rule Prereqs_Usage (Rule 167 of total 325) .... done (Time = 0.00s, Memory = -16.0K)
     Checking Rule Prereqs_ConstantInput-ML (Rule 168 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule ReportPortInfo-ML (Rule 169 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -1286,10 +1286,10 @@ Checking ELABDU Rules for designUnit rob
     Checking Rule W122 (Rule 129 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W496a (Rule 130 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W496b (Rule 131 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W19 (Rule 132 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W19 (Rule 132 of total 325) .... done (Time = 0.01s, Memory = 0.0K)
     Checking Rule W66 (Rule 133 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W116 (Rule 134 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W123 (Rule 135 of total 325) .... done (Time = 0.01s, Memory = 32.0K)
+    Checking Rule W123 (Rule 135 of total 325) .... done (Time = 0.00s, Memory = 32.0K)
     Checking Rule W156 (Rule 136 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W215 (Rule 137 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W216 (Rule 138 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -1320,7 +1320,7 @@ Checking ELABDU Rules for designUnit rob
     Checking Rule W505 (Rule 163 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W505 (Rule 164 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W528 (Rule 165 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.00s, Memory = 608.0K)
+    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.01s, Memory = 608.0K)
     Checking Rule Prereqs_Usage (Rule 167 of total 325) .... done (Time = 0.00s, Memory = -32.0K)
     Checking Rule Prereqs_ConstantInput-ML (Rule 168 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule ReportPortInfo-ML (Rule 169 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -1361,7 +1361,7 @@ Checking ELABDU Rules for designUnit rrat
     Checking Rule W416 (Rule 144 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W352 (Rule 145 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W362 (Rule 146 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W415a (Rule 147 of total 325) .... done (Time = 0.01s, Memory = 8.0K)
+    Checking Rule W415a (Rule 147 of total 325) .... done (Time = 0.00s, Memory = 8.0K)
     Checking Rule W486 (Rule 148 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W499 (Rule 149 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W502 (Rule 150 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -1380,7 +1380,7 @@ Checking ELABDU Rules for designUnit rrat
     Checking Rule W505 (Rule 163 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W505 (Rule 164 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W528 (Rule 165 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.00s, Memory = 608.0K)
+    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.01s, Memory = 608.0K)
     Checking Rule Prereqs_Usage (Rule 167 of total 325) .... done (Time = 0.00s, Memory = -16.0K)
     Checking Rule Prereqs_ConstantInput-ML (Rule 168 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule ReportPortInfo-ML (Rule 169 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -1409,7 +1409,7 @@ Checking ELABDU Rules for designUnit free_list
     Checking Rule W19 (Rule 132 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W66 (Rule 133 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W116 (Rule 134 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W123 (Rule 135 of total 325) .... done (Time = 0.01s, Memory = 16.0K)
+    Checking Rule W123 (Rule 135 of total 325) .... done (Time = 0.00s, Memory = 16.0K)
     Checking Rule W156 (Rule 136 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W215 (Rule 137 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W216 (Rule 138 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -1440,7 +1440,7 @@ Checking ELABDU Rules for designUnit free_list
     Checking Rule W505 (Rule 163 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W505 (Rule 164 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W528 (Rule 165 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.00s, Memory = 608.0K)
+    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.01s, Memory = 608.0K)
     Checking Rule Prereqs_Usage (Rule 167 of total 325) .... done (Time = 0.00s, Memory = -16.0K)
     Checking Rule Prereqs_ConstantInput-ML (Rule 168 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule ReportPortInfo-ML (Rule 169 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -1463,10 +1463,10 @@ Checking ELABDU Rules for designUnit phys_regfile
     Checking Rule STARC05-2.10.1.4b (Rule 126 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule sim_race02 (Rule 127 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W110 (Rule 128 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W122 (Rule 129 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W122 (Rule 129 of total 325) .... done (Time = 0.01s, Memory = 0.0K)
     Checking Rule W496a (Rule 130 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W496b (Rule 131 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W19 (Rule 132 of total 325) .... done (Time = 0.01s, Memory = 0.0K)
+    Checking Rule W19 (Rule 132 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W66 (Rule 133 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W116 (Rule 134 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W123 (Rule 135 of total 325) .... done (Time = 0.00s, Memory = 16.0K)
@@ -1500,7 +1500,7 @@ Checking ELABDU Rules for designUnit phys_regfile
     Checking Rule W505 (Rule 163 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W505 (Rule 164 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W528 (Rule 165 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.00s, Memory = 608.0K)
+    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.01s, Memory = 608.0K)
     Checking Rule Prereqs_Usage (Rule 167 of total 325) .... done (Time = 0.00s, Memory = -16.0K)
     Checking Rule Prereqs_ConstantInput-ML (Rule 168 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule ReportPortInfo-ML (Rule 169 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -1560,7 +1560,7 @@ Checking ELABDU Rules for designUnit execute
     Checking Rule W505 (Rule 163 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W505 (Rule 164 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W528 (Rule 165 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.00s, Memory = 608.0K)
+    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.01s, Memory = 608.0K)
     Checking Rule Prereqs_Usage (Rule 167 of total 325) .... done (Time = 0.00s, Memory = -24.0K)
     Checking Rule Prereqs_ConstantInput-ML (Rule 168 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule ReportPortInfo-ML (Rule 169 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -1576,7 +1576,7 @@ Checking ELABDU Rules for designUnit fu_add
     Checking Rule STARC05-2.2.3.3 (Rule 119 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule STARC05-2.3.1.6 (Rule 120 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule STARC05-2.10.2.3 (Rule 121 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule STARC05-2.10.3.2a (Rule 122 of total 325) .... done (Time = 0.01s, Memory = 0.0K)
+    Checking Rule STARC05-2.10.3.2a (Rule 122 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule STARC05-2.11.3.1 (Rule 123 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule STARC05-2.1.3.1 (Rule 124 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule STARC05-2.10.1.4a (Rule 125 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -1620,7 +1620,7 @@ Checking ELABDU Rules for designUnit fu_add
     Checking Rule W505 (Rule 163 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W505 (Rule 164 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W528 (Rule 165 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.00s, Memory = 608.0K)
+    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.01s, Memory = 608.0K)
     Checking Rule Prereqs_Usage (Rule 167 of total 325) .... done (Time = 0.00s, Memory = -16.0K)
     Checking Rule Prereqs_ConstantInput-ML (Rule 168 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule ReportPortInfo-ML (Rule 169 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -1649,7 +1649,7 @@ Checking ELABDU Rules for designUnit fu_mult
     Checking Rule W19 (Rule 132 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W66 (Rule 133 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W116 (Rule 134 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W123 (Rule 135 of total 325) .... done (Time = 0.01s, Memory = 16.0K)
+    Checking Rule W123 (Rule 135 of total 325) .... done (Time = 0.00s, Memory = 16.0K)
     Checking Rule W156 (Rule 136 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W215 (Rule 137 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W216 (Rule 138 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -1663,7 +1663,7 @@ Checking ELABDU Rules for designUnit fu_mult
     Checking Rule W362 (Rule 146 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W415a (Rule 147 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W486 (Rule 148 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W499 (Rule 149 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule W499 (Rule 149 of total 325) .... done (Time = 0.01s, Memory = 0.0K)
     Checking Rule W502 (Rule 150 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W116 (Rule 151 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W122 (Rule 152 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -1680,7 +1680,7 @@ Checking ELABDU Rules for designUnit fu_mult
     Checking Rule W505 (Rule 163 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W505 (Rule 164 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W528 (Rule 165 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.00s, Memory = 608.0K)
+    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.01s, Memory = 608.0K)
     Checking Rule Prereqs_Usage (Rule 167 of total 325) .... done (Time = 0.00s, Memory = -16.0K)
     Checking Rule Prereqs_ConstantInput-ML (Rule 168 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule ReportPortInfo-ML (Rule 169 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -1709,7 +1709,7 @@ Checking ELABDU Rules for designUnit fu_div_rem
     Checking Rule W19 (Rule 132 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W66 (Rule 133 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W116 (Rule 134 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W123 (Rule 135 of total 325) .... done (Time = 0.01s, Memory = 16.0K)
+    Checking Rule W123 (Rule 135 of total 325) .... done (Time = 0.00s, Memory = 16.0K)
     Checking Rule W156 (Rule 136 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W215 (Rule 137 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W216 (Rule 138 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -1740,7 +1740,7 @@ Checking ELABDU Rules for designUnit fu_div_rem
     Checking Rule W505 (Rule 163 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W505 (Rule 164 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W528 (Rule 165 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.00s, Memory = 608.0K)
+    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.01s, Memory = 608.0K)
     Checking Rule Prereqs_Usage (Rule 167 of total 325) .... done (Time = 0.00s, Memory = -16.0K)
     Checking Rule Prereqs_ConstantInput-ML (Rule 168 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule ReportPortInfo-ML (Rule 169 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -1753,14 +1753,14 @@ Checking ELABDU Rules for designUnit fu_div_rem
 Checking ELABDU Rules for designUnit reservation_station
     Checking Rule Prereqs_InferLatch (Rule 117 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule STARC05-2.1.5.3 (Rule 118 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule STARC05-2.2.3.3 (Rule 119 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule STARC05-2.2.3.3 (Rule 119 of total 325) .... done (Time = 0.01s, Memory = 0.0K)
     Checking Rule STARC05-2.3.1.6 (Rule 120 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule STARC05-2.10.2.3 (Rule 121 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule STARC05-2.10.3.2a (Rule 122 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule STARC05-2.11.3.1 (Rule 123 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule STARC05-2.1.3.1 (Rule 124 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule STARC05-2.10.1.4a (Rule 125 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule STARC05-2.10.1.4b (Rule 126 of total 325) .... done (Time = 0.01s, Memory = 0.0K)
+    Checking Rule STARC05-2.10.1.4b (Rule 126 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule sim_race02 (Rule 127 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W110 (Rule 128 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W122 (Rule 129 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -1772,7 +1772,7 @@ Checking ELABDU Rules for designUnit reservation_station
     Checking Rule W123 (Rule 135 of total 325) .... done (Time = 0.00s, Memory = 64.0K)
     Checking Rule W156 (Rule 136 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W215 (Rule 137 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W216 (Rule 138 of total 325) .... done (Time = 0.01s, Memory = 0.0K)
+    Checking Rule W216 (Rule 138 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W218 (Rule 139 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W224 (Rule 140 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W263 (Rule 141 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -1800,7 +1800,7 @@ Checking ELABDU Rules for designUnit reservation_station
     Checking Rule W505 (Rule 163 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W505 (Rule 164 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule W528 (Rule 165 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.00s, Memory = 608.0K)
+    Checking Rule W528 (Rule 166 of total 325) .... done (Time = 0.01s, Memory = 608.0K)
     Checking Rule Prereqs_Usage (Rule 167 of total 325) .... done (Time = 0.00s, Memory = -56.0K)
     Checking Rule Prereqs_ConstantInput-ML (Rule 168 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule ReportPortInfo-ML (Rule 169 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -2170,7 +2170,7 @@ Checking ELABDU Rules for designUnit rrat
     Checking Rule Av_dcreq01 (Rule 191 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule _chk_signed_unsigned_prereq (Rule 192 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule _width01_prereq (Rule 193 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-    Checking Rule _width02_prereq (Rule 194 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
+    Checking Rule _width02_prereq (Rule 194 of total 325) .... done (Time = 0.01s, Memory = 0.0K)
     Checking Rule _width03_prereq (Rule 195 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule _width04_prereq (Rule 196 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule _signunsign01_prereq (Rule 197 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -2399,45 +2399,45 @@ Checking ELABDU Rules for designUnit reservation_station
     Checking Rule _case_default_missing_prereq (Rule 203 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule _formallint_preReq (Rule 204 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
     Checking Rule _avAddSynthNet (Rule 205 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-Checking Lexical Rules for file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/rrat.sv
+Checking Lexical Rules for file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/valid_array.sv
     Checking Rule Av_complexity_req01 (Rule 206 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-Checking Lexical Rules for file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/rob.sv
+Checking Lexical Rules for file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/stage2.sv
     Checking Rule Av_complexity_req01 (Rule 206 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-Checking Lexical Rules for file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/reservation_station.sv
+Checking Lexical Rules for file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/stage1.sv
     Checking Rule Av_complexity_req01 (Rule 206 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-Checking Lexical Rules for file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/rename_dispatch.sv
+Checking Lexical Rules for file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/lru_array.sv
     Checking Rule Av_complexity_req01 (Rule 206 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-Checking Lexical Rules for file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/rat.sv
+Checking Lexical Rules for file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/cache.sv
     Checking Rule Av_complexity_req01 (Rule 206 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-Checking Lexical Rules for file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/queue.sv
+Checking Lexical Rules for file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/rrat.sv
     Checking Rule Av_complexity_req01 (Rule 206 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-Checking Lexical Rules for file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/phys_regfile.sv
+Checking Lexical Rules for file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/rob.sv
     Checking Rule Av_complexity_req01 (Rule 206 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-Checking Lexical Rules for file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/fu_mult.sv
+Checking Lexical Rules for file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/reservation_station.sv
     Checking Rule Av_complexity_req01 (Rule 206 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-Checking Lexical Rules for file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/fu_div_rem.sv
+Checking Lexical Rules for file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/rename_dispatch.sv
     Checking Rule Av_complexity_req01 (Rule 206 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-Checking Lexical Rules for file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/fu_add.sv
+Checking Lexical Rules for file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/rat.sv
     Checking Rule Av_complexity_req01 (Rule 206 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-Checking Lexical Rules for file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/free_list.sv
+Checking Lexical Rules for file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/queue.sv
     Checking Rule Av_complexity_req01 (Rule 206 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-Checking Lexical Rules for file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/execute.sv
+Checking Lexical Rules for file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/phys_regfile.sv
     Checking Rule Av_complexity_req01 (Rule 206 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-Checking Lexical Rules for file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/cpu.sv
+Checking Lexical Rules for file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/fu_mult.sv
     Checking Rule Av_complexity_req01 (Rule 206 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-Checking Lexical Rules for file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/cacheline_adapter.sv
+Checking Lexical Rules for file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/fu_div_rem.sv
     Checking Rule Av_complexity_req01 (Rule 206 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-Checking Lexical Rules for file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/valid_array.sv
+Checking Lexical Rules for file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/fu_add.sv
     Checking Rule Av_complexity_req01 (Rule 206 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-Checking Lexical Rules for file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/stage2.sv
+Checking Lexical Rules for file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/free_list.sv
     Checking Rule Av_complexity_req01 (Rule 206 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-Checking Lexical Rules for file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/stage1.sv
+Checking Lexical Rules for file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/execute.sv
     Checking Rule Av_complexity_req01 (Rule 206 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-Checking Lexical Rules for file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/lru_array.sv
+Checking Lexical Rules for file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/cpu.sv
     Checking Rule Av_complexity_req01 (Rule 206 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-Checking Lexical Rules for file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/cache.sv
+Checking Lexical Rules for file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/cacheline_adapter.sv
     Checking Rule Av_complexity_req01 (Rule 206 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-Checking Lexical Rules for file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../pkg/types.sv
+Checking Lexical Rules for file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../pkg/types.sv
     Checking Rule Av_complexity_req01 (Rule 206 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
 Checking Rule SGDC_waive24 (Rule 207 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
 Checking Rule SGDC_waive25 (Rule 208 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -2467,7 +2467,7 @@ Checking Rule SGDC_waive35 (Rule 210 of total 325) .... done (Time = 0.00s, Memo
  Synthesizing module: cache (elaborated name: cache) ... (Module 18 of total 19)  done 
  Synthesizing module: cpu (elaborated name: cpu) ... (Module 19 of total 19)  done 
  Synthesis completed.
-Checking Rule InferBlackBox (Rule 211 of total 325) .... done (Time = 0.20s, Memory = 0.0K)
+Checking Rule InferBlackBox (Rule 211 of total 325) .... done (Time = 0.12s, Memory = 0.0K)
 Checking Rule checkCMD_mthresh (Rule 212 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
 Checking Rule SGDC_waive37 (Rule 213 of total 325) .... done (Time = 0.00s, Memory = -4096.0K)
 Checking Rule ReportSglibSummary (Rule 214 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -2728,7 +2728,7 @@ Checking Rule SGDC_reset02 (Rule 232 of total 325) .... done (Time = 0.00s, Memo
 Checking Rule SGDC_reset03 (Rule 233 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
 Checking Rule SGDC_libgroup03 (Rule 234 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
 Checking Rule SGDC_ungroup02 (Rule 235 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-Checking Rule _abstractPortSGDC (Rule 236 of total 325) .... done (Time = 0.01s, Memory = 0.0K)
+Checking Rule _abstractPortSGDC (Rule 236 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
 Checking Rule SGDC_abstract_port03 (Rule 237 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
 Checking Rule SGDC_abstract_port04 (Rule 238 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
 Checking Rule SGDC_abstract_port05 (Rule 239 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -2742,8 +2742,8 @@ Checking Rule Av_complexity_req02 (Rule 246 of total 325) .... done (Time = 0.00
 Checking Rule ReportUngroup (Rule 247 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
 Checking Rule LINT_portReten (Rule 248 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
 Checking Rule SGDC_abstract_port21 (Rule 249 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-Checking Rule InferLatch (Rule 250 of total 325) .... done (Time = 0.10s, Memory = 32.0K)
-Checking Rule UndrivenInTerm-ML (Rule 251 of total 325) .... done (Time = 1.79s, Memory = 0.0K)
+Checking Rule InferLatch (Rule 250 of total 325) .... done (Time = 0.07s, Memory = 32.0K)
+Checking Rule UndrivenInTerm-ML (Rule 251 of total 325) .... done (Time = 1.54s, Memory = 0.0K)
 Checking Rule Av_casereq03 (Rule 252 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
 Checking Rule SGDC_fsm_setup01 (Rule 253 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
 Checking Rule Av_PortRetention (Rule 254 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -2757,17 +2757,17 @@ Checking Rule SGDC_assume_path05 (Rule 255 of total 325) .... done (Time = 0.00s
  Flattening completed
 Checking Rule SGDC_set_case_analysis_LC (Rule 256 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
 Checking Rule Av_IpblockTaggedNet (Rule 257 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-Checking Rule BufClock (Rule 258 of total 325) .... done (Time = 0.87s, Memory = 3504.0K)
-Checking Rule CombLoop (Rule 259 of total 325) .... done (Time = 0.40s, Memory = 944.0K)
+Checking Rule BufClock (Rule 258 of total 325) .... done (Time = 0.73s, Memory = 3504.0K)
+Checking Rule CombLoop (Rule 259 of total 325) .... done (Time = 0.37s, Memory = 944.0K)
 Checking Rule STARC05-2.5.1.2 (Rule 260 of total 325) .... done (Time = 0.01s, Memory = 0.0K)
-Checking Rule STARC05-1.3.1.3 (Rule 261 of total 325) .... done (Time = 0.01s, Memory = 0.0K)
+Checking Rule STARC05-1.3.1.3 (Rule 261 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
 Checking Rule STARC05-1.4.3.4 (Rule 262 of total 325) .... done (Time = 0.03s, Memory = 8.0K)
 Checking Rule FlopClockConstant (Rule 263 of total 325) .... done (Time = 0.06s, Memory = 24.0K)
 Checking Rule FlopSRConst (Rule 264 of total 325) .... done (Time = 0.04s, Memory = 0.0K)
-Checking Rule FlopEConst (Rule 265 of total 325) .... done (Time = 0.07s, Memory = 0.0K)
+Checking Rule FlopEConst (Rule 265 of total 325) .... done (Time = 0.05s, Memory = 0.0K)
 Checking Rule checkPinConnectedToSupply (Rule 266 of total 325) .... done (Time = 0.08s, Memory = 0.0K)
-Checking Rule W392 (Rule 267 of total 325) .... done (Time = 0.03s, Memory = 1848.0K)
-Checking Rule W415 (Rule 268 of total 325) .... done (Time = 0.21s, Memory = 0.0K)
+Checking Rule W392 (Rule 267 of total 325) .... done (Time = 0.02s, Memory = 1848.0K)
+Checking Rule W415 (Rule 268 of total 325) .... done (Time = 0.22s, Memory = 0.0K)
 Checking Rule LatchFeedback (Rule 269 of total 325) .... done (Time = 0.38s, Memory = 8.0K)
 Checking Rule Av_initseq01 (Rule 270 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
 Checking Rule Av_init01 (Rule 271 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -2781,7 +2781,7 @@ Checking Rule _fsm03_prereq (Rule 278 of total 325) .... done (Time = 0.00s, Mem
 Checking Rule _fsm_contr01 (Rule 279 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
 Checking Rule Av_report01 (Rule 280 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
 Checking Rule _advLintReport01 (Rule 281 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
-Checking Rule STARC05-2.4.1.5 (Rule 282 of total 325) .... done (Time = 0.01s, Memory = 0.0K)
+Checking Rule STARC05-2.4.1.5 (Rule 282 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
 Checking Rule STARC05-1.2.1.2 (Rule 283 of total 325) .... done (Time = 0.10s, Memory = 1064.0K)
 Checking Rule AnalyzeBBox (Rule 284 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
 Checking Rule ReportCheckDataSummary (Rule 74 of total 325) .... done (Time = 0.00s, Memory = 0.0K)
@@ -2817,7 +2817,7 @@ Results Summary:
    Command-line read  :      0 error,      0 warning,      0 information message 
    Design Read        :      0 error,      0 warning,      5 information messages
       Found 1 top module:
-         cpu   (file: /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/cpu.sv)
+         cpu   (file: /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/cpu.sv)
 
    Blackbox Resolution:      0 error,      0 warning,      0 information message 
    SGDC Checks        :      0 error,      0 warning,      0 information message 
@@ -2845,16 +2845,16 @@ Results Summary:
    Top Module         :      cpu
 ---------------------------------------------------------------------------------------------------
    Reports Directory: 
-   /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/spyglass-1/consolidated_reports/cpu_lint_lint_turbo_rtl/ 
+   /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/spyglass-1/consolidated_reports/cpu_lint_lint_turbo_rtl/ 
 
    SpyGlass LogFile: 
-    /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/spyglass-1/cpu/lint/lint_turbo_rtl/spyglass.log 
+    /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/spyglass-1/cpu/lint/lint_turbo_rtl/spyglass.log 
 
    Standard Reports: 
      waiver.rpt          moresimple.rpt          no_msg_reporting_rules.rpt       
 
    HTML report:
-    /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/spyglass-1/html_reports/goals_summary.html
+    /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/spyglass-1/html_reports/goals_summary.html
   
 
    Technology Reports:  
@@ -2880,8 +2880,8 @@ rm -rf spyglass-1 WORK *.log
 # This file has been generated by SpyGlass:
 #     Report Name      : moresimple_turbo
 #     Report Created by: root
-#     Report Created on: Fri Nov 15 11:18:06 2024
-#     Working Directory: /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint
+#     Report Created on: Fri Nov 15 15:16:08 2024
+#     Working Directory: /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint
 #     SpyGlass Version : SpyGlass_vR-2020.12-SP1-1
 #     Policy Name      : SpyGlass(SpyGlass_vR-2020.12-SP1-01)
 #                        auto-verify(SpyGlass_vR-2020.12-SP1-01)
@@ -2913,7 +2913,7 @@ MORESIMPLE_TURBO REPORT:
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ID       ParentID   Rule                    Alias                   Severity    File                                                                                               Line    Wt    Message
 ========================================================================================================================
-[3]      N.A        DetectTopDesignUnits    DetectTopDesignUnits    Info        /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/lint/../hdl/cpu.sv                                   1       2     Module cpu is a top level design unit
+[3]      N.A        DetectTopDesignUnits    DetectTopDesignUnits    Info        /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/lint/../hdl/cpu.sv                                   1       2     Module cpu is a top level design unit
 [0]      N.A        AutoGenerateSglib       AutoGenerateSglib       Info        ./spyglass-1/spyglass_cache/autogenerated_sglib/lc/spyglass_lc_aggregate_reports/moresimple.rpt    0       2     Sglib './spyglass-1/spyglass_cache/autogenerated_sglib/aggregate.sglib' has been auto-generated successfully
 [2]      N.A        ElabSummary             ElabSummary             Info        ./spyglass-1/cpu/lint/lint_turbo_rtl/spyglass_reports/SpyGlass/elab_summary.rpt                    0       2     Please refer file './spyglass-1/cpu/lint/lint_turbo_rtl/spyglass_reports/SpyGlass/elab_summary.rpt' for elab summary report
 [5B]     N.A        InferBlackBox           inferblackbox           Info        N.A.                                                                                               0       10    Interfaces for blackbox modules have been inferred. Please refer to AnalyzeBBox violations for more details
@@ -2938,7 +2938,7 @@ rm -rf work
 rm -rf reports
 rm -rf outputs
 make outputs/synth.ddc
-make[1]: Entering directory '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth'
+make[1]: Entering directory '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth'
 mkdir -p reports outputs
 export ECE411_CLOCK_PERIOD_PS=10000 ;\
 export ECE411_MIN_POWER=0 ;\
@@ -3000,96 +3000,96 @@ dw_foundation.sldb
 set target_library [getenv STD_CELL_LIB]
 /srv/ece411ag/freepdk-45nm/stdcells.db
 set sram_library [getenv SRAM_LIB]
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../sram/output/mp_cache_data_array/mp_cache_data_array_TT_1p0V_25C_lib.db /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../sram/output/mp_cache_tag_array/mp_cache_tag_array_TT_1p0V_25C_lib.db
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../sram/output/mp_cache_data_array/mp_cache_data_array_TT_1p0V_25C_lib.db /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../sram/output/mp_cache_tag_array/mp_cache_tag_array_TT_1p0V_25C_lib.db
 if {$sram_library eq ""} {
    set link_library [list "*" $target_library $synthetic_library]
 } else {
    set link_library [list "*" $target_library $synthetic_library $sram_library]
 }
-* /srv/ece411ag/freepdk-45nm/stdcells.db dw_foundation.sldb {/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../sram/output/mp_cache_data_array/mp_cache_data_array_TT_1p0V_25C_lib.db /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../sram/output/mp_cache_tag_array/mp_cache_tag_array_TT_1p0V_25C_lib.db}
+* /srv/ece411ag/freepdk-45nm/stdcells.db dw_foundation.sldb {/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../sram/output/mp_cache_data_array/mp_cache_data_array_TT_1p0V_25C_lib.db /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../sram/output/mp_cache_tag_array/mp_cache_tag_array_TT_1p0V_25C_lib.db}
 get_license DC-Ultra-Features
 1
 get_license DC-Ultra-Opt
 1
 set pkg_src [getenv PKG_SRCS]
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../pkg/types.sv
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../pkg/types.sv
 if {$pkg_src ne ""} {
    analyze -library WORK -format sverilog $pkg_src
 }
 Running PRESTO HDLC
-Compiling source file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../pkg/types.sv
+Compiling source file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../pkg/types.sv
 Presto compilation completed successfully.
 Loading db file '/srv/ece411ag/freepdk-45nm/stdcells.db'
 Loading db file '/srv/software/Synopsys-2021_x86_64/syn/R-2020.09-SP4/libraries/syn/dw_foundation.sldb'
 1
 set modules [split [getenv HDL_SRCS] " "]
-/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/rrat.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/rob.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/reservation_station.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/rename_dispatch.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/rat.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/queue.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/provided_cache.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/phys_regfile.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/fu_mult.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/fu_div_rem.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/fu_add.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/free_list.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/execute.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/cpu.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/cacheline_adapter.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/valid_array.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/stage2.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/stage1.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/lru_array.sv /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/cache.sv
+/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/valid_array.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/stage2.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/stage1.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/lru_array.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/cache.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/rrat.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/rob.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/reservation_station.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/rename_dispatch.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/rat.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/queue.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/provided_cache.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/phys_regfile.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/fu_mult.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/fu_div_rem.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/fu_add.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/free_list.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/execute.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/cpu.sv /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/cacheline_adapter.sv
 foreach module $modules {
    analyze -library WORK -format sverilog "${module}"
 }
 Running PRESTO HDLC
-Compiling source file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/rrat.sv
+Compiling source file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/valid_array.sv
 Presto compilation completed successfully.
 Running PRESTO HDLC
-Compiling source file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/rob.sv
+Compiling source file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/stage2.sv
 Presto compilation completed successfully.
 Running PRESTO HDLC
-Compiling source file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/reservation_station.sv
+Compiling source file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/stage1.sv
 Presto compilation completed successfully.
 Running PRESTO HDLC
-Compiling source file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/rename_dispatch.sv
+Compiling source file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/lru_array.sv
 Presto compilation completed successfully.
 Running PRESTO HDLC
-Compiling source file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/rat.sv
+Compiling source file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/cache.sv
 Presto compilation completed successfully.
 Running PRESTO HDLC
-Compiling source file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/queue.sv
+Compiling source file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/rrat.sv
 Presto compilation completed successfully.
 Running PRESTO HDLC
-Compiling source file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/provided_cache.sv
+Compiling source file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/rob.sv
 Presto compilation completed successfully.
 Running PRESTO HDLC
-Compiling source file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/phys_regfile.sv
+Compiling source file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/reservation_station.sv
 Presto compilation completed successfully.
 Running PRESTO HDLC
-Compiling source file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/fu_mult.sv
+Compiling source file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/rename_dispatch.sv
 Presto compilation completed successfully.
 Running PRESTO HDLC
-Compiling source file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/fu_div_rem.sv
+Compiling source file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/rat.sv
 Presto compilation completed successfully.
 Running PRESTO HDLC
-Compiling source file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/fu_add.sv
+Compiling source file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/queue.sv
 Presto compilation completed successfully.
 Running PRESTO HDLC
-Compiling source file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/free_list.sv
+Compiling source file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/provided_cache.sv
 Presto compilation completed successfully.
 Running PRESTO HDLC
-Compiling source file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/execute.sv
+Compiling source file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/phys_regfile.sv
 Presto compilation completed successfully.
 Running PRESTO HDLC
-Compiling source file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/cpu.sv
+Compiling source file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/fu_mult.sv
 Presto compilation completed successfully.
 Running PRESTO HDLC
-Compiling source file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/cacheline_adapter.sv
+Compiling source file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/fu_div_rem.sv
 Presto compilation completed successfully.
 Running PRESTO HDLC
-Compiling source file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/valid_array.sv
+Compiling source file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/fu_add.sv
 Presto compilation completed successfully.
 Running PRESTO HDLC
-Compiling source file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/stage2.sv
+Compiling source file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/free_list.sv
 Presto compilation completed successfully.
 Running PRESTO HDLC
-Compiling source file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/stage1.sv
+Compiling source file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/execute.sv
 Presto compilation completed successfully.
 Running PRESTO HDLC
-Compiling source file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/lru_array.sv
+Compiling source file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/cpu.sv
 Presto compilation completed successfully.
 Running PRESTO HDLC
-Compiling source file /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/cache.sv
+Compiling source file /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/cacheline_adapter.sv
 Presto compilation completed successfully.
 elaborate $design_toplevel
-Loading db file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_data_array/mp_cache_data_array_TT_1p0V_25C_lib.db'
-Loading db file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array_TT_1p0V_25C_lib.db'
+Loading db file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_data_array/mp_cache_data_array_TT_1p0V_25C_lib.db'
+Loading db file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array_TT_1p0V_25C_lib.db'
 Loading db file '/srv/software/Synopsys-2021_x86_64/syn/R-2020.09-SP4/libraries/syn/gtech.db'
 Loading db file '/srv/software/Synopsys-2021_x86_64/syn/R-2020.09-SP4/libraries/syn/standard.sldb'
   Loading link library 'NangateOpenCellLibrary'
@@ -3100,7 +3100,7 @@ Running PRESTO HDLC
 
 Inferred memory devices in process
 	in routine cpu line 114 in file
-		'/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/cpu.sv'.
+		'/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/cpu.sv'.
 ================================================================================
 |    Register Name     |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
 ================================================================================
@@ -3118,7 +3118,7 @@ Information: Building the design 'cache'. (HDL-193)
 
 Inferred memory devices in process
 	in routine cache line 54 in file
-		'/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/cache.sv'.
+		'/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/cache.sv'.
 ===============================================================================
 |    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
 ===============================================================================
@@ -3133,7 +3133,7 @@ Information: Building the design 'cacheline_adapter'. (HDL-193)
 
 Inferred memory devices in process
 	in routine cacheline_adapter line 16 in file
-		'/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/cacheline_adapter.sv'.
+		'/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/cacheline_adapter.sv'.
 ===============================================================================
 |    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
 ===============================================================================
@@ -3146,7 +3146,7 @@ Information: Building the design 'queue' instantiated from design 'cpu' with
 
 Inferred memory devices in process
 	in routine queue_DATA_WIDTH32_QUEUE_DEPTH64 line 41 in file
-		'/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/queue.sv'.
+		'/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/queue.sv'.
 ===============================================================================
 |    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
 ===============================================================================
@@ -3168,7 +3168,7 @@ Information: Building the design 'rename_dispatch'. (HDL-193)
 
 Inferred memory devices in process
 	in routine rename_dispatch line 46 in file
-		'/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/rename_dispatch.sv'.
+		'/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/rename_dispatch.sv'.
 ======================================================================================
 |       Register Name        |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
 ======================================================================================
@@ -3181,7 +3181,7 @@ Information: Building the design 'rat'. (HDL-193)
 
 Inferred memory devices in process
 	in routine rat line 77 in file
-		'/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/rat.sv'.
+		'/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/rat.sv'.
 ===============================================================================
 |    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
 ===============================================================================
@@ -3207,7 +3207,7 @@ Information: Building the design 'rob'. (HDL-193)
 
 Inferred memory devices in process
 	in routine rob line 85 in file
-		'/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/rob.sv'.
+		'/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/rob.sv'.
 ===============================================================================
 |    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
 ===============================================================================
@@ -3229,7 +3229,7 @@ Information: Building the design 'rrat'. (HDL-193)
 
 Inferred memory devices in process
 	in routine rrat line 36 in file
-		'/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/rrat.sv'.
+		'/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/rrat.sv'.
 ===============================================================================
 |    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
 ===============================================================================
@@ -3247,7 +3247,7 @@ Information: Building the design 'free_list'. (HDL-193)
 
 Inferred memory devices in process
 	in routine free_list line 38 in file
-		'/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/free_list.sv'.
+		'/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/free_list.sv'.
 ===============================================================================
 |    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
 ===============================================================================
@@ -3269,7 +3269,7 @@ Information: Building the design 'phys_regfile'. (HDL-193)
 
 Inferred memory devices in process
 	in routine phys_regfile line 19 in file
-		'/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/phys_regfile.sv'.
+		'/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/phys_regfile.sv'.
 ===============================================================================
 |    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
 ===============================================================================
@@ -3278,7 +3278,7 @@ Inferred memory devices in process
 
 Inferred memory devices in process
 	in routine phys_regfile line 54 in file
-		'/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/phys_regfile.sv'.
+		'/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/phys_regfile.sv'.
 ===============================================================================
 |    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
 ===============================================================================
@@ -3315,7 +3315,7 @@ Information: Building the design 'execute'. (HDL-193)
 
 Inferred memory devices in process
 	in routine execute line 49 in file
-		'/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/execute.sv'.
+		'/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/execute.sv'.
 ===============================================================================
 |    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
 ===============================================================================
@@ -3326,7 +3326,7 @@ Inferred memory devices in process
 
 Inferred memory devices in process
 	in routine execute line 64 in file
-		'/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/execute.sv'.
+		'/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/execute.sv'.
 ===============================================================================
 |    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
 ===============================================================================
@@ -3337,7 +3337,7 @@ Inferred memory devices in process
 
 Inferred memory devices in process
 	in routine execute line 76 in file
-		'/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/execute.sv'.
+		'/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/execute.sv'.
 ===============================================================================
 |    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
 ===============================================================================
@@ -3355,7 +3355,7 @@ Information: Building the design 'reservation_station'. (HDL-193)
 
 Inferred memory devices in process
 	in routine reservation_station line 75 in file
-		'/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/reservation_station.sv'.
+		'/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/reservation_station.sv'.
 ===============================================================================
 |    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
 ===============================================================================
@@ -3365,7 +3365,7 @@ Inferred memory devices in process
 
 Inferred memory devices in process
 	in routine reservation_station line 134 in file
-		'/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/reservation_station.sv'.
+		'/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/reservation_station.sv'.
 ============================================================================================
 |          Register Name           |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
 ============================================================================================
@@ -3394,7 +3394,7 @@ Information: Building the design 'valid_array'. (HDL-193)
 
 Inferred memory devices in process
 	in routine valid_array line 24 in file
-		'/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/valid_array.sv'.
+		'/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/valid_array.sv'.
 ===============================================================================
 |    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
 ===============================================================================
@@ -3405,7 +3405,7 @@ Inferred memory devices in process
 
 Inferred memory devices in process
 	in routine valid_array line 38 in file
-		'/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/valid_array.sv'.
+		'/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/valid_array.sv'.
 ===============================================================================
 |    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
 ===============================================================================
@@ -3422,7 +3422,7 @@ Information: Building the design 'lru_array'. (HDL-193)
 
 Inferred memory devices in process
 	in routine lru_array line 33 in file
-		'/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/lru_array.sv'.
+		'/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/lru_array.sv'.
 ===============================================================================
 |    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
 ===============================================================================
@@ -3436,7 +3436,7 @@ Inferred memory devices in process
 
 Inferred memory devices in process
 	in routine lru_array line 55 in file
-		'/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/lru_array.sv'.
+		'/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/lru_array.sv'.
 ===============================================================================
 |    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
 ===============================================================================
@@ -3453,7 +3453,7 @@ Presto compilation completed successfully. (lru_array)
 Information: Building the design 'fu_add'. (HDL-193)
 
 Statistics for case statements in always block at line 34 in file
-	'/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/fu_add.sv'
+	'/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/fu_add.sv'
 ===============================================
 |           Line           |  full/ parallel  |
 ===============================================
@@ -3461,7 +3461,7 @@ Statistics for case statements in always block at line 34 in file
 ===============================================
 
 Statistics for case statements in always block at line 48 in file
-	'/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/fu_add.sv'
+	'/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/fu_add.sv'
 ===============================================
 |           Line           |  full/ parallel  |
 ===============================================
@@ -3469,7 +3469,7 @@ Statistics for case statements in always block at line 48 in file
 ===============================================
 
 Statistics for case statements in always block at line 60 in file
-	'/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/fu_add.sv'
+	'/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/fu_add.sv'
 ===============================================
 |           Line           |  full/ parallel  |
 ===============================================
@@ -3481,7 +3481,7 @@ Presto compilation completed successfully. (fu_add)
 Information: Building the design 'fu_mult'. (HDL-193)
 
 Statistics for case statements in always block at line 56 in file
-	'/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/fu_mult.sv'
+	'/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/fu_mult.sv'
 ===============================================
 |           Line           |  full/ parallel  |
 ===============================================
@@ -3491,7 +3491,7 @@ Statistics for case statements in always block at line 56 in file
 
 Inferred memory devices in process
 	in routine fu_mult line 43 in file
-		'/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/fu_mult.sv'.
+		'/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/fu_mult.sv'.
 ===============================================================================
 |    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
 ===============================================================================
@@ -3502,7 +3502,7 @@ Presto compilation completed successfully. (fu_mult)
 Information: Building the design 'fu_div_rem'. (HDL-193)
 
 Statistics for case statements in always block at line 56 in file
-	'/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/fu_div_rem.sv'
+	'/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/fu_div_rem.sv'
 ===============================================
 |           Line           |  full/ parallel  |
 ===============================================
@@ -3512,7 +3512,7 @@ Statistics for case statements in always block at line 56 in file
 
 Inferred memory devices in process
 	in routine fu_div_rem line 29 in file
-		'/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/../hdl/fu_div_rem.sv'.
+		'/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/../hdl/fu_div_rem.sv'.
 ===============================================================================
 |    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
 ===============================================================================
@@ -3531,7 +3531,7 @@ check_design
 ****************************************
 check_design summary:
 Version:     R-2020.09-SP4
-Date:        Fri Nov 15 11:19:17 2024
+Date:        Fri Nov 15 15:17:16 2024
 ****************************************
 
                    Name                                            Total
@@ -3551,15 +3551,15 @@ link
   Linking design 'cpu'
   Using the following designs and libraries:
   --------------------------------------------------------------------------
-  * (19 designs)              /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/cpu.db, etc
+  * (19 designs)              /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/cpu.db, etc
   NangateOpenCellLibrary (library)
                               /srv/ece411ag/freepdk-45nm/stdcells.db
   dw_foundation.sldb (library)
                               /srv/software/Synopsys-2021_x86_64/syn/R-2020.09-SP4/libraries/syn/dw_foundation.sldb
   mp_cache_data_array_TT_1p0V_25C_lib (library)
-                              /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_data_array/mp_cache_data_array_TT_1p0V_25C_lib.db
+                              /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_data_array/mp_cache_data_array_TT_1p0V_25C_lib.db
   mp_cache_tag_array_TT_1p0V_25C_lib (library)
-                              /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array_TT_1p0V_25C_lib.db
+                              /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array_TT_1p0V_25C_lib.db
 
 1
 eval [getenv ECE411_COMPILE_CMD]
@@ -3765,13 +3765,13 @@ Information: Ungrouping hierarchy cache_i/stage_1_i 'stage_1' #insts = 1537. (OP
    ELAPSED            WORST NEG   SETUP    DESIGN                              LEAKAGE   MIN DELAY 
     TIME      AREA      SLACK     COST    RULE COST         ENDPOINT            POWER      COST    
   --------- --------- --------- --------- --------- ------------------------- --------- -----------
-    0:21:45  245502.2     23.82    1536.1   14117.2                           7955063.5000      0.00  
-    0:21:49  243370.7     23.84    1537.5   19980.0                           7879292.5000      0.00  
+    0:21:25  245502.2     23.82    1536.1   14117.2                           7955063.5000      0.00  
+    0:21:30  243370.7     23.84    1537.5   19980.0                           7879292.5000      0.00  
 
   Beginning Constant Register Removal
   -----------------------------------
-    0:21:54  240891.1     23.94    1545.0   17830.2                           7754985.0000      0.00  
-    0:21:57  237420.3     23.94    1545.0   17016.7                           7601755.0000      0.00  
+    0:21:33  240891.1     23.94    1545.0   17830.2                           7754985.0000      0.00  
+    0:21:36  237420.3     23.94    1545.0   17016.7                           7601755.0000      0.00  
 
   Beginning Global Optimizations
   ------------------------------
@@ -3852,38 +3852,38 @@ Information: Ungrouping hierarchy cache_i/stage_1_i 'stage_1' #insts = 1537. (OP
 
   Beginning Delay Optimization
   ----------------------------
-    0:22:34  134003.5      0.17       2.6    9909.9                           1996422.7500      0.00  
-    0:22:35  133950.5      0.00       0.0    9799.9                           1994595.1250      0.00  
-    0:22:35  133950.5      0.00       0.0    9799.9                           1994595.1250      0.00  
-    0:22:36  133935.1      0.00       0.0    9862.7                           1994499.7500      0.00  
-    0:22:44  133617.0      0.00       0.0    9856.8                           1986842.7500      0.00  
-    0:22:48  133616.7      0.00       0.0    9856.8                           1986839.6250      0.00  
+    0:22:18  134003.5      0.17       2.6    9909.9                           1996422.7500      0.00  
+    0:22:18  133950.5      0.00       0.0    9799.9                           1994595.1250      0.00  
+    0:22:18  133950.5      0.00       0.0    9799.9                           1994595.1250      0.00  
+    0:22:19  133935.1      0.00       0.0    9862.7                           1994499.7500      0.00  
+    0:22:26  133617.0      0.00       0.0    9856.8                           1986842.7500      0.00  
+    0:22:31  133616.7      0.00       0.0    9856.8                           1986839.6250      0.00  
 
   Beginning WLM Backend Optimization
   --------------------------------------
-    0:23:10  132426.1      0.00       0.0    8566.0                           1938631.1250      0.00  
-    0:23:20  131944.6      0.00       0.0    8221.7                           1919950.0000      0.00  
-    0:23:20  131944.6      0.00       0.0    8221.7                           1919950.0000      0.00  
-    0:23:20  131944.6      0.00       0.0    8221.7                           1919950.0000      0.00  
-    0:23:30  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
-    0:23:30  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
-    0:23:30  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
-    0:23:30  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
-    0:23:30  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
-    0:23:30  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
-    0:23:30  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
-    0:23:30  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
-    0:23:30  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
-    0:23:30  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
-    0:23:30  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
-    0:23:30  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
-    0:23:30  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
-    0:23:30  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
-    0:23:30  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
-    0:23:30  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
-    0:23:30  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
-    0:23:30  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
-    0:23:30  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
+    0:22:52  132426.1      0.00       0.0    8566.0                           1938631.1250      0.00  
+    0:23:03  131944.6      0.00       0.0    8221.7                           1919950.0000      0.00  
+    0:23:03  131944.6      0.00       0.0    8221.7                           1919950.0000      0.00  
+    0:23:03  131944.6      0.00       0.0    8221.7                           1919950.0000      0.00  
+    0:23:13  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
+    0:23:13  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
+    0:23:13  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
+    0:23:13  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
+    0:23:13  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
+    0:23:13  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
+    0:23:13  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
+    0:23:13  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
+    0:23:13  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
+    0:23:13  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
+    0:23:13  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
+    0:23:13  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
+    0:23:13  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
+    0:23:13  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
+    0:23:13  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
+    0:23:13  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
+    0:23:13  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
+    0:23:13  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
+    0:23:13  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
 
 
   Beginning Design Rule Fixing  (max_transition)  (max_fanout)  (max_capacitance)
@@ -3893,13 +3893,13 @@ Information: Ungrouping hierarchy cache_i/stage_1_i 'stage_1' #insts = 1537. (OP
    ELAPSED            WORST NEG   SETUP    DESIGN                              LEAKAGE   MIN DELAY 
     TIME      AREA      SLACK     COST    RULE COST         ENDPOINT            POWER      COST    
   --------- --------- --------- --------- --------- ------------------------- --------- -----------
-    0:23:30  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
+    0:23:13  131178.6      0.00       0.0    8130.7                           1876407.0000      0.00  
   Global Optimization (Phase 33)
   Global Optimization (Phase 34)
   Global Optimization (Phase 35)
-    0:23:33  131382.0      0.00       0.0    1407.1 cache_i/data_out[978]     1879032.2500      0.00  
-    0:23:33  131391.6      0.00       0.0    1393.1                           1879166.8750      0.00  
-    0:23:33  131391.6      0.00       0.0    1393.1                           1879166.8750      0.00  
+    0:23:16  131382.0      0.00       0.0    1407.1 cache_i/data_out[978]     1879032.2500      0.00  
+    0:23:16  131391.6      0.00       0.0    1393.1                           1879166.8750      0.00  
+    0:23:16  131391.6      0.00       0.0    1393.1                           1879166.8750      0.00  
 
 
   Beginning Leakage Power Optimization  (max_leakage_power 0)
@@ -3909,7 +3909,7 @@ Information: Ungrouping hierarchy cache_i/stage_1_i 'stage_1' #insts = 1537. (OP
    ELAPSED            WORST NEG   SETUP    DESIGN                              LEAKAGE   MIN DELAY 
     TIME      AREA      SLACK     COST    RULE COST         ENDPOINT            POWER      COST    
   --------- --------- --------- --------- --------- ------------------------- --------- -----------
-    0:23:33  131391.6      0.00       0.0    1393.1                           1879166.8750      0.00  
+    0:23:16  131391.6      0.00       0.0    1393.1                           1879166.8750      0.00  
   Global Optimization (Phase 36)
   Global Optimization (Phase 37)
   Global Optimization (Phase 38)
@@ -3925,49 +3925,49 @@ Information: Ungrouping hierarchy cache_i/stage_1_i 'stage_1' #insts = 1537. (OP
   Global Optimization (Phase 48)
   Global Optimization (Phase 49)
   Global Optimization (Phase 50)
-    0:23:48  127559.9      0.00       0.0    1313.9                           1746727.1250      0.00  
-    0:23:48  127559.9      0.00       0.0    1313.9                           1746727.1250      0.00  
-    0:23:48  127559.9      0.00       0.0    1313.9                           1746727.1250      0.00  
-    0:23:51  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
-    0:23:51  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
-    0:23:51  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
-    0:23:51  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
-    0:23:51  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
-    0:23:52  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
-    0:23:52  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
-    0:23:52  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
-    0:23:52  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
-    0:23:52  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
-    0:23:52  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
-    0:23:52  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
-    0:23:52  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
-    0:23:52  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
-    0:23:52  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
-    0:23:52  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
-    0:23:52  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
-    0:23:52  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
-    0:23:52  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
+    0:23:30  127559.9      0.00       0.0    1313.9                           1746727.1250      0.00  
+    0:23:30  127559.9      0.00       0.0    1313.9                           1746727.1250      0.00  
+    0:23:30  127559.9      0.00       0.0    1313.9                           1746727.1250      0.00  
+    0:23:33  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
+    0:23:33  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
+    0:23:33  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
+    0:23:33  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
+    0:23:33  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
+    0:23:33  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
+    0:23:33  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
+    0:23:33  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
+    0:23:33  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
+    0:23:33  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
+    0:23:33  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
+    0:23:33  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
+    0:23:33  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
+    0:23:33  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
+    0:23:33  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
+    0:23:33  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
+    0:23:34  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
+    0:23:34  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
+    0:23:34  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
 
                                   TOTAL                                                            
    ELAPSED            WORST NEG   SETUP    DESIGN                              LEAKAGE   MIN DELAY 
     TIME      AREA      SLACK     COST    RULE COST         ENDPOINT            POWER      COST    
   --------- --------- --------- --------- --------- ------------------------- --------- -----------
-    0:23:55  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
-    0:23:58  127413.6      0.00       0.0    1317.3                           1747581.1250      0.00  
-    0:23:58  127413.6      0.00       0.0    1317.3                           1747581.1250      0.00  
-    0:23:58  127413.6      0.00       0.0    1317.3                           1747581.1250      0.00  
-    0:24:02  127408.0      0.00       0.0    1317.3                           1746216.7500      0.00  
-    0:24:07  127406.9      0.00       0.0    1317.3                           1746184.1250      0.00  
-    0:24:08  127584.4      0.00       0.0    1043.0                           1749130.2500      0.00  
-    0:24:08  127584.4      0.00       0.0    1043.0                           1749130.2500      0.00  
-    0:24:08  127584.4      0.00       0.0    1043.0                           1749130.2500      0.00  
-    0:24:08  127584.4      0.00       0.0    1043.0                           1749130.2500      0.00  
-    0:24:08  127584.4      0.00       0.0    1043.0                           1749130.2500      0.00  
-    0:24:08  127584.4      0.00       0.0    1043.0                           1749130.2500      0.00  
-    0:24:16  127569.7      0.00       0.0    1043.2                           1749409.1250      0.00  
+    0:23:37  127537.0      0.00       0.0    1316.0                           1745663.1250      0.00  
+    0:23:40  127413.6      0.00       0.0    1317.3                           1747581.1250      0.00  
+    0:23:41  127413.6      0.00       0.0    1317.3                           1747581.1250      0.00  
+    0:23:41  127413.6      0.00       0.0    1317.3                           1747581.1250      0.00  
+    0:23:44  127408.0      0.00       0.0    1317.3                           1746216.7500      0.00  
+    0:23:50  127406.9      0.00       0.0    1317.3                           1746184.1250      0.00  
+    0:23:51  127584.4      0.00       0.0    1043.0                           1749130.2500      0.00  
+    0:23:51  127584.4      0.00       0.0    1043.0                           1749130.2500      0.00  
+    0:23:51  127584.4      0.00       0.0    1043.0                           1749130.2500      0.00  
+    0:23:51  127584.4      0.00       0.0    1043.0                           1749130.2500      0.00  
+    0:23:51  127584.4      0.00       0.0    1043.0                           1749130.2500      0.00  
+    0:23:51  127584.4      0.00       0.0    1043.0                           1749130.2500      0.00  
+    0:23:59  127569.7      0.00       0.0    1043.2                           1749409.1250      0.00  
 Loading db file '/srv/ece411ag/freepdk-45nm/stdcells.db'
-Loading db file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_data_array/mp_cache_data_array_TT_1p0V_25C_lib.db'
-Loading db file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array_TT_1p0V_25C_lib.db'
+Loading db file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_data_array/mp_cache_data_array_TT_1p0V_25C_lib.db'
+Loading db file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array_TT_1p0V_25C_lib.db'
 
 
 Note: Symbol # after min delay cost means estimated hold TNS across all active scenarios 
@@ -3991,7 +3991,7 @@ check_design
 ****************************************
 check_design summary:
 Version:     R-2020.09-SP4
-Date:        Fri Nov 15 11:43:50 2024
+Date:        Fri Nov 15 15:41:30 2024
 ****************************************
 
                    Name                                            Total
@@ -4004,20 +4004,20 @@ write_file -format ddc -hierarchy -output outputs/synth.ddc
 Writing ddc file 'outputs/synth.ddc'.
 1
 write_file -format verilog -hierarchy -output [format "outputs/%s.gate.v" $design_toplevel]
-Writing verilog file '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth/outputs/cpu.gate.v'.
+Writing verilog file '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth/outputs/cpu.gate.v'.
 1
 exit
 
 Memory usage for this session 1006 Mbytes.
 Memory usage for this session including child processes 2205 Mbytes.
-CPU usage for this session 1441 seconds ( 0.40 hours ).
-Elapsed time for this session 1518 seconds ( 0.42 hours ).
+CPU usage for this session 1425 seconds ( 0.40 hours ).
+Elapsed time for this session 1498 seconds ( 0.42 hours ).
 
 Thank you...
 rm -f  *.log
 rm -f  default.svf
 rm -rf work
-make[1]: Leaving directory '/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/synth'
+make[1]: Leaving directory '/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/synth'
  
 ****************************************
 Report : timing
@@ -4026,7 +4026,7 @@ Report : timing
         -max_paths 1
 Design : cpu
 Version: R-2020.09-SP4
-Date   : Fri Nov 15 11:43:50 2024
+Date   : Fri Nov 15 15:41:30 2024
 ****************************************
 
  # A fanout number of 1000 was used for high fanout net computations.
@@ -4181,15 +4181,15 @@ Wire Load Model Mode: enclosed
 Report : area
 Design : cpu
 Version: R-2020.09-SP4
-Date   : Fri Nov 15 11:43:47 2024
+Date   : Fri Nov 15 15:41:27 2024
 ****************************************
 
 Information: Updating design information... (UID-85)
 Library(s) Used:
 
     NangateOpenCellLibrary (File: /srv/ece411ag/freepdk-45nm/stdcells.db)
-    mp_cache_data_array_TT_1p0V_25C_lib (File: /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_data_array/mp_cache_data_array_TT_1p0V_25C_lib.db)
-    mp_cache_tag_array_TT_1p0V_25C_lib (File: /tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array_TT_1p0V_25C_lib.db)
+    mp_cache_data_array_TT_1p0V_25C_lib (File: /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_data_array/mp_cache_data_array_TT_1p0V_25C_lib.db)
+    mp_cache_tag_array_TT_1p0V_25C_lib (File: /tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sram/output/mp_cache_tag_array/mp_cache_tag_array_TT_1p0V_25C_lib.db)
 
 Number of ports:                         7223
 Number of nets:                         51467
@@ -4859,7 +4859,7 @@ cd vcs && ./top_tb -l simulation.log -exitstatus +NO_DUMP_ALL_ECE411 \
 	+BRAM_0_ON_X_ECE411=0
 Chronologic VCS simulator copyright 1991-2020
 Contains Synopsys proprietary information.
-Compiler version R-2020.12-SP1-1_Full64; Runtime version R-2020.12-SP1-1_Full64;  Nov 15 11:43 2024
+Compiler version R-2020.12-SP1-1_Full64; Runtime version R-2020.12-SP1-1_Full64;  Nov 15 15:41 2024
 *Verdi* Loading libsscore_vcs202012.so
 FSDB Dumper for VCS, Release Verdi_R-2020.12-SP1-1, Linux x86_64/64bit, 04/20/2021
 (C) 1996 - 2021 by Synopsys, Inc.
@@ -4903,7 +4903,7 @@ spec_mem_addr = 00000000
 spec_mem_rmask = 0
 spec_mem_wmask = 0
 spec_mem_wdata = 00000000
-Error: "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 825000 ps
+Error: "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 825000 ps
 RVFI Monitor Error
 -------- RVFI Monitor error 105 in channel 0: top_tb.monitor.monitor.ch0_handle_error at time 825000 --------
 Error message: mismatch in rd_wdata
@@ -4937,7 +4937,7 @@ spec_mem_addr = 00000000
 spec_mem_rmask = 0
 spec_mem_wmask = 0
 spec_mem_wdata = 00000000
-Error: "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 845000 ps
+Error: "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 845000 ps
 RVFI Monitor Error
 -------- RVFI Monitor error 104 in channel 0: top_tb.monitor.monitor.ch0_handle_error at time 845000 --------
 Error message: mismatch in rd_addr
@@ -5003,9 +5003,9 @@ spec_mem_addr = ffffff80
 spec_mem_rmask = 0
 spec_mem_wmask = f
 spec_mem_wdata = 00000000
-Error: "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 865000 ps
+Error: "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 865000 ps
 RVFI Monitor Error
-Error: "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 875000 ps
+Error: "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 875000 ps
 RVFI Monitor Error
 -------- RVFI Monitor error 104 in channel 0: top_tb.monitor.monitor.ch0_handle_error at time 875000 --------
 Error message: mismatch in rd_addr
@@ -5039,15 +5039,15 @@ spec_mem_addr = 00000000
 spec_mem_rmask = 0
 spec_mem_wmask = 0
 spec_mem_wdata = 00000000
-Fatal: "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/vcs/top_tb.sv", 66: top_tb: at time 885000 ps
-$finish called from file "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/vcs/top_tb.sv", line 66.
+Fatal: "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/vcs/top_tb.sv", 66: top_tb: at time 885000 ps
+$finish called from file "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/vcs/top_tb.sv", line 66.
 Monitor: Total IPC: 0.465116
 Monitor: Total Time:               885000
 $finish at simulation time               885000
            V C S   S i m u l a t i o n   R e p o r t 
 Time: 885000 ps
 CPU Time:      0.460 seconds;       Data structure size:   1.1Mb
-Fri Nov 15 11:43:53 2024
+Fri Nov 15 15:41:33 2024
 make: *** [Makefile:31: run_vcs_top_tb] Error 3
  
  ``` 
@@ -5065,7 +5065,7 @@ cd vcs && ./top_tb -l simulation.log -exitstatus +NO_DUMP_ALL_ECE411 \
 	+BRAM_0_ON_X_ECE411=0
 Chronologic VCS simulator copyright 1991-2020
 Contains Synopsys proprietary information.
-Compiler version R-2020.12-SP1-1_Full64; Runtime version R-2020.12-SP1-1_Full64;  Nov 15 11:43 2024
+Compiler version R-2020.12-SP1-1_Full64; Runtime version R-2020.12-SP1-1_Full64;  Nov 15 15:41 2024
 *Verdi* Loading libsscore_vcs202012.so
 FSDB Dumper for VCS, Release Verdi_R-2020.12-SP1-1, Linux x86_64/64bit, 04/20/2021
 (C) 1996 - 2021 by Synopsys, Inc.
@@ -5109,7 +5109,7 @@ spec_mem_addr = 00000000
 spec_mem_rmask = 0
 spec_mem_wmask = 0
 spec_mem_wdata = 00000000
-Error: "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 825000 ps
+Error: "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 825000 ps
 RVFI Monitor Error
 -------- RVFI Monitor error 105 in channel 0: top_tb.monitor.monitor.ch0_handle_error at time 825000 --------
 Error message: mismatch in rd_wdata
@@ -5143,7 +5143,7 @@ spec_mem_addr = 00000000
 spec_mem_rmask = 0
 spec_mem_wmask = 0
 spec_mem_wdata = 00000000
-Error: "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 845000 ps
+Error: "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 845000 ps
 RVFI Monitor Error
 -------- RVFI Monitor error 104 in channel 0: top_tb.monitor.monitor.ch0_handle_error at time 845000 --------
 Error message: mismatch in rd_addr
@@ -5209,9 +5209,9 @@ spec_mem_addr = ffffff80
 spec_mem_rmask = 0
 spec_mem_wmask = f
 spec_mem_wdata = 00000000
-Error: "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 865000 ps
+Error: "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 865000 ps
 RVFI Monitor Error
-Error: "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 875000 ps
+Error: "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 875000 ps
 RVFI Monitor Error
 -------- RVFI Monitor error 104 in channel 0: top_tb.monitor.monitor.ch0_handle_error at time 875000 --------
 Error message: mismatch in rd_addr
@@ -5245,15 +5245,15 @@ spec_mem_addr = 00000000
 spec_mem_rmask = 0
 spec_mem_wmask = 0
 spec_mem_wdata = 00000000
-Fatal: "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/vcs/top_tb.sv", 66: top_tb: at time 885000 ps
-$finish called from file "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/vcs/top_tb.sv", line 66.
+Fatal: "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/vcs/top_tb.sv", 66: top_tb: at time 885000 ps
+$finish called from file "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/vcs/top_tb.sv", line 66.
 Monitor: Total IPC: 0.465116
 Monitor: Total Time:               885000
 $finish at simulation time               885000
            V C S   S i m u l a t i o n   R e p o r t 
 Time: 885000 ps
 CPU Time:      0.460 seconds;       Data structure size:   1.1Mb
-Fri Nov 15 11:43:54 2024
+Fri Nov 15 15:41:34 2024
 make: *** [Makefile:31: run_vcs_top_tb] Error 3
  
  ``` 
@@ -5271,7 +5271,7 @@ cd vcs && ./top_tb -l simulation.log -exitstatus +NO_DUMP_ALL_ECE411 \
 	+BRAM_0_ON_X_ECE411=0
 Chronologic VCS simulator copyright 1991-2020
 Contains Synopsys proprietary information.
-Compiler version R-2020.12-SP1-1_Full64; Runtime version R-2020.12-SP1-1_Full64;  Nov 15 11:43 2024
+Compiler version R-2020.12-SP1-1_Full64; Runtime version R-2020.12-SP1-1_Full64;  Nov 15 15:41 2024
 *Verdi* Loading libsscore_vcs202012.so
 FSDB Dumper for VCS, Release Verdi_R-2020.12-SP1-1, Linux x86_64/64bit, 04/20/2021
 (C) 1996 - 2021 by Synopsys, Inc.
@@ -5315,7 +5315,7 @@ spec_mem_addr = 00000000
 spec_mem_rmask = 0
 spec_mem_wmask = 0
 spec_mem_wdata = 00000000
-Error: "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 825000 ps
+Error: "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 825000 ps
 RVFI Monitor Error
 -------- RVFI Monitor error 105 in channel 0: top_tb.monitor.monitor.ch0_handle_error at time 825000 --------
 Error message: mismatch in rd_wdata
@@ -5349,7 +5349,7 @@ spec_mem_addr = 00000000
 spec_mem_rmask = 0
 spec_mem_wmask = 0
 spec_mem_wdata = 00000000
-Error: "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 845000 ps
+Error: "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 845000 ps
 RVFI Monitor Error
 -------- RVFI Monitor error 104 in channel 0: top_tb.monitor.monitor.ch0_handle_error at time 845000 --------
 Error message: mismatch in rd_addr
@@ -5415,9 +5415,9 @@ spec_mem_addr = ffffff80
 spec_mem_rmask = 0
 spec_mem_wmask = f
 spec_mem_wdata = 00000000
-Error: "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 865000 ps
+Error: "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 865000 ps
 RVFI Monitor Error
-Error: "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 875000 ps
+Error: "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 875000 ps
 RVFI Monitor Error
 -------- RVFI Monitor error 104 in channel 0: top_tb.monitor.monitor.ch0_handle_error at time 875000 --------
 Error message: mismatch in rd_addr
@@ -5451,15 +5451,15 @@ spec_mem_addr = 00000000
 spec_mem_rmask = 0
 spec_mem_wmask = 0
 spec_mem_wdata = 00000000
-Fatal: "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/vcs/top_tb.sv", 66: top_tb: at time 885000 ps
-$finish called from file "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/vcs/top_tb.sv", line 66.
+Fatal: "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/vcs/top_tb.sv", 66: top_tb: at time 885000 ps
+$finish called from file "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/vcs/top_tb.sv", line 66.
 Monitor: Total IPC: 0.465116
 Monitor: Total Time:               885000
 $finish at simulation time               885000
            V C S   S i m u l a t i o n   R e p o r t 
 Time: 885000 ps
 CPU Time:      0.450 seconds;       Data structure size:   1.1Mb
-Fri Nov 15 11:43:55 2024
+Fri Nov 15 15:41:35 2024
 make: *** [Makefile:31: run_vcs_top_tb] Error 3
  
  ``` 
@@ -5477,7 +5477,7 @@ cd vcs && ./top_tb -l simulation.log -exitstatus +NO_DUMP_ALL_ECE411 \
 	+BRAM_0_ON_X_ECE411=0
 Chronologic VCS simulator copyright 1991-2020
 Contains Synopsys proprietary information.
-Compiler version R-2020.12-SP1-1_Full64; Runtime version R-2020.12-SP1-1_Full64;  Nov 15 11:43 2024
+Compiler version R-2020.12-SP1-1_Full64; Runtime version R-2020.12-SP1-1_Full64;  Nov 15 15:41 2024
 *Verdi* Loading libsscore_vcs202012.so
 FSDB Dumper for VCS, Release Verdi_R-2020.12-SP1-1, Linux x86_64/64bit, 04/20/2021
 (C) 1996 - 2021 by Synopsys, Inc.
@@ -5521,7 +5521,7 @@ spec_mem_addr = 00000000
 spec_mem_rmask = 0
 spec_mem_wmask = 0
 spec_mem_wdata = 00000000
-Error: "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 825000 ps
+Error: "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 825000 ps
 RVFI Monitor Error
 -------- RVFI Monitor error 105 in channel 0: top_tb.monitor.monitor.ch0_handle_error at time 825000 --------
 Error message: mismatch in rd_wdata
@@ -5555,7 +5555,7 @@ spec_mem_addr = 00000000
 spec_mem_rmask = 0
 spec_mem_wmask = 0
 spec_mem_wdata = 00000000
-Error: "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 845000 ps
+Error: "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 845000 ps
 RVFI Monitor Error
 -------- RVFI Monitor error 104 in channel 0: top_tb.monitor.monitor.ch0_handle_error at time 845000 --------
 Error message: mismatch in rd_addr
@@ -5621,9 +5621,9 @@ spec_mem_addr = ffffff80
 spec_mem_rmask = 0
 spec_mem_wmask = f
 spec_mem_wdata = 00000000
-Error: "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 865000 ps
+Error: "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 865000 ps
 RVFI Monitor Error
-Error: "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 875000 ps
+Error: "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 875000 ps
 RVFI Monitor Error
 -------- RVFI Monitor error 104 in channel 0: top_tb.monitor.monitor.ch0_handle_error at time 875000 --------
 Error message: mismatch in rd_addr
@@ -5657,15 +5657,15 @@ spec_mem_addr = 00000000
 spec_mem_rmask = 0
 spec_mem_wmask = 0
 spec_mem_wdata = 00000000
-Fatal: "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/vcs/top_tb.sv", 66: top_tb: at time 885000 ps
-$finish called from file "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/vcs/top_tb.sv", line 66.
+Fatal: "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/vcs/top_tb.sv", 66: top_tb: at time 885000 ps
+$finish called from file "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/vcs/top_tb.sv", line 66.
 Monitor: Total IPC: 0.465116
 Monitor: Total Time:               885000
 $finish at simulation time               885000
            V C S   S i m u l a t i o n   R e p o r t 
 Time: 885000 ps
-CPU Time:      0.450 seconds;       Data structure size:   1.1Mb
-Fri Nov 15 11:43:56 2024
+CPU Time:      0.460 seconds;       Data structure size:   1.1Mb
+Fri Nov 15 15:41:36 2024
 make: *** [Makefile:31: run_vcs_top_tb] Error 3
  
  ``` 
@@ -5683,7 +5683,7 @@ cd vcs && ./top_tb -l simulation.log -exitstatus +NO_DUMP_ALL_ECE411 \
 	+BRAM_0_ON_X_ECE411=0
 Chronologic VCS simulator copyright 1991-2020
 Contains Synopsys proprietary information.
-Compiler version R-2020.12-SP1-1_Full64; Runtime version R-2020.12-SP1-1_Full64;  Nov 15 11:43 2024
+Compiler version R-2020.12-SP1-1_Full64; Runtime version R-2020.12-SP1-1_Full64;  Nov 15 15:41 2024
 *Verdi* Loading libsscore_vcs202012.so
 FSDB Dumper for VCS, Release Verdi_R-2020.12-SP1-1, Linux x86_64/64bit, 04/20/2021
 (C) 1996 - 2021 by Synopsys, Inc.
@@ -5727,7 +5727,7 @@ spec_mem_addr = 00000000
 spec_mem_rmask = 0
 spec_mem_wmask = 0
 spec_mem_wdata = 00000000
-Error: "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 825000 ps
+Error: "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 825000 ps
 RVFI Monitor Error
 -------- RVFI Monitor error 105 in channel 0: top_tb.monitor.monitor.ch0_handle_error at time 825000 --------
 Error message: mismatch in rd_wdata
@@ -5761,7 +5761,7 @@ spec_mem_addr = 00000000
 spec_mem_rmask = 0
 spec_mem_wmask = 0
 spec_mem_wdata = 00000000
-Error: "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 845000 ps
+Error: "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 845000 ps
 RVFI Monitor Error
 -------- RVFI Monitor error 104 in channel 0: top_tb.monitor.monitor.ch0_handle_error at time 845000 --------
 Error message: mismatch in rd_addr
@@ -5827,9 +5827,9 @@ spec_mem_addr = ffffff80
 spec_mem_rmask = 0
 spec_mem_wmask = f
 spec_mem_wdata = 00000000
-Error: "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 865000 ps
+Error: "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 865000 ps
 RVFI Monitor Error
-Error: "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 875000 ps
+Error: "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/common/monitor.sv", 349: top_tb.monitor: at time 875000 ps
 RVFI Monitor Error
 -------- RVFI Monitor error 104 in channel 0: top_tb.monitor.monitor.ch0_handle_error at time 875000 --------
 Error message: mismatch in rd_addr
@@ -5863,15 +5863,15 @@ spec_mem_addr = 00000000
 spec_mem_rmask = 0
 spec_mem_wmask = 0
 spec_mem_wdata = 00000000
-Fatal: "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/vcs/top_tb.sv", 66: top_tb: at time 885000 ps
-$finish called from file "/tmp/cb5d0b02-ced0-4bfe-a58d-061552a0f570/dut/sim/../hvl/vcs/top_tb.sv", line 66.
+Fatal: "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/vcs/top_tb.sv", 66: top_tb: at time 885000 ps
+$finish called from file "/tmp/99ffb34a-6100-4623-9e76-d87837a0bdd4/dut/sim/../hvl/vcs/top_tb.sv", line 66.
 Monitor: Total IPC: 0.465116
 Monitor: Total Time:               885000
 $finish at simulation time               885000
            V C S   S i m u l a t i o n   R e p o r t 
 Time: 885000 ps
-CPU Time:      0.450 seconds;       Data structure size:   1.1Mb
-Fri Nov 15 11:43:56 2024
+CPU Time:      0.460 seconds;       Data structure size:   1.1Mb
+Fri Nov 15 15:41:37 2024
 make: *** [Makefile:31: run_vcs_top_tb] Error 3
  
  ``` 
