@@ -361,7 +361,7 @@ import rv32i_types::*;
         .rdata_out(phys_reg),
         .dequeue_in(dequeue_fl),
         .empty_out(is_free_list_empty),
-        .global_branch_signal(global_branch_signal)
+        .global_branch_signal(global_branch_signal_reg)
     );
 
     phys_regfile phys_regfile_i (
