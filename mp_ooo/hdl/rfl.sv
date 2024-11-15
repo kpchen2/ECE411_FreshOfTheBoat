@@ -1,4 +1,4 @@
-module free_list
+module rfl
 import rv32i_types::*;
 #(
     parameter DATA_WIDTH = 6,
@@ -14,8 +14,8 @@ import rv32i_types::*;
     input logic dequeue_in,
 
     output logic empty_out,
-    input logic global_branch_signal,
-    input logic   [DATA_WIDTH:0] mem_rfl [QUEUE_DEPTH]
+
+    output logic   [DATA_WIDTH:0] mem [QUEUE_DEPTH]
 );
 
     localparam ADDR_WIDTH = $clog2(QUEUE_DEPTH);
@@ -26,7 +26,7 @@ import rv32i_types::*;
     logic   [$clog2(QUEUE_DEPTH):0] tail_next;    // combinational
     logic   [$clog2(QUEUE_DEPTH):0] head_next;    // combinational
 
-    logic   [DATA_WIDTH:0] mem [QUEUE_DEPTH];     // extra bit is for validity
+    // logic   [DATA_WIDTH:0] mem [QUEUE_DEPTH];     // extra bit is for validity
     logic   [DATA_WIDTH:0] enqueue_mem_next;
     logic   [DATA_WIDTH:0] dequeue_mem_next;
 
@@ -34,8 +34,6 @@ import rv32i_types::*;
 
     logic   enqueue_reg, enqueue_next;
     logic   dequeue_reg, dequeue_next;
-
-    logic   global_branch_signal_next;
 
     assign  empty_out = empty;
 
@@ -53,22 +51,16 @@ import rv32i_types::*;
             end
 
         end else begin
-            if (global_branch_signal_next) begin
-                mem <= mem_rfl;
-                tail_reg <= {1'b0, {$clog2(QUEUE_DEPTH){1'b1}}};
-                head_reg <= '1;
-            end else begin
-                if (enqueue_next) begin
-                    mem[tail_next[$clog2(QUEUE_DEPTH) - 1:0]] <= enqueue_mem_next;
-                end
-                
-                if (dequeue_next) begin
-                    mem[head_next[$clog2(QUEUE_DEPTH) - 1:0]] <= dequeue_mem_next;
-                end
-
-                tail_reg <= tail_next;
-                head_reg <= head_next;
+            if (enqueue_next) begin
+                mem[tail_next[$clog2(QUEUE_DEPTH) - 1:0]] <= enqueue_mem_next;
             end
+            
+            // if (dequeue_next) begin
+            //     mem[head_next[$clog2(QUEUE_DEPTH) - 1:0]] <= dequeue_mem_next;
+            // end
+
+            tail_reg <= tail_next;
+            head_reg <= head_next;
         end
     end
 
@@ -80,7 +72,6 @@ import rv32i_types::*;
         dequeue_mem_next = '0;
         enqueue_next = enqueue_in;
         dequeue_next = dequeue_in;
-        global_branch_signal_next = global_branch_signal;
 
         if (rst) begin
             empty = '1;
@@ -106,10 +97,7 @@ import rv32i_types::*;
             enqueue_mem_next = {1'b1, wdata_in};
         end
 
-        // tail_next = global_branch_signal ? {1'b0, {$clog2(QUEUE_DEPTH){1'b1}}} : tail_next;
-        // head_next = global_branch_signal ? {~tail_next[5], tail_next[4:0]} : head_next;
-
         empty = (tail_next[ADDR_WIDTH - 1:0] == head_next[ADDR_WIDTH - 1:0]) && (tail_next[ADDR_WIDTH] == head_next[ADDR_WIDTH]);   // logic if queue empty
     end
 
-endmodule : free_list
+endmodule : rfl

@@ -190,6 +190,8 @@ import rv32i_types::*;
 
     logic           d_cache_valid;
 
+    logic   [6:0]   mem[32];
+
     // assign global_branch_signal = cdb_br.pc_select;
     // assign global_branch_addr = cdb_br.pc_branch;
 
@@ -520,6 +522,17 @@ import rv32i_types::*;
         .rrat_out(rrat)
     );
 
+    rfl rfl_i (
+        .clk(clk),
+        .rst(rst),
+        .wdata_in(old_pd),
+        .enqueue_in(enqueue),
+        .rdata_out(),           // useless
+        .dequeue_in(enqueue),
+        .empty_out(),            // useless
+        .mem(mem)
+    );
+
     free_list free_list_i (
         .clk(clk),
         .rst(rst),
@@ -528,7 +541,8 @@ import rv32i_types::*;
         .rdata_out(phys_reg),
         .dequeue_in(dequeue_free_list),
         .empty_out(is_free_list_empty),
-        .global_branch_signal(global_branch_signal_reg)
+        .global_branch_signal(global_branch_signal_reg),
+        .mem_rfl(mem)
     );
 
     phys_regfile phys_regfile_i (
