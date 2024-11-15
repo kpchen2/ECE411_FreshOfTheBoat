@@ -46,6 +46,8 @@ package rv32i_types;
         logic   [31:0] inst;
 
         logic   [31:0]  pc;
+
+        logic   [31:0]  pc;
     } decode_info_t;
 
     typedef struct packed {
@@ -156,6 +158,8 @@ package rv32i_types;
         logic commit;
         logic [5:0] pd;
         rvfi_info rvfi;
+        logic pc_select;
+        logic [31:0] pc_branch;
     } rob_entry_t;
     
     typedef struct packed {

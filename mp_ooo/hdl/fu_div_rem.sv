@@ -11,7 +11,8 @@ import rv32i_types::*;
     output  logic   [31:0]  rd_v,
     input   logic           start,
     output  logic           valid,
-    input   logic           hold
+    input   logic           hold,
+    input   logic           global_branch_signal
 );
 
     logic   [31:0]  a;
@@ -43,7 +44,7 @@ import rv32i_types::*;
     0, 1, 1,
     0)
     U1 (.clk(clk),
-    .rst_n(~rst),
+    .rst_n(~(rst)),
     .hold(1'b0),
     .start(start),
     .a(a_final),

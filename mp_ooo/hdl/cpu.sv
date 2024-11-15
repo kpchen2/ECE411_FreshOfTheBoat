@@ -204,11 +204,13 @@ import rv32i_types::*;
             dfp_read_reg <= '0;
             order  <= '0;
             global_branch_signal_reg <= '0;
+            global_branch_signal_reg <= '0;
         end else begin
             pc <= pc_next;
             initial_flag_reg <= initial_flag;
             dfp_read_reg <= dfp_read;
             order <= order_next;
+            global_branch_signal_reg <= (ufp_resp == '0 && global_branch_signal == '0) ? global_branch_signal_reg : global_branch_signal;
             global_branch_signal_reg <= global_branch_signal;
         end
     end
@@ -238,6 +240,7 @@ import rv32i_types::*;
                     ufp_rmask = '0;
                 end
             end
+            pc_next = global_branch_signal ? global_branch_addr : pc_next;
             pc_next = global_branch_signal ? global_branch_addr : pc_next;
         end
     end
@@ -357,10 +360,13 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
         .wdata_in(ufp_rdata),
+        .enqueue_in((global_branch_signal_reg) ? '0 : ufp_resp),
         .enqueue_in((global_branch_signal || global_branch_signal_reg) ? '0 : i_ufp_resp),
         .rdata_out(inst),
         .dequeue_in(dequeue),
         .full_out(full_stall),
+        .empty_out(iqueue_empty),
+        .global_branch_signal(global_branch_signal)
         .empty_out(iqueue_empty),
         .global_branch_signal(global_branch_signal)
     );
@@ -370,10 +376,13 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
         .wdata_in(pc),
+        .enqueue_in((global_branch_signal_reg) ? '0 : ufp_resp),
         .enqueue_in((global_branch_signal || global_branch_signal_reg) ? '0 : i_ufp_resp),
         .rdata_out(prog),
         .dequeue_in(dequeue),
         .full_out(full_garbage),
+        .empty_out(empty_garbage),
+        .global_branch_signal(global_branch_signal)
         .empty_out(empty_garbage),
         .global_branch_signal(global_branch_signal)
     );
@@ -388,7 +397,7 @@ import rv32i_types::*;
         .is_iqueue_empty(iqueue_empty),
         .phys_reg(phys_reg),
         .is_free_list_empty(is_free_list_empty),
-        .order(order),
+        // .order(order),
         .dequeue(dequeue),
         .dequeue_free_list(dequeue_free_list),
         .order_next(order_next),
@@ -412,7 +421,7 @@ import rv32i_types::*;
         .rs_signal(rs_signal),
         .dispatch_pc_rdata(dispatch_pc_rdata),
         .dispatch_pc_wdata(dispatch_pc_wdata),
-        .dispatch_order(dispatch_order),
+        // .dispatch_order(dispatch_order),
         .dispatch_rs1_s(dispatch_rs1_s),
         .dispatch_rs2_s(dispatch_rs2_s),
         .dispatch_inst(dispatch_inst),
@@ -450,7 +459,7 @@ import rv32i_types::*;
         .enqueue_valid(regf_we_dispatch),
         .pc_rdata(dispatch_pc_rdata),
         .pc_wdata(dispatch_pc_wdata),
-        .order(dispatch_order),
+        .order(order),
         .rs1_s(dispatch_rs1_s),
         .rs2_s(dispatch_rs2_s),
         .inst(dispatch_inst),
@@ -467,9 +476,13 @@ import rv32i_types::*;
         .br_rob_idx_in(cdb_br.rob_idx),
         .br_cdb_valid(cdb_br.valid),
         .br_inst(cdb_br.inst),
+        .br_rob_idx_in(cdb_br.rob_idx),
+        .br_cdb_valid(cdb_br.valid),
+        .br_inst(cdb_br.inst),
         .mem_rob_idx_in(cdb_mem.rob_idx),
         .mem_cdb_valid(cdb_mem.valid),
         .mem_inst(cdb_mem.inst),
+        .order_next(order_next),
 
         .add_rs1_rdata(rs1_v_add),
         .add_rs2_rdata(rs2_v_add),
@@ -502,7 +515,9 @@ import rv32i_types::*;
         .dequeue_valid(rob_valid),
         .rob_num(rob_num),
         .rob_head(rob_head),
-        .full(rob_full)
+        .full(rob_full),
+        .global_branch_signal(global_branch_signal),
+        .global_branch_addr(global_branch_addr)
     );
     
     rrat rrat_i (
@@ -512,6 +527,8 @@ import rv32i_types::*;
         .pd(rob_entry.pd),
         .regf_we(rob_valid),
         .enqueue(enqueue),
+        .old_pd(old_pd),
+        .rrat_out(rrat)
         .old_pd(old_pd),
         .rrat_out(rrat)
     );
@@ -579,6 +596,12 @@ import rv32i_types::*;
         .calculated_address(calculated_address),
         .fu_rs1_v_mem(fu_rs1_v_mem),
         .fu_rs2_v_mem(fu_rs2_v_mem)
+        .cdb_div(cdb_div),
+        .rob_idx_br(branch_rob_entry),
+        .pd_s_br(branch_pd),
+        .rd_s_br(branch_rd),
+        .cdb_br(cdb_br),
+        .global_branch_signal(global_branch_signal)
     );
 
     reservation_station reservation_stations_i (

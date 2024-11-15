@@ -14,10 +14,13 @@ import rv32i_types::*;
     // to and from free list
     input   logic   [5:0]   phys_reg,
     input   logic           is_free_list_empty,
+    // input logic [63:0] order,
     input   logic   [63:0]  order,
     output  logic           dequeue,
     output  logic           dequeue_free_list,
     output  logic   [63:0]  order_next,
+    output  logic           dequeue_fl,
+    // output logic [63:0] order_next,
     // to and from RAT
     output  logic   [4:0]                   rd, rs1, rs2,
     output  logic   [PHYS_REG_BITS-1:0]     pd,
@@ -31,9 +34,10 @@ import rv32i_types::*;
     output  logic   [PHYS_REG_BITS-1:0]     rob_num_out,
     output  decode_info_t                   decode_info,
     output  logic   [2:0]                   rs_signal,
+    output  logic   [2:0]                   rs_signal,
     output  logic   [31:0]                  dispatch_pc_rdata,
     output  logic   [31:0]                  dispatch_pc_wdata,
-    output  logic   [63:0]                  dispatch_order,    
+    // output  logic   [63:0]                  dispatch_order,    
     output  logic   [4:0]                   dispatch_rs1_s,    
     output  logic   [4:0]                   dispatch_rs2_s,    
     output  logic   [31:0]                  dispatch_inst,     
@@ -78,12 +82,12 @@ import rv32i_types::*;
         ps2_out = ps2;
         ps1_valid_out = ps1_valid;
         ps2_valid_out = ps2_valid;
-        order_next = order;
+        // order_next = order;
         rob_num_out = rob_num;
         mem_idx_out = mem_idx_in;
         dispatch_inst = '0;
         dispatch_pc_rdata = '0;
-        dispatch_order = '0;
+        // dispatch_order = '0;
         dispatch_pc_wdata ='0;
         dispatch_rs1_s = '0;
         dispatch_rs2_s = '0; 
@@ -93,18 +97,23 @@ import rv32i_types::*;
         if (inst[6:0] == op_b_reg && inst[31:25] == 7'b0000001 && (inst[14:12] inside { mult_div_f3_mul, mult_div_f3_mulh, mult_div_f3_mulhsu, mult_div_f3_mulhu})) begin
         // if (inst[6:0] == op_b_reg && inst[31:25] == 7'b0000001 && (inst[14:12] == mult_div_f3_mul || inst[14:12] == mult_div_f3_mulh || inst[14:12] == mult_div_f3_mulhsu || inst[14:12] == mult_div_f3_mulhu)) begin
             rs_signal = 3'b001;
+            rs_signal = 3'b001;
         end else if (inst[6:0] == op_b_reg && inst[31:25] == 7'b0000001 && (inst[14:12] == mult_div_f3_div || inst[14:12] == mult_div_f3_divu || inst[14:12] == mult_div_f3_rem || inst[14:12] == mult_div_f3_remu)) begin
             rs_signal = 3'b010;
         end else if (inst[6:0] inside {op_b_jal, op_b_jalr, op_b_br}) begin
             rs_signal = 3'b011;
         end else if (inst[6:0] inside {op_b_load, op_b_store}) begin
             rs_signal = 3'b100;
+            rs_signal = 3'b010;
+        end else if (inst[6:0] inside {op_b_jal, op_b_jalr, op_b_br}) begin
+            rs_signal = 3'b011;
         end
 
         // if free list empty, instruction queue empty, ROB full, corresponding RS full, don't process instruction
         if (!is_free_list_empty_reg && !is_iqueue_empty_reg && !rob_full_reg && !((rs_full_add && (rs_signal == 3'b000)) || (rs_full_mul && (rs_signal == 3'b001)) || (rs_full_div && (rs_signal == 3'b010)) || (rs_full_br && (rs_signal == 3'b011)) || (rs_full_mem && (rs_signal == 3'b100)))) begin
         // if (!is_free_list_empty && !is_iqueue_empty && !rob_full && !rs_full_add && !rs_full_mul && !rs_full_div) begin
             dequeue = 1'b1;
+            dequeue_fl = ((inst[6:0] == op_b_br) || (inst == 32'h13 || inst == 0)) ? 1'b0 : 1'b1; // also if store
             dequeue_free_list = (inst[6:0] == op_b_store) ? 1'b0 : 1'b1;
             decode_info.funct3 = inst[14:12];
             decode_info.funct7 = inst[31:25];
@@ -147,6 +156,7 @@ import rv32i_types::*;
             decode_info.pc = prog - 4;
         end
 
+        pd = ((inst[6:0] == op_b_br) || (inst == 32'h13 || inst == 0)) ? '0 : phys_reg;
         pd = (inst[6:0] == op_b_br || inst[6:0] == op_b_store) ? '0 : phys_reg;
     end
 

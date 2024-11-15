@@ -32,6 +32,11 @@ import rv32i_types::*;
     input   logic   [$clog2(QUEUE_DEPTH)-1:0]   br_rob_idx_in,
     input   logic                               br_cdb_valid,
     input   logic   [31:0]                      br_inst,
+
+    output  logic   [63:0]                      order_next,
+    input   logic   [$clog2(QUEUE_DEPTH)-1:0]   br_rob_idx_in,
+    input   logic                               br_cdb_valid,
+    input   logic   [31:0]                      br_inst,
     input   logic   [$clog2(QUEUE_DEPTH)-1:0]   mem_rob_idx_in,
     input   logic                               mem_cdb_valid,
     input   logic   [31:0]                      mem_inst,
@@ -141,6 +146,13 @@ import rv32i_types::*;
                 mem[add_rob_idx_in_next].rvfi.monitor_rs1_rdata <= add_rs1_rdata;
                 mem[add_rob_idx_in_next].rvfi.monitor_rs2_rdata <= add_rs2_rdata;
                 mem[add_rob_idx_in_next].rvfi.monitor_rd_wdata <= (add_inst == 32'h13) ? '0 : add_rd_wdata;
+                mem[add_rob_idx_in_next].rvfi.monitor_mem_addr <= monitor_mem_addr;
+                mem[add_rob_idx_in_next].rvfi.monitor_mem_rmask <= monitor_mem_rmask;
+                mem[add_rob_idx_in_next].rvfi.monitor_mem_wmask <= monitor_mem_wmask;
+                mem[add_rob_idx_in_next].rvfi.monitor_mem_rdata <= monitor_mem_rdata;
+                mem[add_rob_idx_in_next].rvfi.monitor_mem_wdata <= monitor_mem_wdata;
+                mem[add_rob_idx_in_next].pc_select <= '0;
+                mem[add_rob_idx_in_next].pc_branch <= '0;
                 mem[add_rob_idx_in_next].rvfi.monitor_mem_addr <= '0;
                 mem[add_rob_idx_in_next].rvfi.monitor_mem_rmask <= '0;
                 mem[add_rob_idx_in_next].rvfi.monitor_mem_wmask <= '0;
@@ -153,6 +165,13 @@ import rv32i_types::*;
                 mem[mul_rob_idx_in_next].rvfi.monitor_rs1_rdata <= multiply_rs1_rdata;
                 mem[mul_rob_idx_in_next].rvfi.monitor_rs2_rdata <= multiply_rs2_rdata;
                 mem[mul_rob_idx_in_next].rvfi.monitor_rd_wdata <= (mul_inst == 32'h13) ? '0 : multiply_rd_wdata;
+                mem[mul_rob_idx_in_next].rvfi.monitor_mem_addr <= monitor_mem_addr;
+                mem[mul_rob_idx_in_next].rvfi.monitor_mem_rmask <= monitor_mem_rmask;
+                mem[mul_rob_idx_in_next].rvfi.monitor_mem_wmask <= monitor_mem_wmask;
+                mem[mul_rob_idx_in_next].rvfi.monitor_mem_rdata <= monitor_mem_rdata;
+                mem[mul_rob_idx_in_next].rvfi.monitor_mem_wdata <= monitor_mem_wdata;
+                mem[mul_rob_idx_in_next].pc_select <= '0;
+                mem[mul_rob_idx_in_next].pc_branch <= '0;
                 mem[mul_rob_idx_in_next].rvfi.monitor_mem_addr <= '0;
                 mem[mul_rob_idx_in_next].rvfi.monitor_mem_rmask <= '0;
                 mem[mul_rob_idx_in_next].rvfi.monitor_mem_wmask <= '0;
@@ -214,6 +233,8 @@ import rv32i_types::*;
     end
 
     always_comb begin
+        global_branch_signal = '0;
+        global_branch_addr = '0;
         tail_next = tail_reg;
         head_next = head_reg;
         rob_out = '0;
@@ -242,6 +263,8 @@ import rv32i_types::*;
         dequeue_valid = '0;
 
         phys_reg_in_next = phys_reg_in;
+
+        order_next = order;
         
         if (!rst) begin
             full = (tail_reg[ADDR_WIDTH - 1:0] == head_reg[ADDR_WIDTH - 1:0]) && (tail_reg[ADDR_WIDTH] != head_reg[ADDR_WIDTH]);    // logic if queue full
@@ -249,12 +272,16 @@ import rv32i_types::*;
             dequeue_valid = (mem[head_reg[5:0]+1'b1].valid == 1'b1 && mem[head_reg[5:0]+1'b1].commit == 1'b1);  // dequeue if tail's inst is valid and ready to commit
 
             // send dequeue inst same cycle; update queue next cycle
-            if (dequeue_valid) begin
+            if (dequeue_valid && head_reg != tail_reg) begin
                 head_next = head_reg + 1'd1;
                 dequeue_mem_next = mem[head_reg[ADDR_WIDTH - 1:0]+1'b1];     // get current data out of the queue 
                 dequeue_mem_next.valid = 1'b0;                    // not valid anymore
                 dequeue_mem_next.rvfi.monitor_valid = 1'b1;
+                order_next = order_next + 64'd1;
+                dequeue_mem_next.rvfi.monitor_order = order;
                 rob_out = dequeue_mem_next;
+                global_branch_signal = dequeue_mem_next.pc_select;
+                global_branch_addr = dequeue_mem_next.pc_branch;
             end
             
             if (enqueue_next) begin
@@ -267,9 +294,9 @@ import rv32i_types::*;
                     enqueue_mem_next.rvfi.monitor_rd_addr = (inst[6:0] == op_b_store) ? '0 : arch_reg_in;
                     enqueue_mem_next.rvfi.monitor_pc_rdata = pc_rdata;
                     enqueue_mem_next.rvfi.monitor_pc_wdata = pc_wdata;
-                    enqueue_mem_next.rvfi.monitor_order = order;
-                    enqueue_mem_next.rvfi.monitor_rs1_addr = (inst[6:0] == op_b_lui || inst[6:0] == op_b_auipc) ? '0 : rs1_s;
-                    enqueue_mem_next.rvfi.monitor_rs2_addr = (inst[6:0] == op_b_imm || inst[6:0] == op_b_lui || inst[6:0] == op_b_auipc || inst[6:0] == op_b_load) ? '0 : rs2_s;
+                    // enqueue_mem_next.rvfi.monitor_order = order;
+                    enqueue_mem_next.rvfi.monitor_rs1_addr = (inst[6:0] == op_b_lui || inst[6:0] == op_b_auipc || inst[6:0] == op_b_auipc || inst[6:0] == op_b_jal) ? '0 : rs1_s;
+                    enqueue_mem_next.rvfi.monitor_rs2_addr = (inst[6:0] == op_b_imm || inst[6:0] == op_b_lui || inst[6:0] == op_b_auipc || inst[6:0] == op_b_load || inst[6:0] == op_b_auipc || inst[6:0] == op_b_jal || inst[6:0] == op_b_jalr) ? '0 : rs2_s;
                     enqueue_mem_next.rvfi.monitor_inst = inst;
                     enqueue_mem_next.rvfi.monitor_regf_we = regf_we;            
                     
@@ -281,7 +308,9 @@ import rv32i_types::*;
                     enqueue_mem_next = mem[tail_reg[ADDR_WIDTH - 1:0]+1'b1];
                 end
             end
-            tail_next = global_branch_signal ? (head_next) : tail_next;
+
+            tail_next = (global_branch_signal) ? head_next + 1'b1 : tail_next;
+            head_next = (global_branch_signal) ? head_next + 1'b1 : head_next;
 
             full = (tail_next[ADDR_WIDTH - 1:0] == head_next[ADDR_WIDTH - 1:0]) && (tail_next[ADDR_WIDTH] != head_next[ADDR_WIDTH]);    // logic if queue full
         end

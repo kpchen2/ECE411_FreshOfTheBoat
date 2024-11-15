@@ -2,7 +2,13 @@ module top_tb
 (
     input   logic   clk,
     input   logic   rst
+    input   logic   rst
 );
+
+    longint timeout;
+    initial begin
+        $value$plusargs("TIMEOUT_ECE411=%d", timeout);
+    end
 
     longint timeout;
     initial begin
