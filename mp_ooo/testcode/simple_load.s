@@ -12,7 +12,7 @@ data:
     .word 0x01928508
     .word 0x01928509
     .word 0x0192850a
-    .word 0x0192850b
+    .word 0x0192850b ## should replace 92 with the byte
     .word 0x0192850c
     .word 0x0192850d
     .word 0x0192850e
