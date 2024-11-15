@@ -29,6 +29,12 @@ import rv32i_types::*;
     input   logic   [$clog2(QUEUE_DEPTH)-1:0]   div_rob_idx_in,
     input   logic                               div_cdb_valid,
     input   logic   [31:0]                      div_inst,
+    input   logic   [$clog2(QUEUE_DEPTH)-1:0]   br_rob_idx_in,
+    input   logic                               br_cdb_valid,
+    input   logic   [31:0]                      br_inst,
+    input   logic   [$clog2(QUEUE_DEPTH)-1:0]   mem_rob_idx_in,
+    input   logic                               mem_cdb_valid,
+    input   logic   [31:0]                      mem_inst,
 
     input   logic  [31:0]                       add_rs1_rdata,
     input   logic  [31:0]                       add_rs2_rdata,
@@ -41,7 +47,17 @@ import rv32i_types::*;
     input   logic  [31:0]                       divide_rs1_rdata,
     input   logic  [31:0]                       divide_rs2_rdata,
     input   logic  [31:0]                       divide_rd_wdata,
+
+    input   logic  [31:0]                       branch_rs1_rdata,
+    input   logic  [31:0]                       branch_rs2_rdata,
+    input   logic  [31:0]                       branch_rd_wdata,
+    input   logic                               branch_pc_select,
+    input   logic  [31:0]                       branch_pc_branch,
     
+    input   logic  [31:0]                       mem_rs1_rdata,
+    input   logic  [31:0]                       mem_rs2_rdata,
+    input   logic  [31:0]                       mem_rd_wdata,
+
     input   logic  [31:0]                       monitor_mem_addr,
     input   logic  [3:0]                        monitor_mem_rmask,
     input   logic  [3:0]                        monitor_mem_wmask,
@@ -54,7 +70,16 @@ import rv32i_types::*;
 
     // other output
     output  logic   [$clog2(QUEUE_DEPTH)-1:0]   rob_num,
-    output  logic                               full
+    output  logic   [$clog2(QUEUE_DEPTH)-1:0]   rob_head,
+    output  logic                               full,
+
+    // branch signals
+    output  logic                               global_branch_signal,
+    output  logic   [31:0]                      global_branch_addr
+
+    // memory inputs
+    // input   logic                               mem_output_valid,
+    // input   logic   [$clog2(QUEUE_DEPTH)-1:0]   mem_rob_idx_in
 );
 
     localparam ADDR_WIDTH = $clog2(QUEUE_DEPTH);
@@ -75,12 +100,16 @@ import rv32i_types::*;
     logic                       add_cdb_valid_next;
     logic                       mul_cdb_valid_next;
     logic                       div_cdb_valid_next;
+    logic                       br_cdb_valid_next;
+    logic                       mem_cdb_valid_next;
 
     logic   [$clog2(QUEUE_DEPTH)-1:0]   add_rob_idx_in_next;
     logic   [$clog2(QUEUE_DEPTH)-1:0]   mul_rob_idx_in_next;
     logic   [$clog2(QUEUE_DEPTH)-1:0]   div_rob_idx_in_next;
+    logic   [$clog2(QUEUE_DEPTH)-1:0]   br_rob_idx_in_next;
+    logic   [$clog2(QUEUE_DEPTH)-1:0]   mem_rob_idx_in_next;
 
-    logic   [5:0]   phys_reg_in_next;
+    logic   [5:0]                       phys_reg_in_next;
 
     always_ff @ (posedge clk) begin
         enqueue_reg <= enqueue_next;
@@ -112,11 +141,11 @@ import rv32i_types::*;
                 mem[add_rob_idx_in_next].rvfi.monitor_rs1_rdata <= add_rs1_rdata;
                 mem[add_rob_idx_in_next].rvfi.monitor_rs2_rdata <= add_rs2_rdata;
                 mem[add_rob_idx_in_next].rvfi.monitor_rd_wdata <= (add_inst == 32'h13) ? '0 : add_rd_wdata;
-                mem[add_rob_idx_in_next].rvfi.monitor_mem_addr <= monitor_mem_addr;
-                mem[add_rob_idx_in_next].rvfi.monitor_mem_rmask <= monitor_mem_rmask;
-                mem[add_rob_idx_in_next].rvfi.monitor_mem_wmask <= monitor_mem_wmask;
-                mem[add_rob_idx_in_next].rvfi.monitor_mem_rdata <= monitor_mem_rdata;
-                mem[add_rob_idx_in_next].rvfi.monitor_mem_wdata <= monitor_mem_wdata;
+                mem[add_rob_idx_in_next].rvfi.monitor_mem_addr <= '0;
+                mem[add_rob_idx_in_next].rvfi.monitor_mem_rmask <= '0;
+                mem[add_rob_idx_in_next].rvfi.monitor_mem_wmask <= '0;
+                mem[add_rob_idx_in_next].rvfi.monitor_mem_rdata <= '0;
+                mem[add_rob_idx_in_next].rvfi.monitor_mem_wdata <= '0;
             end
             // mul instruction done
             if (mul_cdb_valid_next) begin
@@ -124,11 +153,11 @@ import rv32i_types::*;
                 mem[mul_rob_idx_in_next].rvfi.monitor_rs1_rdata <= multiply_rs1_rdata;
                 mem[mul_rob_idx_in_next].rvfi.monitor_rs2_rdata <= multiply_rs2_rdata;
                 mem[mul_rob_idx_in_next].rvfi.monitor_rd_wdata <= (mul_inst == 32'h13) ? '0 : multiply_rd_wdata;
-                mem[mul_rob_idx_in_next].rvfi.monitor_mem_addr <= monitor_mem_addr;
-                mem[mul_rob_idx_in_next].rvfi.monitor_mem_rmask <= monitor_mem_rmask;
-                mem[mul_rob_idx_in_next].rvfi.monitor_mem_wmask <= monitor_mem_wmask;
-                mem[mul_rob_idx_in_next].rvfi.monitor_mem_rdata <= monitor_mem_rdata;
-                mem[mul_rob_idx_in_next].rvfi.monitor_mem_wdata <= monitor_mem_wdata;
+                mem[mul_rob_idx_in_next].rvfi.monitor_mem_addr <= '0;
+                mem[mul_rob_idx_in_next].rvfi.monitor_mem_rmask <= '0;
+                mem[mul_rob_idx_in_next].rvfi.monitor_mem_wmask <= '0;
+                mem[mul_rob_idx_in_next].rvfi.monitor_mem_rdata <= '0;
+                mem[mul_rob_idx_in_next].rvfi.monitor_mem_wdata <= '0;
             end
             // div instruction done
             if (div_cdb_valid_next) begin
@@ -136,13 +165,49 @@ import rv32i_types::*;
                 mem[div_rob_idx_in_next].rvfi.monitor_rs1_rdata <= divide_rs1_rdata;
                 mem[div_rob_idx_in_next].rvfi.monitor_rs2_rdata <= divide_rs2_rdata;
                 mem[div_rob_idx_in_next].rvfi.monitor_rd_wdata <= (div_inst == 32'h13) ? '0 : divide_rd_wdata;
-                mem[div_rob_idx_in_next].rvfi.monitor_mem_addr <= monitor_mem_addr;
-                mem[div_rob_idx_in_next].rvfi.monitor_mem_rmask <= monitor_mem_rmask;
-                mem[div_rob_idx_in_next].rvfi.monitor_mem_wmask <= monitor_mem_wmask;
-                mem[div_rob_idx_in_next].rvfi.monitor_mem_rdata <= monitor_mem_rdata;
-                mem[div_rob_idx_in_next].rvfi.monitor_mem_wdata <= monitor_mem_wdata;
+                mem[div_rob_idx_in_next].rvfi.monitor_mem_addr <= '0;
+                mem[div_rob_idx_in_next].rvfi.monitor_mem_rmask <= '0;
+                mem[div_rob_idx_in_next].rvfi.monitor_mem_wmask <= '0;
+                mem[div_rob_idx_in_next].rvfi.monitor_mem_rdata <= '0;
+                mem[div_rob_idx_in_next].rvfi.monitor_mem_wdata <= '0;
             end
-  
+            // br instruction done
+            if (br_cdb_valid_next) begin
+                mem[br_rob_idx_in_next].commit <= '1;
+                mem[br_rob_idx_in_next].rvfi.monitor_rs1_rdata <= branch_rs1_rdata;
+                mem[br_rob_idx_in_next].rvfi.monitor_rs2_rdata <= branch_rs2_rdata;
+                mem[br_rob_idx_in_next].rvfi.monitor_rd_wdata <= (br_inst == 32'h13) ? '0 : branch_rd_wdata;
+                mem[br_rob_idx_in_next].rvfi.monitor_mem_addr <= '0;
+                mem[br_rob_idx_in_next].rvfi.monitor_mem_rmask <= '0;
+                mem[br_rob_idx_in_next].rvfi.monitor_mem_wmask <= '0;
+                mem[br_rob_idx_in_next].rvfi.monitor_mem_rdata <= '0;
+                mem[br_rob_idx_in_next].rvfi.monitor_mem_wdata <= '0;
+                mem[br_rob_idx_in_next].rvfi.monitor_pc_wdata <= global_branch_signal ? global_branch_addr : mem[br_rob_idx_in_next].rvfi.monitor_pc_wdata;
+            end
+
+            if (mem_cdb_valid_next) begin
+                mem[mem_rob_idx_in_next].commit <= '1;
+                mem[mem_rob_idx_in_next].rvfi.monitor_rs1_rdata <= mem_rs1_rdata;
+                mem[mem_rob_idx_in_next].rvfi.monitor_rs2_rdata <= mem_rs2_rdata;
+                mem[mem_rob_idx_in_next].rvfi.monitor_rd_wdata <= (mem_inst == 32'h13) ? '0 : mem_rd_wdata;
+                mem[mem_rob_idx_in_next].rvfi.monitor_mem_addr <= monitor_mem_addr;
+                mem[mem_rob_idx_in_next].rvfi.monitor_mem_rmask <= monitor_mem_rmask;
+                mem[mem_rob_idx_in_next].rvfi.monitor_mem_wmask <= monitor_mem_wmask;
+                mem[mem_rob_idx_in_next].rvfi.monitor_mem_rdata <= monitor_mem_rdata;
+                mem[mem_rob_idx_in_next].rvfi.monitor_mem_wdata <= monitor_mem_wdata;
+            end
+
+            // if (global_branch_signal) begin
+            //     for (int i = 0; i < QUEUE_DEPTH; i++) begin
+            //         mem[i] <= '0;
+            //     end
+            // end
+            // mem instruction done
+            // if (mem_output_valid_next) begin
+            //     mem[mem_rob_idx_in_next].commit <= '1;
+            //     // SET RVFI SIGNALS FOR MEM INSTRUCTIONS
+            // end
+
             tail_reg <= tail_next;
             head_reg <= head_next;
         end
@@ -159,12 +224,20 @@ import rv32i_types::*;
         add_cdb_valid_next = add_cdb_valid;
         mul_cdb_valid_next = mul_cdb_valid;
         div_cdb_valid_next = div_cdb_valid;
+        br_cdb_valid_next = br_cdb_valid;
+        mem_cdb_valid_next = mem_cdb_valid;
+
+        global_branch_signal = br_cdb_valid_next ? branch_pc_select : 1'b0;
+        global_branch_addr = br_cdb_valid_next ? branch_pc_branch : '0;
 
         add_rob_idx_in_next = add_rob_idx_in;
         mul_rob_idx_in_next = mul_rob_idx_in;
         div_rob_idx_in_next = div_rob_idx_in;
+        br_rob_idx_in_next = br_rob_idx_in;
+        mem_rob_idx_in_next = mem_rob_idx_in;
 
         rob_num = tail_reg[5:0] + 1'b1;
+        rob_head = head_reg[5:0] + 1'b1;
         full = '0;
         dequeue_valid = '0;
 
@@ -191,12 +264,12 @@ import rv32i_types::*;
                     enqueue_mem_next.valid = 1'b1;
                     enqueue_mem_next.commit = 1'b0;
                     // enqueue_mem_next.pd = phys_reg_in;
-                    enqueue_mem_next.rvfi.monitor_rd_addr = arch_reg_in;
+                    enqueue_mem_next.rvfi.monitor_rd_addr = (inst[6:0] == op_b_store) ? '0 : arch_reg_in;
                     enqueue_mem_next.rvfi.monitor_pc_rdata = pc_rdata;
                     enqueue_mem_next.rvfi.monitor_pc_wdata = pc_wdata;
                     enqueue_mem_next.rvfi.monitor_order = order;
-                    enqueue_mem_next.rvfi.monitor_rs1_addr = (inst[6:0] == op_b_lui) ? '0 : rs1_s;
-                    enqueue_mem_next.rvfi.monitor_rs2_addr = (inst[6:0] == op_b_imm || inst[6:0] == op_b_lui) ? '0 : rs2_s;
+                    enqueue_mem_next.rvfi.monitor_rs1_addr = (inst[6:0] == op_b_lui || inst[6:0] == op_b_auipc) ? '0 : rs1_s;
+                    enqueue_mem_next.rvfi.monitor_rs2_addr = (inst[6:0] == op_b_imm || inst[6:0] == op_b_lui || inst[6:0] == op_b_auipc || inst[6:0] == op_b_load) ? '0 : rs2_s;
                     enqueue_mem_next.rvfi.monitor_inst = inst;
                     enqueue_mem_next.rvfi.monitor_regf_we = regf_we;            
                     
@@ -208,6 +281,7 @@ import rv32i_types::*;
                     enqueue_mem_next = mem[tail_reg[ADDR_WIDTH - 1:0]+1'b1];
                 end
             end
+            tail_next = global_branch_signal ? (head_next) : tail_next;
 
             full = (tail_next[ADDR_WIDTH - 1:0] == head_next[ADDR_WIDTH - 1:0]) && (tail_next[ADDR_WIDTH] != head_next[ADDR_WIDTH]);    // logic if queue full
         end

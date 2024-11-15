@@ -6,15 +6,17 @@ import rv32i_types::*;
 (
     input   logic           clk,
     input   logic           rst,
-    input   logic           regf_we_add, regf_we_mul, regf_we_div,
-    input   logic   [31:0]  rd_v_add, rd_v_mul, rd_v_div,
-    input   logic   [PHYS_REG_BITS-1:0]   rs1_add, rs2_add, rs1_mul, rs2_mul, rs1_div, rs2_div, rd_add, rd_mul, rd_div,
-    output  logic   [31:0]  rs1_v_add, rs2_v_add, rs1_v_mul, rs2_v_mul, rs1_v_div, rs2_v_div,
+    input   logic           regf_we_add, regf_we_mul, regf_we_div, regf_we_mem, regf_we_br,
+    input   logic   [31:0]  rd_v_add, rd_v_mul, rd_v_div, rd_v_mem, rd_v_br,
+    input   logic   [PHYS_REG_BITS-1:0]   rs1_add, rs2_add, rs1_mul, rs2_mul, rs1_div, rs2_div, rs1_mem, rs2_mem, rs1_br, rs2_br, rd_add, rd_mul, rd_div, rd_mem, rd_br,
+    output  logic   [31:0]  rs1_v_add, rs2_v_add, rs1_v_mul, rs2_v_mul, rs1_v_div, rs2_v_div, rs1_v_mem, rs2_v_mem, rs1_v_br, rs2_v_br,
     input   logic   [4:0]   arch_s1_add, arch_s2_add,
-    input   logic   [4:0]   arch_rd_add, arch_rd_mul, arch_rd_div
+    input   logic   [4:0]   arch_s1_br, arch_s2_br,
+    input   logic   [4:0]   arch_s1_mem, arch_s2_mem,
+    input   logic   [4:0]   arch_rd_add, arch_rd_mul, arch_rd_div, arch_rd_br, arch_rd_mem
 );
 
-            logic   [31:0]  data [2**PHYS_REG_BITS];
+    logic   [31:0]  data [2**PHYS_REG_BITS];
 
     always_ff @(posedge clk) begin
         if (rst) begin
@@ -31,8 +33,16 @@ import rv32i_types::*;
             data[rd_mul] <= (arch_rd_mul != 0) ? rd_v_mul : '0;
         end
 
+        if (!rst && (regf_we_mem && (rd_mem != 0))) begin
+            data[rd_mem] <= (arch_rd_mem != 0) ? rd_v_mem : '0;
+        end
+
         if (!rst && (regf_we_div && (rd_div != 0))) begin
             data[rd_div] <= (arch_rd_div != 0) ? rd_v_div : '0;
+        end
+
+        if (!rst && (regf_we_br && (rd_br != 0))) begin
+            data[rd_br] <= (arch_rd_br != 0) ? rd_v_br : '0;
         end
     end
 
@@ -102,6 +112,12 @@ import rv32i_types::*;
 
         rs1_v_add = (arch_s1_add != 0) ? data[rs1_add] : '0;
         rs2_v_add = (arch_s2_add != 0) ? data[rs2_add] : '0;
+
+        rs1_v_mem = (arch_s1_mem != 0) ? data[rs1_mem] : '0;
+        rs2_v_mem = (arch_s2_mem != 0) ? data[rs2_mem] : '0;
+
+        rs1_v_br = (arch_s1_br != 0) ? data[rs1_br] : '0;
+        rs2_v_br = (arch_s2_br != 0) ? data[rs2_br] : '0;
 
         rs1_v_mul = (rs1_mul_f1 > 0) ? data[rs1_mul_f1] : '0;
         rs2_v_mul = (rs2_mul_f2 > 0) ? data[rs2_mul_f2] : '0;

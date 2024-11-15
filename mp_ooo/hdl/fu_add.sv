@@ -134,6 +134,13 @@ import rv32i_types::*;
                     b = '0;
                     rd_v = decode_info.u_imm;
                 end
+                op_b_auipc : 
+                begin
+                    a = '0;
+                    b = '0;
+                    rd_v = decode_info.pc + decode_info.u_imm;
+                end
+
                 default : begin
                     // do nothing
                 end

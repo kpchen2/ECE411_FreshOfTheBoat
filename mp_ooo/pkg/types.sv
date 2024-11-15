@@ -3,10 +3,13 @@ package rv32i_types;
     localparam NUM_ADD_REGISTERS = 4;
     localparam NUM_MULTIPLY_REGISTERS = 4;
     localparam NUM_DIVIDE_REGISTERS = 4;
+    localparam NUM_MEM_REGISTERS = 4;
+    localparam NUM_BRANCH_REGISTERS = 4;
     localparam MAX_ISSUES = 4; // num instructions to issue
     // parameter DATA_WIDTH = 6;
 
     typedef logic [6:0] physicalIndexing;
+    
     typedef struct packed {
         logic           monitor_valid;
         logic   [63:0]  monitor_order;
@@ -41,6 +44,8 @@ package rv32i_types;
         logic   [4:0]  rs2_s;
         logic   [4:0]  rd_s;
         logic   [31:0] inst;
+
+        logic   [31:0]  pc;
     } decode_info_t;
 
     typedef struct packed {
@@ -80,18 +85,52 @@ package rv32i_types;
     } divide_reservation_station_data;
 
     typedef struct packed {
+        logic busy;
+        logic ps1_v;
+        logic [5:0] ps1;
+        logic ps2_v;
+        logic [5:0] ps2;
+        logic [5:0] pd;
+        logic [4:0] rd;
+        logic [5:0] rob_entry;
+        decode_info_t decode_info;
+        logic   [5:0]   mem_idx;
+    } mem_reservation_station_data;
+
+    typedef struct packed {
+        logic busy;
+        logic ps1_v;
+        logic [5:0] ps1;
+        logic ps2_v;
+        logic [5:0] ps2;
+        logic [5:0] pd;
+        logic [4:0] rd;
+        logic [5:0] rob_entry;
+        decode_info_t decode_info;
+    } branch_reservation_station_data;
+
+    typedef struct packed {
         logic   [5:0]   rob_idx;
         logic   [5:0]   pd_s;
         logic   [4:0]   rd_s;
         logic   [31:0]  rd_v;
         logic           valid;
         logic   [31:0]  inst;
+        logic           pc_select;
+        logic   [31:0]  pc_branch;
+        logic   [31:0]  addr;
+        logic   [3:0]   rmask;
+        logic   [3:0]   wmask;
+        logic   [31:0]  rdata;
+        logic   [31:0]  wdata;
+        logic   [31:0]  rs1_rdata;
+        logic   [31:0]  rs2_rdata;
     } cdb_t;
 
     typedef struct packed {
         logic [5:0] ps1;
         logic [5:0] ps2;
-        logic [5:0]  pd;
+        logic [5:0] pd;
         logic [4:0] rd;
         logic [5:0] rob_entry;
     } cdb_rs_output;
@@ -119,7 +158,28 @@ package rv32i_types;
         rvfi_info rvfi;
     } rob_entry_t;
     
+    typedef struct packed {
+        logic           valid;
+        logic           addr_ready;
+        logic   [31:0]  addr;
+        logic   [31:0]  inst;
+        logic   [6:0]   opcode;
+        logic   [2:0]   funct3;
+        logic   [1:0]   shift_bits;
+        logic   [5:0]   pd_s;
+        logic   [5:0]   rob_num;
+        logic   [31:0]  store_wdata;
+        
+        logic   [4:0]   rd_s;
+        logic   [3:0]   rmask;
+        logic   [3:0]   wmask;
+        logic   [31:0]  rdata;
+        logic   [31:0]  wdata;
 
+        logic   [31:0]  rs1_rdata;
+        logic   [31:0]  rs2_rdata;
+    } lsq_entry_t;
+    
     typedef struct packed {
         rvfi_info if_id_rvfi;
     } if_id_t;
@@ -244,7 +304,7 @@ package rv32i_types;
 
     typedef enum logic [6:0] {
         base           = 7'b0000000,
-        variant        = 7'b0100000,
+        variant        = 7'b0100000 ,
         mult           = 7'b0000001
     } funct7_t;
 
