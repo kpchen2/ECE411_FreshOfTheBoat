@@ -211,7 +211,6 @@ import rv32i_types::*;
             dfp_read_reg <= dfp_read;
             order <= order_next;
             global_branch_signal_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? global_branch_signal_reg : global_branch_signal;
-            global_branch_signal_reg <= global_branch_signal;
         end
     end
 
@@ -240,7 +239,6 @@ import rv32i_types::*;
                     ufp_rmask = '0;
                 end
             end
-            pc_next = global_branch_signal ? global_branch_addr : pc_next;
             pc_next = global_branch_signal ? global_branch_addr : pc_next;
         end
     end

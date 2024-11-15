@@ -28,7 +28,6 @@ import rv32i_types::*;
 
     always_comb begin
         rrat_next = rrat;
-        rrat_out = rrat;
 
         old_pd = regf_we ? rrat_next[rd] : '0;
         rrat_next[rd] = regf_we ? pd : rrat_next[rd];
