@@ -16,6 +16,7 @@ import rv32i_types::*;
     input   logic           is_free_list_empty,
     input   logic   [63:0]  order,
     output  logic           dequeue,
+    output  logic           dequeue_free_list,
     output  logic   [63:0]  order_next,
     // to and from RAT
     output  logic   [4:0]                   rd, rs1, rs2,
@@ -67,6 +68,7 @@ import rv32i_types::*;
         rs1 = '0;
         rs2 = '0;
         dequeue = 1'b0;
+        dequeue_free_list = '0;
         rs_signal = 3'b000;
         decode_info = '0;
         regf_we = 1'b0;
@@ -103,6 +105,7 @@ import rv32i_types::*;
         if (!is_free_list_empty_reg && !is_iqueue_empty_reg && !rob_full_reg && !((rs_full_add && (rs_signal == 3'b000)) || (rs_full_mul && (rs_signal == 3'b001)) || (rs_full_div && (rs_signal == 3'b010)) || (rs_full_br && (rs_signal == 3'b011)) || (rs_full_mem && (rs_signal == 3'b100)))) begin
         // if (!is_free_list_empty && !is_iqueue_empty && !rob_full && !rs_full_add && !rs_full_mul && !rs_full_div) begin
             dequeue = 1'b1;
+            dequeue_free_list = (inst[6:0] == op_b_store) ? 1'b0 : 1'b1;
             decode_info.funct3 = inst[14:12];
             decode_info.funct7 = inst[31:25];
             decode_info.opcode = inst[6:0];
@@ -116,10 +119,16 @@ import rv32i_types::*;
             decode_info.rs2_s  = inst[24:20];
             decode_info.inst   = inst;
             regf_we = 1'b1;
+
+            // if (decode_info.opcode == op_b_store) begin
+            //     regf_we = '0;
+            // end
+
             if (rs_signal == 3'b100 && !rs_full_mem)
             begin
                 mem_regf_we = 1'b1;
             end
+
             order_next = order + 64'd1;
             rd = (inst[6:0] == op_b_br) ? '0 : decode_info.rd_s;
             rs1 = decode_info.rs1_s;
@@ -138,7 +147,8 @@ import rv32i_types::*;
             decode_info.pc = prog - 4;
         end
 
-        pd = (inst[6:0] == op_b_br) ? '0 : phys_reg;
+        pd = (inst[6:0] == op_b_br || inst[6:0] == op_b_store) ? '0 : phys_reg;
     end
 
 endmodule : rename_dispatch
+ 

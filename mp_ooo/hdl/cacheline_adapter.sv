@@ -10,6 +10,7 @@ import rv32i_types::*;
     input   logic               mem_valid,
     output  logic   [255:0]     cache_wdata,
     output  logic               cache_valid,
+    output  logic               d_cache_valid,
     output  logic   [63:0]      bmem_wdata,
     output  logic               bmem_write
 );
@@ -46,6 +47,7 @@ import rv32i_types::*;
         mem_wdata_next = mem_wdata_reg;
         bmem_write = 1'b1;
         bmem_wdata = '0;
+        d_cache_valid = '0;
 
         case (state)
             start:
@@ -85,6 +87,7 @@ import rv32i_types::*;
                 mem_wdata_next = mem_wdata_reg;
                 bmem_wdata = mem_wdata_reg[255:192];
                 bmem_write = 1'b1;
+                d_cache_valid = '1;
             end
         endcase    
     end

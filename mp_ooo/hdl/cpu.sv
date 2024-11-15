@@ -80,7 +80,7 @@ import rv32i_types::*;
     logic   [5:0]   old_pd;
     logic           enqueue;
     logic   [5:0]   phys_reg;
-    logic           dequeue;
+    logic           dequeue, dequeue_free_list;
     logic           is_free_list_empty;
 
     /* cdb propagations*/
@@ -187,6 +187,8 @@ import rv32i_types::*;
     logic           addr_valid;
 
     logic   [31:0]  fu_rs1_v_mem, fu_rs2_v_mem;
+
+    logic           d_cache_valid;
 
     assign global_branch_signal = cdb_br.pc_select;
     assign global_branch_addr = cdb_br.pc_branch;
@@ -332,7 +334,8 @@ import rv32i_types::*;
         .bmem_ready(bmem_ready),
 
         .cache_wdata(cache_wdata),
-        .cache_valid(cache_valid)
+        .cache_valid(cache_valid),
+        .d_cache_valid(d_cache_valid)
     );
 
     // outputs cache_valid if cache_wdata is ready
@@ -345,6 +348,7 @@ import rv32i_types::*;
         .mem_valid(mem_valid),
         .cache_wdata(cache_wdata),
         .cache_valid(cache_valid),
+        .d_cache_valid(d_cache_valid),
         .bmem_wdata(bmem_wdata),
         .bmem_write(bmem_write)
     );
@@ -386,6 +390,7 @@ import rv32i_types::*;
         .is_free_list_empty(is_free_list_empty),
         .order(order),
         .dequeue(dequeue),
+        .dequeue_free_list(dequeue_free_list),
         .order_next(order_next),
         .rd(rd_dispatch),
         .rs1(rs1),
@@ -517,7 +522,7 @@ import rv32i_types::*;
         .wdata_in(old_pd),
         .enqueue_in(enqueue),
         .rdata_out(phys_reg),
-        .dequeue_in(dequeue),
+        .dequeue_in(dequeue_free_list),
         .empty_out(is_free_list_empty),
         .global_branch_signal(global_branch_signal)
     );

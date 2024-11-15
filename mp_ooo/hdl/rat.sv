@@ -64,8 +64,8 @@ import rv32i_types::*;
 
         // Renames rd to pd, marking invalid
         if (regf_we_dispatch) begin
-            rat_next[rd_dispatch] = (rd_dispatch != '0) ? pd_dispatch : rat_next[rd_dispatch];
-            valid_next[rd_dispatch] = 1'b0;
+            rat_next[rd_dispatch] = (rd_dispatch != '0 && decode_info.opcode != op_b_store) ? pd_dispatch : rat_next[rd_dispatch];
+            valid_next[rd_dispatch] = (rd_dispatch != '0 && decode_info.opcode != op_b_store) ? 1'b0 : valid_next[rd_dispatch];
         end
 
         // rat_next = global_branch_signal ? rrat : rat_next;

@@ -27,7 +27,8 @@ module cache_arbiter
     input   logic           bmem_ready,
     
     input   logic   [255:0] cache_wdata,
-    input   logic           cache_valid
+    input   logic           cache_valid,
+    input   logic           d_cache_valid
 );
 
     // states
@@ -110,11 +111,11 @@ module cache_arbiter
 
     always_comb begin
         state_next = state;
-        d_dfp_read_next  = d_dfp_read_reg;
-        d_dfp_write_next = d_dfp_write_reg;
-        i_dfp_read_next  = i_dfp_read_reg;
-        i_dfp_addr_next  = i_dfp_addr_reg;
-        d_dfp_addr_next  = d_dfp_addr_reg;
+        d_dfp_read_next  = d_dfp_read;
+        d_dfp_write_next = d_dfp_write;
+        i_dfp_read_next  = i_dfp_read;
+        i_dfp_addr_next  = i_dfp_addr;
+        d_dfp_addr_next  = d_dfp_addr;
         full_burst_next  = full_burst;
 
         d_dfp_resp  = '0;
@@ -152,8 +153,8 @@ module cache_arbiter
 
                 end else if (d_dfp_read || d_dfp_write) begin
                     state_next = d;
-                    d_dfp_read_next  = d_dfp_read  ? '1 : '0;
-                    d_dfp_write_next = d_dfp_write ? '1 : '0;
+                    d_dfp_read_next  = d_dfp_read;
+                    d_dfp_write_next = d_dfp_write;
                     d_dfp_addr_next  = d_dfp_addr;
                     full_burst_next  = d_dfp_write ? d_dfp_wdata : full_burst_reg;
                     i_dfp_read_next  = '0;
@@ -229,10 +230,10 @@ module cache_arbiter
                     i_dfp_read_next  = '1;
                     i_dfp_addr_next  = i_dfp_addr;
 
-                    if (d_dfp_read || d_dfp_write) begin
+                    if ((d_dfp_read || d_dfp_write) && !missed_d_reg) begin
                         // GO TO D STATE AFTERWARDS
                         missed_d = '1;
-                        missed_d_addr = d_dfp_addr;
+                        missed_d_addr = d_dfp_addr_reg;
                         missed_rw = d_dfp_write;
                     end
 
@@ -255,19 +256,19 @@ module cache_arbiter
                 i_dfp_rdata = '0;
 
                 bmem_read  = (d_dfp_read_reg && !d_dfp_read_reg2) ? '1 : '0;
-                bmem_addr  = d_dfp_addr_reg;
-                mem_valid  = d_dfp_write_reg;
+                bmem_addr  = missed_d_reg ? missed_d_addr_reg : d_dfp_addr_reg;
+                mem_valid  = (d_dfp_write_reg && !d_dfp_write_reg2);
                 full_burst = full_burst_reg;
 
                 missed_d = '0;
 
+                if (d_cache_valid) begin
+                    d_dfp_resp = '1;
+                end
+
                 if (cache_valid) begin
                     d_dfp_rdata = cache_wdata;
-                    d_dfp_resp  = '1; 
-
-                end else begin
-                    d_dfp_rdata = '0;
-                    d_dfp_resp  = '0;
+                    d_dfp_resp  = '1;
                 end
 
                 if (~d_dfp_read && ~d_dfp_write && ~i_dfp_read) begin
@@ -287,7 +288,7 @@ module cache_arbiter
 
                 end else if (d_dfp_read || d_dfp_write) begin
                     state_next = d;
-                    d_dfp_read_next  = (d_dfp_read ? '1 : '0);
+                    d_dfp_read_next  = d_dfp_read  ? '1 : '0;
                     d_dfp_write_next = d_dfp_write ? '1 : '0;
                     d_dfp_addr_next  = d_dfp_addr;
                     i_dfp_read_next  = '0;
