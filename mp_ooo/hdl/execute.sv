@@ -201,6 +201,10 @@ import rv32i_types::*;
     begin
         busy_mul = mul_1 || mul_2 || mul_3 || mul_4;
         busy_div = div_1 || div_2 || div_3 || div_4;
+        cdb_add = '0;
+        cdb_mul = '0;
+        cdb_div = '0;
+        cdb_br = '0;
 
         cdb_add.rob_idx = rob_idx_add;
         cdb_add.pd_s = pd_s_add;
@@ -210,8 +214,6 @@ import rv32i_types::*;
         cdb_add.inst = decode_info_add.inst;
         cdb_add.pc_select = '0;
         cdb_add.pc_branch = '0;
-        cdb_add.pc_select = '0;
-        cdb_add.pc_branch = '0;
 
         cdb_mul.rob_idx = rob_mul_reg;
         cdb_mul.pd_s = pd_mul_reg;
@@ -219,8 +221,6 @@ import rv32i_types::*;
         cdb_mul.rd_v = rd_v_mul;
         cdb_mul.valid = valid_mul;
         cdb_mul.inst = decode_info_mul.inst;
-        cdb_mul.pc_select = '0;
-        cdb_mul.pc_branch = '0;
         cdb_mul.pc_select = '0;
         cdb_mul.pc_branch = '0;
 
