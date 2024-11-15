@@ -283,7 +283,7 @@ import rv32i_types::*;
 
     memory_queue memory_queue_i (
         .clk(clk),
-        .rst(rst),
+        .rst(rst || global_branch_signal),
         .inst(dispatch_inst),
         .opcode(decode_info.opcode),
         .funct3(decode_info.funct3),
