@@ -34,15 +34,15 @@ covergroup instr_cg with function sample(instr_t instr);
 
         // TODO:    What other opcodes does funct3 not exist for? Put those in
         // ignore_bins.
-        illegal_bins AUIPC_FUNCT3 = funct3_cross with (instr.i_type.opcode == op_b_auipc);
+        ignore_bins AUIPC_FUNCT3 = funct3_cross with (instr.i_type.opcode == op_b_auipc);
 
 
         ignore_bins LUI_FUNCT3 = funct3_cross with (instr.i_type.opcode == op_b_lui);
 
-        illegal_bins LOAD_I_FUNCT3 = funct3_cross with (instr.i_type.opcode == op_b_load);
+        // illegal_bins LOAD_I_FUNCT3 = funct3_cross with (instr.i_type.opcode == op_b_load);
 
 
-        illegal_bins STORE_I_FUNCT3 = funct3_cross with (instr.i_type.opcode == op_b_store);
+        // illegal_bins STORE_I_FUNCT3 = funct3_cross with (instr.i_type.opcode == op_b_store);
         
         illegal_bins BRANCH_I_FUNCT3 = funct3_cross with (instr.i_type.opcode == op_b_br);
 
@@ -61,18 +61,18 @@ covergroup instr_cg with function sample(instr_t instr);
         //     instr.i_type.opcode == op_b_jalr 
         //     && !(instr.i_type.funct3 inside {arith_f3_add} ));
         
-        // illegal_bins LOAD_FUNCT3 = funct3_cross with
-        // (
-        //     instr.i_type.opcode == op_b_load
-        //     && !(instr.i_type.funct3 inside {load_f3_lb, load_f3_lh, load_f3_lw, load_f3_lbu, load_f3_lhu}) 
-        //     );
+        illegal_bins LOAD_FUNCT3 = funct3_cross with
+        (
+            instr.i_type.opcode == op_b_load
+            && !(instr.i_type.funct3 inside {load_f3_lb, load_f3_lh, load_f3_lw, load_f3_lbu, load_f3_lhu}) 
+            );
         
 
-        // illegal_bins STORE_FUNCT3 = funct3_cross with 
-        // (
-        //     instr.i_type.opcode == op_b_store &&
-        //     !(instr.i_type.funct3 inside {store_f3_sb,store_f3_sh,store_f3_sw} )
-        // );
+        illegal_bins STORE_FUNCT3 = funct3_cross with 
+        (
+            instr.i_type.opcode == op_b_store &&
+            !(instr.i_type.funct3 inside {store_f3_sb,store_f3_sh,store_f3_sw} )
+        );
 
 
     }
