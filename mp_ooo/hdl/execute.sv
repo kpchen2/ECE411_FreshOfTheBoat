@@ -199,6 +199,13 @@ import rv32i_types::*;
         cdb_br.inst = decode_info_br.inst;
         cdb_br.pc_select = pc_select;
         cdb_br.pc_branch = pc_branch;
+
+        if (global_branch_signal) begin
+            cdb_add = '0;
+            cdb_mul = '0;
+            cdb_div = '0;
+            cdb_br = '0;
+        end
     end
 
 endmodule : execute
