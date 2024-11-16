@@ -343,12 +343,12 @@ import rv32i_types::*;
             for (int i = 0; i < NUM_BRANCH_REGISTERS; i++)
             begin
                 // if ((regf_we_div && divide_reservation_station[i].ps1 == cdb_ps_id_divide_reg) || (regf_we_mul && divide_reservation_station[i].ps1 == cdb_ps_id_multiply_reg) || (regf_we_add && divide_reservation_station[i].ps1 == cdb_ps_id_add_reg) || (regf_we_div && divide_reservation_station[i].ps1 == cdb_ps_id_divide) || (regf_we_mul && divide_reservation_station[i].ps1 == cdb_ps_id_multiply))
-                if (branch_reservation_station[i].busy && ((regf_we_div_reg && branch_reservation_station[i].ps1 == cdb_ps_id_divide_reg) || (regf_we_mul_reg && branch_reservation_station[i].ps1 == cdb_ps_id_multiply_reg) || (branch_reservation_station[i].ps1 == cdb_ps_id_add_reg) || (branch_reservation_station[i].ps1 == cdb_ps_id_branch_reg)) || (branch_reservation_station[i].ps1 == cdb_ps_id_mem_reg))
+                if (branch_reservation_station[i].busy && ((regf_we_div_reg && branch_reservation_station[i].ps1 == cdb_ps_id_divide_reg) || (regf_we_mul_reg && branch_reservation_station[i].ps1 == cdb_ps_id_multiply_reg) || (branch_reservation_station[i].ps1 == cdb_ps_id_add_reg) || (branch_reservation_station[i].ps1 == cdb_ps_id_branch_reg) || (branch_reservation_station[i].ps1 == cdb_ps_id_mem_reg)))
                 begin
                     branch_reservation_station[i].ps1_v <= 1'b1;
                 end
                 // if ((regf_we_div && divide_reservation_station[i].ps2 == cdb_ps_id_divide_reg) || (regf_we_mul && divide_reservation_station[i].ps2 == cdb_ps_id_multiply_reg) || (regf_we_add && divide_reservation_station[i].ps2 == cdb_ps_id_add_reg) || (regf_we_div && divide_reservation_station[i].ps2 == cdb_ps_id_divide) || (regf_we_mul && divide_reservation_station[i].ps2 == cdb_ps_id_multiply))
-                if (branch_reservation_station[i].busy && ((regf_we_div_reg && branch_reservation_station[i].ps2 == cdb_ps_id_divide_reg) || (regf_we_mul_reg && branch_reservation_station[i].ps2 == cdb_ps_id_multiply_reg) || (branch_reservation_station[i].ps2 == cdb_ps_id_add_reg) || (branch_reservation_station[i].ps2 == cdb_ps_id_branch_reg)) || (branch_reservation_station[i].ps2 == cdb_ps_id_mem_reg))
+                if (branch_reservation_station[i].busy && ((regf_we_div_reg && branch_reservation_station[i].ps2 == cdb_ps_id_divide_reg) || (regf_we_mul_reg && branch_reservation_station[i].ps2 == cdb_ps_id_multiply_reg) || (branch_reservation_station[i].ps2 == cdb_ps_id_add_reg) || (branch_reservation_station[i].ps2 == cdb_ps_id_branch_reg) || (branch_reservation_station[i].ps2 == cdb_ps_id_mem_reg)))
                 begin
                     branch_reservation_station[i].ps2_v <= 1'b1;
                 end
