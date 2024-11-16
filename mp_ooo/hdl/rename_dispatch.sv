@@ -118,7 +118,7 @@ import rv32i_types::*;
             decode_info.rs2_s  = inst[24:20];
             decode_info.inst   = inst;
             regf_we = 1'b1;
-            dequeue_free_list = ((inst[6:0] == op_b_br) || (inst[11:7] == '0 && (inst[6:0] inside {op_b_reg, op_b_imm, op_b_jalr, op_b_store})) || inst[6:0] == op_b_store) ? 1'b0 : 1'b1; // also if store
+            dequeue_free_list = ((inst[6:0] == op_b_br) || (inst[11:7] == '0 && (inst[6:0] inside {op_b_reg, op_b_imm, op_b_jalr, op_b_load})) || inst[6:0] == op_b_store) ? 1'b0 : 1'b1; // also if store
 
             // if (decode_info.opcode == op_b_store) begin
             //     regf_we = '0;
@@ -143,7 +143,7 @@ import rv32i_types::*;
             decode_info.pc = prog - 4;
         end
 
-        pd = ((inst[6:0] == op_b_br) || (inst[11:7] == '0 && (inst[6:0] inside {op_b_reg, op_b_imm, op_b_jalr, op_b_store})) || inst[6:0] == op_b_store) ? '0 : phys_reg;
+        pd = ((inst[6:0] == op_b_br) || (inst[11:7] == '0 && (inst[6:0] inside {op_b_reg, op_b_imm, op_b_jalr, op_b_load})) || inst[6:0] == op_b_store) ? '0 : phys_reg;
         // pd = (inst[6:0] == op_b_br || inst[6:0] == op_b_store) ? '0 : phys_reg;
     end
 

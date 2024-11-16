@@ -33,6 +33,8 @@ import rv32i_types::*;
         rrat_next[rd] = regf_we ? pd : rrat_next[rd];
         enqueue = (old_pd != 0) ? regf_we : 1'b0;
 
+        rrat_next[0] = '0;
+
         rrat_out = rrat_next;
     end
 

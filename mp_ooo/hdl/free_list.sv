@@ -127,7 +127,7 @@ import rv32i_types::*;
         if (global_branch_signal) begin
             for (int i = 0; i < 64; i++) begin
                 if (rrat_available[i] == 1'b1) begin
-                    mem_next[counter] <= physicalIndexing'(i);
+                    mem_next[counter] = physicalIndexing'(i);
                     counter = counter + 1'b1;
                 end
             end
