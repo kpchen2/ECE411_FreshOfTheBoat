@@ -233,7 +233,7 @@ module cache_arbiter
                     if ((d_dfp_read || d_dfp_write) && !missed_d_reg) begin
                         // GO TO D STATE AFTERWARDS
                         missed_d = '1;
-                        missed_d_addr = d_dfp_addr_reg;
+                        missed_d_addr = d_dfp_addr;
                         missed_rw = d_dfp_write;
                     end
 
