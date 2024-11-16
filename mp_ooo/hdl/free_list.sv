@@ -40,7 +40,7 @@ import rv32i_types::*;
 
     logic   [63:0]  rrat_available;
 
-    int     counter;
+    int unsigned     counter;
 
     assign  empty_out = empty;
 
