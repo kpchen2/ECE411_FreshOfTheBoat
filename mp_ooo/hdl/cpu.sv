@@ -19,6 +19,7 @@ import rv32i_types::*;
     logic           cache_valid; // If bursts are ready
     logic   [255:0] cache_wdata; // bursts (equivalent to dfp_rdata for icache)
 
+    logic proper_enqueue_in;
     /* ufp signals to send to icache */
     logic   [31:0]  ufp_addr;
     logic   [3:0]   ufp_rmask;
@@ -193,6 +194,8 @@ import rv32i_types::*;
     // assign global_branch_signal = cdb_br.pc_select;
     // assign global_branch_addr = cdb_br.pc_branch;
 
+    assign proper_enqueue_in = (global_branch_signal_reg) ? 1'b0 : i_ufp_resp;
+
     always_ff @(posedge clk) begin
 
         bmem_raddr_dummy <= bmem_raddr; // useless
@@ -358,7 +361,7 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
         .wdata_in(ufp_rdata),
-        .enqueue_in((global_branch_signal_reg) ? '0 : i_ufp_resp),
+        .enqueue_in(proper_enqueue_in),
         .rdata_out(inst),
         .dequeue_in(dequeue),
         .full_out(full_stall),
@@ -371,7 +374,7 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
         .wdata_in(pc),
-        .enqueue_in((global_branch_signal_reg) ? '0 : i_ufp_resp),
+        .enqueue_in(proper_enqueue_in),
         .rdata_out(prog),
         .dequeue_in(dequeue),
         .full_out(full_garbage),
