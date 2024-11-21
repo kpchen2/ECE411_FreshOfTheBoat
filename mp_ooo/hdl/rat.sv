@@ -23,21 +23,21 @@ import rv32i_types::*;
     logic [PHYS_REG_BITS-1:0] rat[32]; // holds mapping from arch register to phys register
     logic valid[32];
 
-    logic [PHYS_REG_BITS-1:0] rat_init[32];
+    // logic [PHYS_REG_BITS-1:0] rat_init[32];
 
     logic [PHYS_REG_BITS-1:0] rat_next[32];
     logic valid_next[32];
-    logic valid_init[32];
+    // logic valid_init[32];
 
-    logic [5:0] temp;
-    always_comb begin
-        temp = 6'b0;
-        for (int i = 0; i < 32; i++) begin
-            rat_init[i] = temp;
-            valid_init[i] = 1'b1;
-            temp = temp + 6'b000001;
-        end
-    end
+    // logic [5:0] temp;
+    // always_comb begin
+    //     temp = 6'b0;
+    //     for (int i = 0; i < 32; i++) begin
+    //         rat_init[i] = temp;
+    //         valid_init[i] = 1'b1;
+    //         temp = temp + 6'b000001;
+    //     end
+    // end
 
     always_comb begin
         rat_next = rat;
@@ -100,8 +100,12 @@ import rv32i_types::*;
 
     always_ff @(posedge clk) begin
         if (rst) begin
-            rat <= rat_init;
-            valid <= valid_init;
+            // rat <= rat_init;
+            // valid <= valid_init;
+            for (int i = 0; i < 32; i++) begin
+                rat[i] <= i[5:0];
+                valid[i] <= 1'b1;
+            end
         end else begin
             rat <= rat_next;
             valid <= valid_next;
