@@ -102,10 +102,43 @@ import rv32i_types::*;
         if (rst) begin
             // rat <= rat_init;
             // valid <= valid_init;
-            for (int i = 0; i < 32; i++) begin
-                rat[i] <= i[5:0];
-                valid[i] <= 1'b1;
+            for (int i = 0;i < 32; i ++)
+            begin
+                valid[i] <= '0;
             end
+
+            rat[0] <=  6'd0;
+            rat[1] <=  6'd1;
+            rat[2] <=  6'd2;
+            rat[3] <=  6'd3;
+            rat[4] <=  6'd4;
+            rat[5] <=  6'd5;
+            rat[6] <=  6'd6;
+            rat[7] <=  6'd7;
+            rat[8] <=  6'd8;
+            rat[9] <=  6'd9;
+            rat[10] <=  6'd10;
+            rat[11] <=  6'd11;
+            rat[12] <=  6'd12;
+            rat[13] <=  6'd13;
+            rat[14] <=  6'd14;
+            rat[15] <=  6'd15;
+            rat[16] <=  6'd16;
+            rat[17] <=  6'd17;
+            rat[18] <=  6'd18;
+            rat[19] <=  6'd19;
+            rat[20] <=  6'd20;
+            rat[21] <=  6'd21;
+            rat[22] <=  6'd22;
+            rat[23] <=  6'd23;
+            rat[24] <=  6'd24;
+            rat[25] <=  6'd25;
+            rat[26] <=  6'd26;
+            rat[27] <=  6'd27;
+            rat[28] <=  6'd28;
+            rat[29] <=  6'd29;
+            rat[30] <=  6'd30;
+            rat[31] <=  6'd31;
         end else begin
             rat <= rat_next;
             valid <= valid_next;
