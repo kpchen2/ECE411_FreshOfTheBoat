@@ -35,8 +35,6 @@ import rv32i_types::*;
     logic   enqueue_reg, enqueue_next;
     logic   dequeue_reg, dequeue_next;
 
-    logic   global_branch_signal_next;
-
     assign  empty_out = empty;
 
     always_ff @ (posedge clk) begin
@@ -74,8 +72,6 @@ import rv32i_types::*;
         dequeue_mem_next = '0;
         enqueue_next = enqueue_in;
         dequeue_next = dequeue_in;
-
-        global_branch_signal_next = global_branch_signal;
 
         if (rst) begin
             empty = '1;
