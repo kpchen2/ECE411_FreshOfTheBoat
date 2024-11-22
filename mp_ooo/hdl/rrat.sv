@@ -1,11 +1,9 @@
 module rrat
 import rv32i_types::*;
-#(
-    parameter PHYS_REG_BITS = 6
-)
+
 (
     input   logic   clk, rst,
-    input   logic   [4:0]   rd,
+    input   logic   [ARCH_REG_BITS - 1:0]   rd,
     input   logic   [PHYS_REG_BITS-1:0] pd,
     input   logic   regf_we,
     output  logic   enqueue,

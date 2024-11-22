@@ -2,7 +2,7 @@ module queue
 import rv32i_types::*;
 #(
     parameter DATA_WIDTH = 32,
-    parameter QUEUE_DEPTH = 64
+    parameter QUEUE_DEPTH = INST_QUEUE_DEPTH
 )
 (
     input logic clk,

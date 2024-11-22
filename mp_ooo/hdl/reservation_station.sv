@@ -11,16 +11,16 @@ import rv32i_types::*;
         input logic [2:0] rs_select  , // select rs, inherit from dispatch, 
         input logic dispatch_ps_ready1   , // if the ps is ready
         input logic dispatch_ps_ready2,     // if the ps is ready
-        input logic [5:0] ps1      , // ps1, inherited from rename/dispatch
-        input logic [5:0] ps2      , // ps2, inherited from rename/dispatch
-        input logic [4:0] rd       ,// the arch dest register, inherited from free list, don't know width
-        input logic [5:0] pd       , // the phys dest register, inherited from free list, don't know width
-        input logic [5:0] rob_entry , // rob entry, inherited from rob, don't know width
-        input logic [5:0] cdb_ps_id_add       ,   // cdb tells us if a busy register can be marked as unbusy
-        input logic [5:0] cdb_ps_id_multiply,
-        input logic [5:0] cdb_ps_id_divide,
-        input logic [5:0] cdb_ps_id_mem,
-        input logic [5:0] cdb_ps_id_branch,
+        input logic [PHYS_REG_BITS - 1:0] ps1      , // ps1, inherited from rename/dispatch
+        input logic [PHYS_REG_BITS - 1:0] ps2      , // ps2, inherited from rename/dispatch
+        input logic [ARCH_REG_BITS - 1:0] rd       ,// the arch dest register, inherited from free list, don't know width
+        input logic [PHYS_REG_BITS - 1:0] pd       , // the phys dest register, inherited from free list, don't know width
+        input logic [PHYS_REG_BITS - 1:0] rob_entry , // rob entry, inherited from rob, don't know width
+        input logic [PHYS_REG_BITS - 1:0] cdb_ps_id_add       ,   // cdb tells us if a busy register can be marked as unbusy
+        input logic [PHYS_REG_BITS - 1:0] cdb_ps_id_multiply,
+        input logic [PHYS_REG_BITS - 1:0] cdb_ps_id_divide,
+        input logic [PHYS_REG_BITS - 1:0] cdb_ps_id_mem,
+        input logic [PHYS_REG_BITS - 1:0] cdb_ps_id_branch,
         input decode_info_t decode_info_in,
 
 
@@ -41,23 +41,23 @@ import rv32i_types::*;
         output logic mem_fu_ready,
         output logic branch_fu_ready,
 
-        output logic [5:0] add_rob_entry,
-        output logic [5:0] multiply_rob_entry,
-        output logic [5:0] divide_rob_entry,
-        output logic [5:0] mem_rob_entry,
-        output logic [5:0] branch_rob_entry,
+        output logic [ROB_ADDR_WIDTH - 1:0] add_rob_entry,
+        output logic [ROB_ADDR_WIDTH - 1:0] multiply_rob_entry,
+        output logic [ROB_ADDR_WIDTH - 1:0] divide_rob_entry,
+        output logic [ROB_ADDR_WIDTH - 1:0] mem_rob_entry,
+        output logic [ROB_ADDR_WIDTH - 1:0] branch_rob_entry,
 
-        output logic [5:0] add_pd,
-        output logic [5:0] multiply_pd,
-        output logic [5:0] divide_pd,
-        output logic [5:0] mem_pd,
-        output logic [5:0] branch_pd,
+        output logic [PHYS_REG_BITS - 1:0] add_pd,
+        output logic [PHYS_REG_BITS - 1:0] multiply_pd,
+        output logic [PHYS_REG_BITS - 1:0] divide_pd,
+        output logic [PHYS_REG_BITS - 1:0] mem_pd,
+        output logic [PHYS_REG_BITS - 1:0] branch_pd,
 
-        output logic [4:0] add_rd,
-        output logic [4:0] multiply_rd,
-        output logic [4:0] divide_rd,
-        output logic [4:0] mem_rd,
-        output logic [4:0] branch_rd,
+        output logic [ARCH_REG_BITS - 1:0] add_rd,
+        output logic [ARCH_REG_BITS - 1:0] multiply_rd,
+        output logic [ARCH_REG_BITS - 1:0] divide_rd,
+        output logic [ARCH_REG_BITS - 1:0] mem_rd,
+        output logic [ARCH_REG_BITS - 1:0] branch_rd,
 
         output logic add_full,      // if the RS is full
         output logic multiply_full,
@@ -71,20 +71,20 @@ import rv32i_types::*;
         output decode_info_t mem_decode_info_out,
         output decode_info_t branch_decode_info_out,
 
-        output logic [5:0] add_ps1,
-        output logic [5:0] add_ps2,
+        output logic [PHYS_REG_BITS - 1:0] add_ps1,
+        output logic [PHYS_REG_BITS - 1:0] add_ps2,
 
-        output logic [5:0] multiply_ps1,
-        output logic [5:0] multiply_ps2,
+        output logic [PHYS_REG_BITS - 1:0] multiply_ps1,
+        output logic [PHYS_REG_BITS - 1:0] multiply_ps2,
 
-        output logic [5:0] divide_ps1,
-        output logic [5:0] divide_ps2,
+        output logic [PHYS_REG_BITS - 1:0] divide_ps1,
+        output logic [PHYS_REG_BITS - 1:0] divide_ps2,
 
-        output logic [5:0] mem_ps1,
-        output logic [5:0] mem_ps2,
+        output logic [PHYS_REG_BITS - 1:0] mem_ps1,
+        output logic [PHYS_REG_BITS - 1:0] mem_ps2,
 
-        output logic [5:0] branch_ps1,
-        output logic [5:0] branch_ps2,
+        output logic [PHYS_REG_BITS - 1:0] branch_ps1,
+        output logic [PHYS_REG_BITS - 1:0] branch_ps2,
 
         
         // Not sure if CDB might output anything to the RS
@@ -95,8 +95,8 @@ import rv32i_types::*;
         input  logic       regf_we_br,
         input  logic       global_branch_signal,
         input  logic       regf_we_mem,
-        input  logic [5:0]  mem_idx_in,
-        output logic [5:0]  mem_idx_out
+        input  logic [MEM_ADDR_WIDTH - 1:0]  mem_idx_in,
+        output logic [MEM_ADDR_WIDTH - 1:0]  mem_idx_out
 
     );
 
@@ -167,11 +167,11 @@ import rv32i_types::*;
 
 
     logic [2:0] rs_select_reg; // reg equivalent of rs_select
-    logic [5:0] cdb_ps_id_add_reg;  //reg equivalent of cdb_ps_id_add
-    logic [5:0] cdb_ps_id_multiply_reg;
-    logic [5:0] cdb_ps_id_divide_reg;
-    logic [5:0] cdb_ps_id_branch_reg;
-    logic [5:0] cdb_ps_id_mem_reg;
+    logic [PHYS_REG_BITS - 1:0] cdb_ps_id_add_reg;  //reg equivalent of cdb_ps_id_add
+    logic [PHYS_REG_BITS - 1:0] cdb_ps_id_multiply_reg;
+    logic [PHYS_REG_BITS - 1:0] cdb_ps_id_divide_reg;
+    logic [PHYS_REG_BITS - 1:0] cdb_ps_id_branch_reg;
+    logic [PHYS_REG_BITS - 1:0] cdb_ps_id_mem_reg;
 
     
     logic insert_add;

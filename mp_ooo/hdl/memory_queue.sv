@@ -1,7 +1,7 @@
 module memory_queue
 import rv32i_types::*;
 #(
-    parameter QUEUE_DEPTH = 64
+    parameter QUEUE_DEPTH = MEM_QUEUE_DEPTH
 )
 (
     input   logic           clk,
@@ -19,13 +19,13 @@ import rv32i_types::*;
     // adder inputs
     input   logic   [31:0]  addr,
     input   logic           addr_valid,
-    input   logic   [5:0]   mem_idx_in,
+    input   logic   [$clog2(QUEUE_DEPTH) - 1:0]   mem_idx_in,
     input   logic   [31:0]  store_wdata,
     input   logic   [31:0]  rs1_rdata,
     input   logic   [31:0]  rs2_rdata,
 
     // rob inputs
-    input   logic   [5:0]   commited_rob,
+    input   logic   [ROB_ADDR_WIDTH - 1:0]   commited_rob,
 
     // dcache inputs
     input   logic   [31:0]  data_in,
@@ -36,7 +36,7 @@ import rv32i_types::*;
     output  cdb_t           cdb_mem,
 
     // rename/dispatch outputs
-    output  logic   [5:0]   mem_idx_out,
+    output  logic   [$clog2(QUEUE_DEPTH) - 1 :0]   mem_idx_out,
 
     // dcache outputs
     output  logic   [31:0]  d_addr,
@@ -61,13 +61,13 @@ import rv32i_types::*;
     logic           enqueue_reg;
     logic           dequeue_reg;
 
-    logic   [5:0]   rob_num_next;
+    logic   [ROB_ADDR_WIDTH - 1:0]   rob_num_next;
     logic   [31:0]  data_in_next;
 
     logic           enqueue_valid_next;
     logic           data_valid_next;
     logic           addr_valid_next;
-    logic   [5:0]   mem_idx_in_next;
+    logic   [ADDR_WIDTH - 1 :0]   mem_idx_in_next;
     logic   [31:0]  addr_next;
     logic   [31:0]  store_wdata_next;
 
@@ -137,7 +137,7 @@ import rv32i_types::*;
         addr_next = addr;
         store_wdata_next = store_wdata;
 
-        mem_idx_out = tail_reg[5:0] + 1'b1;
+        mem_idx_out = tail_reg[ADDR_WIDTH - 1:0] + 1'b1;
         accessing_cache = '0;
         
         if (!rst) begin
@@ -163,12 +163,12 @@ import rv32i_types::*;
                 cdb_mem.rs2_rdata = dequeue_mem_next.rs2_rdata;
 
                 if (dequeue_mem_next.opcode == op_b_load) begin
-                    unique case (mem[head_reg[5:0]+1'b1].funct3)
+                    unique case (mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].funct3)
                         // rd_v = rd_wdata
-                        load_f3_lb : cdb_mem.rd_v = {{24{data_in[7 +8 *mem[head_reg[5:0]+1'b1].shift_bits]}}   , data_in[8 *mem[head_reg[5:0]+1'b1].shift_bits    +: 8 ]};
-                        load_f3_lbu: cdb_mem.rd_v = {{24{1'b0}}                                                , data_in[8 *mem[head_reg[5:0]+1'b1].shift_bits    +: 8 ]};
-                        load_f3_lh : cdb_mem.rd_v = {{16{data_in[15+16*mem[head_reg[5:0]+1'b1].shift_bits[1]]}}, data_in[16*mem[head_reg[5:0]+1'b1].shift_bits[1] +: 16]};
-                        load_f3_lhu: cdb_mem.rd_v = {{16{1'b0}}                                                , data_in[16*mem[head_reg[5:0]+1'b1].shift_bits[1] +: 16]};
+                        load_f3_lb : cdb_mem.rd_v = {{24{data_in[7 +8 *mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].shift_bits]}}   , data_in[8 *mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].shift_bits    +: 8 ]};
+                        load_f3_lbu: cdb_mem.rd_v = {{24{1'b0}}                                                , data_in[8 *mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].shift_bits    +: 8 ]};
+                        load_f3_lh : cdb_mem.rd_v = {{16{data_in[15+16*mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].shift_bits[1]]}}, data_in[16*mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].shift_bits[1] +: 16]};
+                        load_f3_lhu: cdb_mem.rd_v = {{16{1'b0}}                                                , data_in[16*mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].shift_bits[1] +: 16]};
                         load_f3_lw : cdb_mem.rd_v = data_in;
                         default    : cdb_mem.rd_v = 'x;
                     endcase
@@ -178,29 +178,29 @@ import rv32i_types::*;
                 end
 
             // ready to access cache
-            end else if (mem[head_reg[5:0]+1'b1].valid == 1'b1 && mem[head_reg[5:0]+1'b1].addr_ready == 1'b1) begin
-                d_addr = mem[head_reg[5:0]+1'b1].addr;
+            end else if (mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].valid == 1'b1 && mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].addr_ready == 1'b1) begin
+                d_addr = mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].addr;
                 
-                if (mem[head_reg[5:0]+1'b1].opcode == op_b_load && mem[head_reg[5:0]+1'b1].rob_num == commited_rob) begin
-                    unique case (mem[head_reg[5:0]+1'b1].funct3)
+                if (mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].opcode == op_b_load && mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].rob_num == commited_rob) begin
+                    unique case (mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].funct3)
                         load_f3_lb, load_f3_lbu: d_rmask = 4'b0001 << d_addr[1:0];
                         load_f3_lh, load_f3_lhu: d_rmask = 4'b0011 << d_addr[1:0];
                         load_f3_lw             : d_rmask = 4'b1111;
                         default                : d_rmask = 'x;
                     endcase
 
-                end else if (mem[head_reg[5:0]+1'b1].rob_num == commited_rob) begin
-                    unique case (mem[head_reg[5:0]+1'b1].funct3)
+                end else if (mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].rob_num == commited_rob) begin
+                    unique case (mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].funct3)
                         store_f3_sb: d_wmask = 4'b0001 << d_addr[1:0];
                         store_f3_sh: d_wmask = 4'b0011 << d_addr[1:0];
                         store_f3_sw: d_wmask = 4'b1111;
                         default    : d_wmask = 'x;
                     endcase
                     
-                    unique case (mem[head_reg[5:0]+1'b1].funct3)
-                        store_f3_sb: d_wdata[8 *d_addr[1:0] +: 8 ] = mem[head_reg[5:0]+1'b1].store_wdata[7 :0];
-                        store_f3_sh: d_wdata[16*d_addr[1]   +: 16] = mem[head_reg[5:0]+1'b1].store_wdata[15:0];
-                        store_f3_sw: d_wdata = mem[head_reg[5:0]+1'b1].store_wdata;
+                    unique case (mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].funct3)
+                        store_f3_sb: d_wdata[8 *d_addr[1:0] +: 8 ] = mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].store_wdata[7 :0];
+                        store_f3_sh: d_wdata[16*d_addr[1]   +: 16] = mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].store_wdata[15:0];
+                        store_f3_sw: d_wdata = mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].store_wdata;
                         default    : d_wdata = 'x;
                     endcase
                 end

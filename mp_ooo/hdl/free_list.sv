@@ -1,8 +1,8 @@
 module free_list
 import rv32i_types::*;
 #(
-    parameter DATA_WIDTH = 6,
-    parameter QUEUE_DEPTH = 32
+    parameter DATA_WIDTH = FREE_LIST_DATA_WIDTH,
+    parameter QUEUE_DEPTH = FREE_LIST_DEPTH
 )
 (
     input logic clk,

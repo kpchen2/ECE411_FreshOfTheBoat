@@ -1,7 +1,7 @@
 module rob
 import rv32i_types::*;
 #(
-    parameter QUEUE_DEPTH = 64
+    parameter QUEUE_DEPTH = ROB_DEPTH
 )
 (
     input   logic                               clk,

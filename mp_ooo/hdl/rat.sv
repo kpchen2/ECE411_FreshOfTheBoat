@@ -1,11 +1,9 @@
 module rat
 import rv32i_types::*;
-#(
-    parameter PHYS_REG_BITS = 6
-)
+
 (
     input   logic   clk, rst,
-    input   logic   [4:0]   rd_dispatch, rs1, rs2, rd_add, rd_mul, rd_div, rd_br, rd_mem,
+    input   logic   [ARCH_REG_BITS - 1:0]   rd_dispatch, rs1, rs2, rd_add, rd_mul, rd_div, rd_br, rd_mem,
 
     input   logic   [PHYS_REG_BITS-1:0]     pd_dispatch, pd_add, pd_mul, pd_div, pd_br, pd_mem,
     output  logic   [PHYS_REG_BITS-1:0]     ps1, ps2,

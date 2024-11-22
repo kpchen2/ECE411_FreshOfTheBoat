@@ -10,8 +10,8 @@ import rv32i_types::*;
     input   decode_info_t   decode_info_add, decode_info_mul, decode_info_div, decode_info_br, decode_info_mem,
     input   logic           start_add, start_mul, start_div, start_br, start_mem,
 
-    input logic [5:0] mem_idx_in,
-    output logic [5:0] mem_idx_out,
+    input logic [MEM_ADDR_WIDTH - 1:0] mem_idx_in,
+    output logic [$clog2(MEM_QUEUE_DEPTH) - 1:0] mem_idx_out,
 
     // ADD PORTS
     input   logic   [5:0]   rob_idx_add,

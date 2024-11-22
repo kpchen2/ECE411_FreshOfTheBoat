@@ -1,8 +1,6 @@
 module rename_dispatch
 import rv32i_types::*;
-#(
-    parameter PHYS_REG_BITS = 6
-)
+
 (
     input                   clk,
     input                   rst,
@@ -12,14 +10,14 @@ import rv32i_types::*;
 
     input   logic           is_iqueue_empty,
     // to and from free list
-    input   logic   [5:0]   phys_reg,
+    input   logic   [PHYS_REG_BITS - 1:0]   phys_reg,
     input   logic           is_free_list_empty,
     // input logic [63:0] order,
     output  logic           dequeue,
     output  logic           dequeue_free_list,
     // output logic [63:0] order_next,
     // to and from RAT
-    output  logic   [4:0]                   rd, rs1, rs2,
+    output  logic   [ARCH_REG_BITS - 1:0]                   rd, rs1, rs2,
     output  logic   [PHYS_REG_BITS-1:0]     pd,
     input   logic   [PHYS_REG_BITS-1:0]     ps1, ps2,
     input   logic                           ps1_valid, ps2_valid,
@@ -34,13 +32,13 @@ import rv32i_types::*;
     output  logic   [31:0]                  dispatch_pc_rdata,
     output  logic   [31:0]                  dispatch_pc_wdata,
     // output  logic   [63:0]                  dispatch_order,    
-    output  logic   [4:0]                   dispatch_rs1_s,    
-    output  logic   [4:0]                   dispatch_rs2_s,    
+    output  logic   [ARCH_REG_BITS - 1:0]                   dispatch_rs1_s,    
+    output  logic   [ARCH_REG_BITS - 1:0]                   dispatch_rs2_s,    
     output  logic   [31:0]                  dispatch_inst,     
     output  logic                           dispatch_regf_we,
     // to and from memory queue
-    input   logic   [5:0]   mem_idx_in,
-    output  logic   [5:0]   mem_idx_out,
+    input   logic   [MEM_ADDR_WIDTH  - 1:0]   mem_idx_in,
+    output  logic   [MEM_ADDR_WIDTH - 1:0]   mem_idx_out,
     
     input   logic   [31:0]  global_branch_addr,
     input   logic           global_branch_signal

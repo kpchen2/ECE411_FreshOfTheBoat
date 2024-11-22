@@ -8,8 +8,8 @@ import rv32i_types::*;
     output logic busy,
     output logic [31:0] mem_addr,
     input logic [31:0] i_imm,
-    input logic [5:0] dispatch_mem_idx,
-    output logic [5:0] mem_idx_out,
+    input logic [MEM_ADDR_WIDTH - 1:0] dispatch_mem_idx,
+    output logic [MEM_ADDR_WIDTH - 1:0] mem_idx_out,
     output logic [31:0] store_wdata,
     output  logic   [31:0]  fu_rs1_v_mem, fu_rs2_v_mem
 );

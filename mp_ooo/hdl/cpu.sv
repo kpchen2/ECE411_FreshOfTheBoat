@@ -64,8 +64,8 @@ import rv32i_types::*;
     logic   [31:0]  inst;
     logic           rob_full;
     logic           iqueue_empty;
-    logic   [4:0]   rd_dispatch, rs1, rs2;
-    logic   [5:0]   pd_dispatch, ps1, ps2;
+    logic   [ARCH_REG_BITS - 1:0]   rd_dispatch, rs1, rs2;
+    logic   [PHYS_REG_BITS - 1:0]   pd_dispatch, ps1, ps2;
     logic           ps1_valid, ps2_valid;
     logic           regf_we_dispatch;
 
@@ -73,14 +73,14 @@ import rv32i_types::*;
     logic           mem_regf_we_dispatch; 
     /*                                      */ 
 
-    logic   [5:0]   rob_num, rob_num_out, rob_head;
-    logic   [4:0]   rd_rob;
-    logic   [5:0]   pd_rob;
+    logic   [ROB_ADDR_WIDTH - 1:0]   rob_num, rob_num_out, rob_head;
+    logic   [ARCH_REG_BITS - 1:0]   rd_rob;
+    logic   [PHYS_REG_BITS - 1:0]   pd_rob;
     logic           rob_valid;
     logic   [31:0]  cdb_rd_v;
-    logic   [5:0]   old_pd;
+    logic   [PHYS_REG_BITS - 1:0]   old_pd;
     logic           enqueue;
-    logic   [5:0]   phys_reg;
+    logic   [PHYS_REG_BITS - 1:0]   phys_reg;
     logic           dequeue, dequeue_free_list;
     logic           is_free_list_empty;
 
@@ -103,25 +103,25 @@ import rv32i_types::*;
     logic   branch_fu_ready;
 
     /* rob entries*/
-    logic   [5:0]   add_rob_entry;
-    logic   [5:0]   multiply_rob_entry;
-    logic   [5:0]   divide_rob_entry;
-    logic   [5:0]   mem_rob_entry;
-    logic   [5:0]   branch_rob_entry; 
+    logic   [ROB_ADDR_WIDTH - 1:0]   add_rob_entry;
+    logic   [ROB_ADDR_WIDTH - 1:0]   multiply_rob_entry;
+    logic   [ROB_ADDR_WIDTH - 1:0]   divide_rob_entry;
+    logic   [ROB_ADDR_WIDTH - 1:0]   mem_rob_entry;
+    logic   [ROB_ADDR_WIDTH - 1:0]   branch_rob_entry; 
 
     /* physical destination registers*/
-    logic   [5:0]   add_pd;
-    logic   [5:0]   multiply_pd;
-    logic   [5:0]   divide_pd;
-    logic   [5:0]   mem_pd;
-    logic   [5:0]   branch_pd;
+    logic   [PHYS_REG_BITS - 1:0]   add_pd;
+    logic   [PHYS_REG_BITS - 1:0]   multiply_pd;
+    logic   [PHYS_REG_BITS - 1:0]   divide_pd;
+    logic   [PHYS_REG_BITS - 1:0]   mem_pd;
+    logic   [PHYS_REG_BITS - 1:0]   branch_pd;
 
     /* architectural destination registers */
-    logic   [4:0]   add_rd;
-    logic   [4:0]   multiply_rd;
-    logic   [4:0]   divide_rd;
-    logic   [4:0]   branch_rd;
-    logic   [4:0]   mem_rd;
+    logic   [ARCH_REG_BITS - 1:0]   add_rd;
+    logic   [ARCH_REG_BITS - 1:0]   multiply_rd;
+    logic   [ARCH_REG_BITS - 1:0]   divide_rd;
+    logic   [ARCH_REG_BITS - 1:0]   branch_rd;
+    logic   [ARCH_REG_BITS - 1:0]   mem_rd;
 
     /* reservation station select signal*/
     logic   [2:0]   rs_signal;
@@ -130,14 +130,14 @@ import rv32i_types::*;
     logic           rs_add_full, rs_mul_full, rs_div_full, rs_mem_full, rs_br_full; 
 
     /* physical register source and valids*/
-    logic   [5:0]   ps1_out, ps2_out;
+    logic   [PHYS_REG_BITS - 1:0]   ps1_out, ps2_out;
     logic           ps1_valid_out, ps2_valid_out;
 
     /* rs1_v, rs2_v*/
     logic   [31:0]  rs1_v_add, rs1_v_mul, rs1_v_div, rs1_v_mem, rs1_v_br, rs2_v_add, rs2_v_mul, rs2_v_div, rs2_v_mem, rs2_v_br; 
     
     /* ps1, ps2*/
-    logic   [5:0]   add_ps1, add_ps2, multiply_ps1, multiply_ps2, divide_ps1, divide_ps2, mem_ps1, mem_ps2, branch_ps1, branch_ps2; 
+    logic   [PHYS_REG_BITS - 1:0]   add_ps1, add_ps2, multiply_ps1, multiply_ps2, divide_ps1, divide_ps2, mem_ps1, mem_ps2, branch_ps1, branch_ps2; 
     
     /* output rob entry, contains rvfi data*/
     rob_entry_t rob_entry;
@@ -157,19 +157,19 @@ import rv32i_types::*;
     logic   [31:0]  dispatch_pc_rdata;
     logic   [31:0]  dispatch_pc_wdata;
     logic   [63:0]  dispatch_order;
-    logic   [4:0]   dispatch_rs1_s;
-    logic   [4:0]   dispatch_rs2_s;
+    logic   [ARCH_REG_BITS - 1:0]   dispatch_rs1_s;
+    logic   [ARCH_REG_BITS - 1:0]   dispatch_rs2_s;
     logic   [31:0]  dispatch_inst;
     logic           dispatch_regf_we;
 
     /* load store queue, dispatch stage*/
-    logic   [5:0]   queue_mem_idx, dispatch_mem_idx;
+    logic   [MEM_ADDR_WIDTH - 1:0]   queue_mem_idx, dispatch_mem_idx;
 
     /* rob idx for memory instructions (needed to know store) */
-    logic   [5:0]   mem_rob_idx_in;
+    logic   [ROB_ADDR_WIDTH - 1:0]   mem_rob_idx_in;
 
     /* reservation station, memory functional unit */
-    logic   [5:0]   res_dispatch_mem_idx, fu_mem_idx;
+    logic   [MEM_ADDR_WIDTH - 1:0]   res_dispatch_mem_idx, fu_mem_idx;
 
      /* calculated address */
     logic [31:0]    calculated_address;
