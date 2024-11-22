@@ -1,12 +1,23 @@
 package rv32i_types;
 
     localparam NUM_ADD_REGISTERS = 4;
-    localparam NUM_MULTIPLY_REGISTERS = 4;
-    localparam NUM_DIVIDE_REGISTERS = 4;
+    localparam NUM_MULTIPLY_REGISTERS = 2;
+    localparam NUM_DIVIDE_REGISTERS = 2;
     localparam NUM_MEM_REGISTERS = 4;
     localparam NUM_BRANCH_REGISTERS = 4;
     localparam MAX_ISSUES = 4; // num instructions to issue
-    // parameter DATA_WIDTH = 6;
+    localparam MEM_QUEUE_DEPTH = 32;
+    localparam MEM_ADDR_WIDTH = $clog2(MEM_QUEUE_DEPTH);
+    localparam ROB_DEPTH = 64;
+    localparam ROB_ADDR_WIDTH = $clog2(ROB_DEPTH);
+    localparam FREE_LIST_DEPTH = 32;
+    localparam FREE_LIST_ADDR_WIDTH = $clog2(FREE_LIST_DEPTH);
+    localparam FREE_LIST_DATA_WIDTH = 6;
+    localparam PHYS_REG_BITS = 6;
+    localparam ARCH_REG_BITS = 5;
+    localparam INST_QUEUE_DEPTH = 64;
+    localparam INST_ADDR_WIDTH = $clog2(INST_QUEUE_DEPTH);
+
 
     typedef logic [6:0] physicalIndexing;
     
@@ -40,9 +51,9 @@ package rv32i_types;
         logic   [31:0]  u_imm;
         logic   [31:0]  j_imm;
 
-        logic   [4:0]  rs1_s;
-        logic   [4:0]  rs2_s;
-        logic   [4:0]  rd_s;
+        logic   [ARCH_REG_BITS - 1:0]  rs1_s;
+        logic   [ARCH_REG_BITS - 1:0]  rs2_s;
+        logic   [ARCH_REG_BITS - 1:0]  rd_s;
         logic   [31:0] inst;
 
         logic   [31:0]  pc;
@@ -52,68 +63,68 @@ package rv32i_types;
     typedef struct packed {
         logic busy;
         logic ps1_v;
-        logic [5:0] ps1;
+        logic [PHYS_REG_BITS - 1:0] ps1;
         logic ps2_v;
-        logic [5:0] ps2;
-        logic [5:0] pd;
-        logic [4:0] rd;
-        logic [5:0] rob_entry;
+        logic [PHYS_REG_BITS - 1:0] ps2;
+        logic [PHYS_REG_BITS - 1:0] pd;
+        logic [ARCH_REG_BITS - 1:0] rd;
+        logic [ROB_ADDR_WIDTH - 1:0] rob_entry;
         decode_info_t decode_info;
     } add_reservation_station_data;
 
     typedef struct packed {
         logic busy;
         logic ps1_v;
-        logic [5:0] ps1;
+        logic [PHYS_REG_BITS - 1:0] ps1;
         logic ps2_v;
-        logic [5:0] ps2;
-        logic [5:0] pd;
-        logic [4:0] rd;
-        logic [5:0] rob_entry;
+        logic [PHYS_REG_BITS - 1:0] ps2;
+        logic [PHYS_REG_BITS - 1:0] pd;
+        logic [ARCH_REG_BITS - 1:0] rd;
+        logic [ROB_ADDR_WIDTH - 1:0] rob_entry;
         decode_info_t decode_info;
     } multiply_reservation_station_data;
 
     typedef struct packed {
         logic busy;
         logic ps1_v;
-        logic [5:0] ps1;
+        logic [PHYS_REG_BITS - 1:0] ps1;
         logic ps2_v;
-        logic [5:0] ps2;
-        logic [5:0] pd;
-        logic [4:0] rd;
-        logic [5:0] rob_entry;
+        logic [PHYS_REG_BITS - 1:0] ps2;
+        logic [PHYS_REG_BITS - 1:0] pd;
+        logic [ARCH_REG_BITS - 1:0] rd;
+        logic [ROB_ADDR_WIDTH - 1:0] rob_entry;
         decode_info_t decode_info;
     } divide_reservation_station_data;
 
     typedef struct packed {
         logic busy;
         logic ps1_v;
-        logic [5:0] ps1;
+        logic [PHYS_REG_BITS - 1:0] ps1;
         logic ps2_v;
-        logic [5:0] ps2;
-        logic [5:0] pd;
-        logic [4:0] rd;
-        logic [5:0] rob_entry;
+        logic [PHYS_REG_BITS - 1:0] ps2;
+        logic [PHYS_REG_BITS - 1:0] pd;
+        logic [ARCH_REG_BITS - 1:0] rd;
+        logic [ROB_ADDR_WIDTH - 1:0] rob_entry;
         decode_info_t decode_info;
-        logic   [5:0]   mem_idx;
+        logic   [$clog2(MEM_QUEUE_DEPTH) - 1:0]   mem_idx;
     } mem_reservation_station_data;
 
     typedef struct packed {
         logic busy;
         logic ps1_v;
-        logic [5:0] ps1;
+        logic [PHYS_REG_BITS - 1:0] ps1;
         logic ps2_v;
-        logic [5:0] ps2;
-        logic [5:0] pd;
-        logic [4:0] rd;
-        logic [5:0] rob_entry;
+        logic [PHYS_REG_BITS - 1:0] ps2;
+        logic [PHYS_REG_BITS - 1:0] pd;
+        logic [ARCH_REG_BITS - 1:0] rd;
+        logic [ROB_ADDR_WIDTH - 1:0] rob_entry;
         decode_info_t decode_info;
     } branch_reservation_station_data;
 
     typedef struct packed {
-        logic   [5:0]   rob_idx;
-        logic   [5:0]   pd_s;
-        logic   [4:0]   rd_s;
+        logic   [ROB_ADDR_WIDTH - 1:0]   rob_idx;
+        logic   [PHYS_REG_BITS - 1:0]   pd_s;
+        logic   [ARCH_REG_BITS - 1:0]   rd_s;
         logic   [31:0]  rd_v;
         logic           valid;
         logic   [31:0]  inst;
@@ -129,11 +140,11 @@ package rv32i_types;
     } cdb_t;
 
     typedef struct packed {
-        logic [5:0] ps1;
-        logic [5:0] ps2;
-        logic [5:0] pd;
-        logic [4:0] rd;
-        logic [5:0] rob_entry;
+        logic [PHYS_REG_BITS - 1:0] ps1;
+        logic [PHYS_REG_BITS - 1:0] ps2;
+        logic [PHYS_REG_BITS - 1:0] pd;
+        logic [ARCH_REG_BITS - 1:0] rd;
+        logic [ROB_ADDR_WIDTH - 1:0] rob_entry;
     } cdb_rs_output;
 
     typedef struct packed {
@@ -148,14 +159,14 @@ package rv32i_types;
     } stage_reg_t;
 
     typedef struct packed {
-        logic   [5:0]   phys_reg;
-        logic   [4:0]   arch_reg;
+        logic   [PHYS_REG_BITS - 1:0]   phys_reg;
+        logic   [ARCH_REG_BITS - 1:0]   arch_reg;
     } rob_out_t;
 
     typedef struct packed {
         logic valid;
         logic commit;
-        logic [5:0] pd;
+        logic [PHYS_REG_BITS - 1:0] pd;
         rvfi_info rvfi;
         logic pc_select;
         logic [31:0] pc_branch;
@@ -169,11 +180,11 @@ package rv32i_types;
         logic   [6:0]   opcode;
         logic   [2:0]   funct3;
         logic   [1:0]   shift_bits;
-        logic   [5:0]   pd_s;
-        logic   [5:0]   rob_num;
+        logic   [PHYS_REG_BITS - 1:0]   pd_s;
+        logic   [ROB_ADDR_WIDTH - 1:0]   rob_num;
         logic   [31:0]  store_wdata;
         
-        logic   [4:0]   rd_s;
+        logic   [ARCH_REG_BITS - 1:0]   rd_s;
         logic   [3:0]   rmask;
         logic   [3:0]   wmask;
         logic   [31:0]  rdata;
