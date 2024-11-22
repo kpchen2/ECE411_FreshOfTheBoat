@@ -14,30 +14,30 @@ import rv32i_types::*;
     output logic [$clog2(MEM_QUEUE_DEPTH) - 1:0] mem_idx_out,
 
     // ADD PORTS
-    input   logic   [5:0]   rob_idx_add,
-    input   logic   [5:0]   pd_s_add,
-    input   logic   [4:0]   rd_s_add,
+    input   logic   [ROB_ADDR_WIDTH -1:0]   rob_idx_add,
+    input   logic   [PHYS_REG_BITS - 1:0]   pd_s_add,
+    input   logic   [ARCH_REG_BITS - 1:0]   rd_s_add,
     output  cdb_t           cdb_add,
     output  logic           busy_add,
 
     // MULT PORTS
-    input   logic   [5:0]   rob_idx_mul,
-    input   logic   [5:0]   pd_s_mul,
-    input   logic   [4:0]   rd_s_mul,
+    input   logic   [ROB_ADDR_WIDTH - 1:0]   rob_idx_mul,
+    input   logic   [PHYS_REG_BITS - 1:0]   pd_s_mul,
+    input   logic   [ARCH_REG_BITS - 1:0]   rd_s_mul,
     output  cdb_t           cdb_mul,
     output  logic           busy_mul,
 
     // DIV PORTS
-    input   logic   [5:0]   rob_idx_div,
-    input   logic   [5:0]   pd_s_div,
-    input   logic   [4:0]   rd_s_div,
+    input   logic   [ROB_ADDR_WIDTH -1:0]   rob_idx_div,
+    input   logic   [PHYS_REG_BITS - 1:0]   pd_s_div,
+    input   logic   [ARCH_REG_BITS - 1:0]   rd_s_div,
     output  cdb_t           cdb_div,
     output  logic           busy_div,
 
     // BR PORTS
-    input   logic   [5:0]   rob_idx_br,
-    input   logic   [5:0]   pd_s_br,
-    input   logic   [4:0]   rd_s_br,
+    input   logic   [ROB_ADDR_WIDTH -1:0]   rob_idx_br,
+    input   logic   [PHYS_REG_BITS - 1:0]   pd_s_br,
+    input   logic   [ARCH_REG_BITS - 1:0]   rd_s_br,
     output  cdb_t           cdb_br,
     output  logic           busy_br,
 
@@ -61,9 +61,9 @@ import rv32i_types::*;
     
     // cdb_t   cdb_add, cdb_mul, cdb_div;
 
-    logic   [5:0]   rob_add_reg, rob_mul_reg, rob_div_reg,  rob_br_reg, rob_mem_reg;
-    logic   [5:0]   pd_add_reg, pd_mul_reg, pd_div_reg,     pd_br_reg, pd_mem_reg;
-    logic   [4:0]   rd_add_reg, rd_mul_reg, rd_div_reg,     rd_br_reg, rd_mem_reg;
+    logic   [ROB_ADDR_WIDTH -1:0]   rob_add_reg, rob_mul_reg, rob_div_reg,  rob_br_reg, rob_mem_reg;
+    logic   [PHYS_REG_BITS - 1:0]   pd_add_reg, pd_mul_reg, pd_div_reg,     pd_br_reg, pd_mem_reg;
+    logic   [ARCH_REG_BITS - 1:0]   rd_add_reg, rd_mul_reg, rd_div_reg,     rd_br_reg, rd_mem_reg;
     
 
     logic   [31:0]  rd_v_add, rd_v_mul, rd_v_div, rd_v_br;//, rd_v_mem;

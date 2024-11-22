@@ -11,10 +11,10 @@ import rv32i_types::*;
     input   logic   [31:0]  inst,
     input   logic   [6:0]   opcode,
     input   logic   [2:0]   funct3,
-    input   logic   [5:0]   phys_reg_in,
+    input   logic   [PHYS_REG_BITS - 1:0]   phys_reg_in,
     input   logic           enqueue_valid,
-    input   logic   [5:0]   rob_num,
-    input   logic   [4:0]   rd_dispatch,
+    input   logic   [ROB_ADDR_WIDTH- 1:0]   rob_num,
+    input   logic   [ARCH_REG_BITS - 1:0]   rd_dispatch,
 
     // adder inputs
     input   logic   [31:0]  addr,

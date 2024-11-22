@@ -15,7 +15,7 @@ import rv32i_types::*;
         input logic [PHYS_REG_BITS - 1:0] ps2      , // ps2, inherited from rename/dispatch
         input logic [ARCH_REG_BITS - 1:0] rd       ,// the arch dest register, inherited from free list, don't know width
         input logic [PHYS_REG_BITS - 1:0] pd       , // the phys dest register, inherited from free list, don't know width
-        input logic [PHYS_REG_BITS - 1:0] rob_entry , // rob entry, inherited from rob, don't know width
+        input logic [ROB_ADDR_WIDTH - 1:0] rob_entry , // rob entry, inherited from rob, don't know width
         input logic [PHYS_REG_BITS - 1:0] cdb_ps_id_add       ,   // cdb tells us if a busy register can be marked as unbusy
         input logic [PHYS_REG_BITS - 1:0] cdb_ps_id_multiply,
         input logic [PHYS_REG_BITS - 1:0] cdb_ps_id_divide,

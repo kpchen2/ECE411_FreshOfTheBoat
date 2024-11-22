@@ -8,14 +8,14 @@ import rv32i_types::*;
     input   logic                               rst,
 
     // rename/dispatch inputs
-    input   logic   [5:0]                       phys_reg_in,
-    input   logic   [4:0]                       arch_reg_in,
+    input   logic   [PHYS_REG_BITS - 1:0]                       phys_reg_in,
+    input   logic   [ARCH_REG_BITS - 1:0]                       arch_reg_in,
     input   logic                               enqueue_valid,
     input   logic   [31:0]                      pc_rdata,
     input   logic   [31:0]                      pc_wdata,
     input   logic   [63:0]                      order,
-    input   logic   [4:0]                       rs1_s,
-    input   logic   [4:0]                       rs2_s,
+    input   logic   [ARCH_REG_BITS - 1:0]                       rs1_s,
+    input   logic   [ARCH_REG_BITS - 1:0]                       rs2_s,
     input   logic   [31:0]                      inst,
     input   logic                               regf_we,
 
@@ -257,8 +257,8 @@ import rv32i_types::*;
         br_rob_idx_in_next = br_rob_idx_in;
         mem_rob_idx_in_next = mem_rob_idx_in;
 
-        rob_num = tail_reg[5:0] + 1'b1;
-        rob_head = head_reg[5:0] + 1'b1;
+        rob_num = tail_reg[ROB_ADDR_WIDTH - 1: 0] + 1'b1;
+        rob_head = head_reg[ROB_ADDR_WIDTH - 1: 0] + 1'b1;
         full = '0;
         dequeue_valid = '0;
 
@@ -269,7 +269,7 @@ import rv32i_types::*;
         if (!rst) begin
             full = (tail_reg[ADDR_WIDTH - 1:0] == head_reg[ADDR_WIDTH - 1:0]) && (tail_reg[ADDR_WIDTH] != head_reg[ADDR_WIDTH]);    // logic if queue full
             enqueue_next = full ? '0 : enqueue_valid;
-            dequeue_valid = (mem[head_reg[5:0]+1'b1].valid == 1'b1 && mem[head_reg[5:0]+1'b1].commit == 1'b1);  // dequeue if tail's inst is valid and ready to commit
+            dequeue_valid = (mem[head_reg[ROB_ADDR_WIDTH - 1:0]+1'b1].valid == 1'b1 && mem[head_reg[ROB_ADDR_WIDTH - 1:0]+1'b1].commit == 1'b1);  // dequeue if tail's inst is valid and ready to commit
 
             // send dequeue inst same cycle; update queue next cycle
             if (dequeue_valid && head_reg != tail_reg) begin
