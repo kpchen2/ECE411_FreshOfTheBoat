@@ -6,9 +6,9 @@ package rv32i_types;
     localparam NUM_MEM_REGISTERS = 4;
     localparam NUM_BRANCH_REGISTERS = 4;
     localparam MAX_ISSUES = 4; // num instructions to issue
-    localparam MEM_QUEUE_DEPTH = 32;
+    localparam MEM_QUEUE_DEPTH = 64;
     localparam MEM_ADDR_WIDTH = $clog2(MEM_QUEUE_DEPTH);
-    localparam ROB_DEPTH = 64;
+    localparam ROB_DEPTH = 32;
     localparam ROB_ADDR_WIDTH = $clog2(ROB_DEPTH);
     localparam FREE_LIST_DEPTH = 32;
     localparam FREE_LIST_ADDR_WIDTH = $clog2(FREE_LIST_DEPTH);
