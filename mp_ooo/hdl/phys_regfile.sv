@@ -13,7 +13,9 @@ import rv32i_types::*;
     input   logic   [4:0]   arch_s1_add, arch_s2_add,
     input   logic   [4:0]   arch_s1_br, arch_s2_br,
     input   logic   [4:0]   arch_s1_mem, arch_s2_mem,
-    input   logic   [4:0]   arch_rd_add, arch_rd_mul, arch_rd_div, arch_rd_br, arch_rd_mem
+    input   logic   [4:0]   arch_rd_add, arch_rd_mul, arch_rd_div, arch_rd_br, arch_rd_mem,
+    input   logic   [PHYS_REG_BITS-1:0]   rs1_jalr,
+    output  logic   [31:0]  rs1_v_jalr
 );
 
     logic   [31:0]  data [2**PHYS_REG_BITS];
@@ -124,6 +126,8 @@ import rv32i_types::*;
 
         rs1_v_div = (rs1_div_f1 > 0) ? data[rs1_div_f1] : '0;
         rs2_v_div = (rs2_div_f2 > 0) ? data[rs2_div_f2] : '0;
+
+        rs1_v_jalr = (rs1_jalr != 0) ? data[rs1_jalr] : '0;
     end
 
 endmodule : phys_regfile

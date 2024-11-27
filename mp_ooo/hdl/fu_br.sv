@@ -83,6 +83,11 @@ import rv32i_types::*;
                 end
             endcase
         end
+
+        // These are poorly named. In reality, it depends on the branch prediction.
+        pc_select = decode_info.branch_prediction ? ~pc_select : pc_select;
+        pc_branch = decode_info.branch_prediction ? decode_info.pc + 'd4 : pc_branch;
+        pc_branch = pc_select ? pc_branch : '0;
         
     end
 

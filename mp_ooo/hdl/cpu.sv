@@ -15,7 +15,7 @@ import rv32i_types::*;
     input   logic               bmem_rvalid
 );
 
-    logic   [31:0]  pc, pc_next;
+    logic   [31:0]  pc, pc_next, branch_pc_next, branch_pc_next_reg, pc_reg;
     logic           cache_valid; // If bursts are ready
     logic   [255:0] cache_wdata; // bursts (equivalent to dfp_rdata for icache)
 
@@ -194,6 +194,17 @@ import rv32i_types::*;
     // assign global_branch_signal = cdb_br.pc_select;
     // assign global_branch_addr = cdb_br.pc_branch;
 
+    logic           branch_prediction;
+
+    assign branch_prediction = '1;
+    logic           branch_pc_next_valid, branch_pc_next_valid_reg;
+
+    logic   [5:0]   rs1_jalr;
+    logic   [31:0]  rs1_v_jalr;
+
+    logic   [4:0]   rs1_fly;
+    logic   [5:0]   ps1_fly;
+
     assign proper_enqueue_in = (global_branch_signal_reg) ? 1'b0 : i_ufp_resp;
 
     always_ff @(posedge clk) begin
@@ -208,12 +219,18 @@ import rv32i_types::*;
             order  <= '0;
             global_branch_signal_reg <= '0;
             global_branch_signal_reg <= '0;
+            pc_reg <= 32'h1eceb000;
+            branch_pc_next_reg <= '0;
+            branch_pc_next_valid_reg <= '0;
         end else begin
             pc <= pc_next;
             initial_flag_reg <= initial_flag;
             dfp_read_reg <= dfp_read;
             order <= order_next;
             global_branch_signal_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? global_branch_signal_reg : global_branch_signal;
+            pc_reg <= pc;
+            branch_pc_next_reg <= branch_pc_next;
+            branch_pc_next_valid_reg <= branch_pc_next_valid;
         end
     end
 
@@ -242,6 +259,7 @@ import rv32i_types::*;
                     ufp_rmask = '0;
                 end
             end
+            pc_next = branch_pc_next_valid ? branch_pc_next : pc_next;
             pc_next = global_branch_signal ? global_branch_addr : pc_next;
         end
     end
@@ -250,7 +268,7 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
 
-        .ufp_addr(pc),
+        .ufp_addr(branch_pc_next_valid ? branch_pc_next - 32'd4 : pc),
         .ufp_rmask(ufp_rmask),
         .ufp_wmask('0),             // FILL WHEN WE WANT TO WRITE
         .ufp_rdata(ufp_rdata),
@@ -264,6 +282,34 @@ import rv32i_types::*;
         .dfp_wdata(dfp_wdata),      // FILL WHEN WE WANT TO WRITE
         .dfp_resp(dfp_resp)
     );
+
+    // calculate new pc on the fly for branch instructions
+    always_comb begin
+        branch_pc_next = '0;
+        branch_pc_next_valid = '0;
+        rs1_fly = '0;
+
+        if (!global_branch_signal_reg && ufp_rdata[6:0] inside {op_b_jal, op_b_jalr, op_b_br}) begin
+            rs1_fly = ufp_rdata[19:15];
+            unique case (ufp_rdata[6:0])
+                op_b_jal  : begin
+                    branch_pc_next = pc + {{12{ufp_rdata[31]}}, ufp_rdata[19:12], ufp_rdata[20], ufp_rdata[30:21], 1'b0};
+                    branch_pc_next_valid = branch_prediction;
+                end
+                op_b_jalr : begin
+                    branch_pc_next = (rs1_v_jalr + {{21{ufp_rdata[31]}}, ufp_rdata[30:20]}) & 32'hfffffffe;
+                    branch_pc_next_valid = branch_prediction;
+                end
+                op_b_br   : begin
+                    branch_pc_next = pc + {{20{ufp_rdata[31]}}, ufp_rdata[7], ufp_rdata[30:25], ufp_rdata[11:8], 1'b0};
+                    branch_pc_next_valid = branch_prediction;       
+                end
+                default : begin
+                    // do nothing
+                end
+            endcase
+        end
+    end
 
     cache cache_d (
         .clk(clk),
@@ -373,7 +419,7 @@ import rv32i_types::*;
     (
         .clk(clk),
         .rst(rst),
-        .wdata_in(pc),
+        .wdata_in(branch_pc_next_valid ? branch_pc_next - 32'd4 : pc),
         .enqueue_in(proper_enqueue_in),
         .rdata_out(prog),
         .dequeue_in(dequeue),
@@ -386,7 +432,7 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
         .inst(inst),
-        .prog(prog),
+        .prog(pc_reg),
         .rob_full(rob_full),
         .rs_full_add(rs_add_full), .rs_full_mul(rs_mul_full), .rs_full_div(rs_div_full), .rs_full_br(rs_br_full), .rs_full_mem(rs_mem_full), // TODO: Change this later for branch
         .is_iqueue_empty(iqueue_empty),
@@ -424,8 +470,11 @@ import rv32i_types::*;
         .mem_idx_in(queue_mem_idx),
         .mem_idx_out(dispatch_mem_idx),          // PROPAGATE THIS INTO MEM ADDER
         .global_branch_addr(global_branch_addr),
-        .global_branch_signal(global_branch_signal)
-        );
+        .global_branch_signal(global_branch_signal),
+        .branch_pc_next_reg(branch_pc_next_reg),
+        .branch_pc_next_valid_reg(branch_pc_next_valid_reg),
+        .branch_prediction(branch_prediction)    // 0 for static non-taken, 1 for static taken
+    );
 
     rat rat_i (
         .clk(clk),
@@ -443,7 +492,8 @@ import rv32i_types::*;
         .regf_we_add(cdb_add.valid), .regf_we_mul(cdb_mul.valid), .regf_we_div(cdb_div.valid), .regf_we_br(cdb_br.valid), .regf_we_mem(cdb_mem.valid),
         .decode_info(decode_info),
         .rrat(rrat),
-        .global_branch_signal(global_branch_signal_reg)
+        .global_branch_signal(global_branch_signal_reg),
+        .rs1_fly(rs1_fly), .ps1_fly(ps1_fly)
     );
 
     rob rob_i (
@@ -545,7 +595,8 @@ import rv32i_types::*;
         .rs1_v_add(rs1_v_add), .rs1_v_mul(rs1_v_mul), .rs1_v_div(rs1_v_div), .rs1_v_br(rs1_v_br), .rs1_v_mem(rs1_v_mem),
         .rs2_v_add(rs2_v_add), .rs2_v_mul(rs2_v_mul), .rs2_v_div(rs2_v_div), .rs2_v_br(rs2_v_br), .rs2_v_mem(rs2_v_mem),
         .arch_s1_add(add_decode_info.rs1_s), .arch_s2_add(add_decode_info.rs2_s), .arch_rd_add(cdb_add.rd_s), .arch_rd_mul(cdb_mul.rd_s), .arch_rd_div(cdb_div.rd_s), .arch_rd_mem(cdb_mem.rd_s), .arch_s1_mem(mem_decode_info.rs1_s), .arch_s2_mem(mem_decode_info.rs2_s),
-        .arch_s1_br(branch_decode_info.rs1_s), .arch_s2_br(branch_decode_info.rs2_s), .arch_rd_br(cdb_br.rd_s)
+        .arch_s1_br(branch_decode_info.rs1_s), .arch_s2_br(branch_decode_info.rs2_s), .arch_rd_br(cdb_br.rd_s),
+        .rs1_jalr(ps1_fly), .rs1_v_jalr(rs1_v_jalr)
     );
 
     logic   start_add, start_mul, start_div, start_br , start_mem;

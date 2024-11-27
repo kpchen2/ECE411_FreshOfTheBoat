@@ -43,7 +43,11 @@ import rv32i_types::*;
     output  logic   [5:0]   mem_idx_out,
     
     input   logic   [31:0]  global_branch_addr,
-    input   logic           global_branch_signal
+    input   logic           global_branch_signal,
+    input   logic           branch_prediction,
+    input   logic           branch_pc_next_valid_reg,
+    input   logic   [31:0]  branch_pc_next_reg
+    // output  logic   [5:0]   rs1_jalr
 );
 
     // decode_info_t decode_info;
@@ -88,6 +92,8 @@ import rv32i_types::*;
         dispatch_rs1_s = '0;
         dispatch_rs2_s = '0; 
         dispatch_regf_we = '0;
+        // rs1_jalr = '0;
+
 
 
         if (inst[6:0] == op_b_reg && inst[31:25] == 7'b0000001 && (inst[14:12] inside { mult_div_f3_mul, mult_div_f3_mulh, mult_div_f3_mulhsu, mult_div_f3_mulhu})) begin
@@ -136,11 +142,13 @@ import rv32i_types::*;
             dispatch_inst = inst;
             dispatch_pc_rdata = prog - 32'd4;
             dispatch_pc_wdata = global_branch_signal ? global_branch_addr : prog;
+            dispatch_pc_wdata = branch_pc_next_valid_reg ? branch_pc_next_reg - 32'd4 : dispatch_pc_wdata;
             dispatch_rs1_s = inst[19:15];
             dispatch_rs2_s = inst[24:20];
             dispatch_regf_we = regf_we;
 
             decode_info.pc = prog - 4;
+            decode_info.branch_prediction = branch_prediction;
         end
 
         pd = ((inst[6:0] == op_b_br) || (inst[11:7] == '0 && (inst[6:0] inside {op_b_auipc, op_b_lui, op_b_reg, op_b_imm, op_b_jal, op_b_jalr, op_b_load})) || inst[6:0] == op_b_store) ? '0 : phys_reg;

@@ -17,7 +17,10 @@ import rv32i_types::*;
     // input   logic   [PHYS_REG_BITS-1:0] rrat[32],
     // input   logic   global_branch_signal
     input   logic   global_branch_signal,
-    input   logic   [PHYS_REG_BITS-1:0]     rrat[32]
+    input   logic   [PHYS_REG_BITS-1:0]     rrat[32],
+
+    input   logic   [4:0]   rs1_fly,
+    output  logic   [PHYS_REG_BITS-1:0]     ps1_fly
 );
 
     logic [PHYS_REG_BITS-1:0] rat[32]; // holds mapping from arch register to phys register
@@ -85,6 +88,8 @@ import rv32i_types::*;
             ps2_valid = (decode_info.opcode inside {op_b_imm, op_b_lui, op_b_auipc, op_b_jal, op_b_jalr, op_b_load}) ? '1 : valid[rs2];
         end
 
+        ps1_fly = rat[rs1_fly];
+
         valid_next[0] = 1'b1;
 
         if (global_branch_signal) begin
@@ -93,6 +98,7 @@ import rv32i_types::*;
                 valid_next[i] = 1'b1;
             end
         end
+
 
         // rat_next = global_branch_signal ? rrat : rat_next;
         // valid_next = global_branch_signal ? '1 : valid_next;
