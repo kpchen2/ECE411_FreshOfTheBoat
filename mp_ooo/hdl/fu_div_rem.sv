@@ -128,9 +128,9 @@ import rv32i_types::*;
             end
         endcase
 
-        if (divide_by_0 && (decode_info_reg.funct3 == mult_div_f3_div || decode_info_reg.funct3 == mult_div_f3_divu) && complete_inst) begin
-            rd_v = '1; 
-        end
+        // if (divide_by_0 && (decode_info_reg.funct3 == mult_div_f3_div || decode_info_reg.funct3 == mult_div_f3_divu) && complete_inst) begin
+        //     rd_v = '1; 
+        // end
     end
 
 endmodule : fu_div_rem
