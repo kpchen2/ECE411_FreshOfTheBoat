@@ -40,9 +40,16 @@ import rv32i_types::*;
         end
     end
 
-    DW_div_seq #(33, 33, 1, 3,
-    0, 1, 1,
-    0)
+    DW_div_seq #(
+        33, 
+        33,
+        1, 
+        12,
+        0, 
+        1, 
+        1,    
+        0
+        )
     U1 (.clk(clk),
     .rst_n(~(rst)),
     .hold(1'b0),
