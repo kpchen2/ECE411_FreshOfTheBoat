@@ -1,4 +1,4 @@
-# AG Leaderboard mp_ooo_comp 2024-12-01T08:13:44-06:00 
+# AG Leaderboard mp_ooo_comp 2024-12-01T11:10:03-06:00 
 
 # Total Points
 |Rank|Team|f<sub>max</sub> (MHz)|Area (µm<sup>2</sup>)|Points|
