@@ -245,6 +245,15 @@ import rv32i_types::*;
             pc_next = global_branch_signal ? global_branch_addr : pc_next;
         end
     end
+
+    btb btb_i (
+        .clk0       (clk),
+        .csb0       ('0),
+        .web0       (),     // active low
+        .addr0      (),
+        .din0       (),
+        .dout0      ()
+    );
     
     cache cache_i (
         .clk(clk),
@@ -373,7 +382,7 @@ import rv32i_types::*;
     (
         .clk(clk),
         .rst(rst),
-        .wdata_in(pc),
+        .wdata_in(pc - 32'd4),
         .enqueue_in(proper_enqueue_in),
         .rdata_out(prog),
         .dequeue_in(dequeue),
