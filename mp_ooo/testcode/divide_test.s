@@ -3,7 +3,7 @@ dividend:    .word 100, 200, 300, 400, 500  # Array of dividends
 divisor:     .word 2, 4, 5, 8, 10           # Array of divisors
 result:      .space 20                      # Space for division results
 remainder:   .space 20                      # Space for remainder results
-length:      .word 5                        # Length of arrays
+length:      .word 20                        # Length of arrays
 
 .section .text
 .global _start
