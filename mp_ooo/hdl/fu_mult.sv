@@ -11,8 +11,8 @@ import rv32i_types::*;
     output  logic   [31:0]  rd_v,
     input   logic           start,
     output  logic           valid,
-    input   logic           hold
-    // input   logic           global_branch_signal
+    input   logic           hold,
+    input   logic           global_branch_signal
 );
 
     logic   [31:0]  a;
@@ -20,6 +20,8 @@ import rv32i_types::*;
 
     logic           complete_inst, complete_prev;
     logic   [65:0]  product_inst;
+
+    logic           flush, flush_next;
 
     logic   [32:0]  a_sext, a_zext, b_sext, b_zext;
     logic   [32:0]  a_final, b_final;
@@ -45,12 +47,15 @@ import rv32i_types::*;
         if (rst) begin
             complete_prev <= 1'b0;
             decode_info_reg <= '0;
+            flush <= '0;
         end else if (hold) begin
             complete_prev <= complete_inst;
             decode_info_reg <= decode_info_reg;
+            flush <= flush_next;
         end else begin
             complete_prev <= complete_inst;
             decode_info_reg <= decode_info;
+            flush <= '0;
         end
     end
 
@@ -62,7 +67,11 @@ import rv32i_types::*;
         a = rs1_v;
         b = rs2_v;
 
-        valid = complete_prev ? 1'b0 : complete_inst;
+        valid = (complete_prev) ? 1'b0 : complete_inst;
+
+        valid = flush ? 1'b0 : valid;
+
+        flush_next = global_branch_signal ? 1'b1 : flush;
 
         unique case (decode_info.funct3)
             mult_div_f3_mul : begin

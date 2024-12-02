@@ -119,7 +119,7 @@ import rv32i_types::*;
             mul_3 <= 1'b0;
             mul_4 <= 1'b0;
 
-            for (int i = 0; i<= NUM_DIV_CYCLES; i++)
+            for (int i = 0; i <= NUM_DIV_CYCLES; i++)
             begin
                 divs[i] <= 1'b0;
             end
@@ -164,8 +164,8 @@ import rv32i_types::*;
         .rd_v(rd_v_mul),
         .start(~global_branch_signal && start_mul),
         .valid(valid_mul),
-        .hold(mul_1 || mul_2 || mul_3 || mul_4)
-        // .global_branch_signal(global_branch_signal)
+        .hold(mul_1 || mul_2 || mul_3 || mul_4),
+        .global_branch_signal(global_branch_signal)
     );
 
     fu_div_rem fu_div_i (
@@ -177,9 +177,9 @@ import rv32i_types::*;
         .rd_v(rd_v_div),
         .start(~global_branch_signal && start_div),
         .valid(valid_div),
-        .hold(|divs)
+        .hold(|divs),
         // .hold(div_1 || div_2 || div_3 || div_4)
-        // .global_branch_signal(global_branch_signal)
+        .global_branch_signal(global_branch_signal)
     );
 
     fu_br fu_br_i (
@@ -253,29 +253,11 @@ import rv32i_types::*;
         cdb_br.pc_select = pc_select;
         cdb_br.pc_branch = pc_branch;
 
-        // cdb_mem.rob_idx = rob_idx_mem;
-        // cdb_mem.pd_s = pd_s_mem;
-        // cdb_mem.rd_s = rd_s_mem;
-        // cdb_mem.rd_v = '0; // 0 for now because we don't know value until we send to cache
-        // cdb_mem.valid = valid_mem;
-        // cdb_mem.inst = decode_info_mem.inst;
-        // cdb_mem.pc_select = pc_select;
-        // cdb_mem.pc_branch = pc_branch;
         addr_valid = valid_mem;
 
         // cdb_add = global_branch_signal ? '0 : cdb_add;
         // cdb_br = global_branch_signal ? '0 : cdb_br;
-        cdb_div.pc_select = '0;
-        cdb_div.pc_branch = '0;
 
-        cdb_br.rob_idx = rob_idx_br;
-        cdb_br.pd_s = pd_s_br;
-        cdb_br.rd_s = rd_s_br;
-        cdb_br.rd_v = rd_v_br;
-        cdb_br.valid = valid_br;
-        cdb_br.inst = decode_info_br.inst;
-        cdb_br.pc_select = pc_select;
-        cdb_br.pc_branch = pc_branch;
 
         if (global_branch_signal) begin
             cdb_add = '0;

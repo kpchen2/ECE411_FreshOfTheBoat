@@ -78,7 +78,7 @@ import rv32i_types::*;
             rs2_mul_4 <= '0;
 
 
-            for (int i =0 ; i <= NUM_DIV_CYCLES; i ++)
+            for (int i = 0; i <= NUM_DIV_CYCLES; i++)
             begin
                 rs1_divs[i] <= '0;
                 rs2_divs[i] <= '0;
@@ -103,7 +103,7 @@ import rv32i_types::*;
 
             rs1_divs[0] <= rs1_div;
             rs2_divs[0] <= rs2_div;
-            for (int i = 1 ; i <= NUM_DIV_CYCLES; i++)
+            for (int i = 1; i <= NUM_DIV_CYCLES; i++)
             begin
                 rs1_divs[i] <= rs1_divs[i - 1];
                 rs2_divs[i] <= rs2_divs[i - 1];
@@ -137,7 +137,7 @@ import rv32i_types::*;
         begin
             rs1_div_f1 = rs1_div;
             rs2_div_f2 = rs2_div;
-            for (int i = 0; i <= NUM_DIV_CYCLES; i ++)
+            for (int i = 0; i <= NUM_DIV_CYCLES; i++)
             begin
                 rs1_div_f1 = rs1_div_f1 | rs1_divs[i];
                 rs2_div_f2 = rs2_div_f2 | rs2_divs[i];    
