@@ -44,7 +44,7 @@ import rv32i_types::*;
         33, 
         33,
         1, 
-        12,
+        NUM_DIV_CYCLES,
         0, 
         1, 
         1,    
