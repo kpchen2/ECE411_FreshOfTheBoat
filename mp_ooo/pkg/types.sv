@@ -8,6 +8,16 @@ package rv32i_types;
     localparam MAX_ISSUES = 4; // num instructions to issue
     localparam MEM_QUEUE_DEPTH = 64;
     localparam MEM_ADDR_WIDTH = $clog2(MEM_QUEUE_DEPTH);
+
+    localparam LOAD_MEM_QUEUE_DEPTH = 32;
+    localparam LOAD_MEM_ADDR_WIDTH = $clog2(LOAD_MEM_QUEUE_DEPTH);
+
+    localparam STORE_MEM_QUEUE_DEPTH = 32;
+    localparam STORE_MEM_ADDR_WIDTH = $clog2(STORE_MEM_QUEUE_DEPTH);
+
+    localparam NUM_MUL_CYCLES = 3;
+    localparam NUM_DIV_CYCLES = 12;
+
     localparam ROB_DEPTH = 32;
     localparam ROB_ADDR_WIDTH = $clog2(ROB_DEPTH);
     localparam FREE_LIST_DEPTH = 32;

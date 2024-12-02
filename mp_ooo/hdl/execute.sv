@@ -69,6 +69,7 @@ import rv32i_types::*;
     logic   [31:0]  rd_v_add, rd_v_mul, rd_v_div, rd_v_br;//, rd_v_mem;
 
     logic           mul_1, mul_2, mul_3, mul_4;
+    logic [NUM_DIV_CYCLES: 0]          divs;
     logic           div_1, div_2, div_3, div_4;
 
     logic           pc_select;
@@ -118,20 +119,29 @@ import rv32i_types::*;
             mul_3 <= 1'b0;
             mul_4 <= 1'b0;
 
-            div_1 <= 1'b0;
-            div_2 <= 1'b0;
-            div_3 <= 1'b0;
-            div_4 <= 1'b0;
+            for (int i = 0; i<= NUM_DIV_CYCLES; i++)
+            begin
+                divs[i] <= 1'b0;
+            end
+            // div_1 <= 1'b0;
+            // div_2 <= 1'b0;
+            // div_3 <= 1'b0;
+            // div_4 <= 1'b0;
         end else begin
             mul_1 <= start_mul;
             mul_2 <= mul_1;
             mul_3 <= mul_2;
             mul_4 <= mul_3;
 
-            div_1 <= start_div;
-            div_2 <= div_1;
-            div_3 <= div_2;
-            div_4 <= div_3;
+
+            divs[0] <= start_div;
+            for (int i = 1; i <= NUM_DIV_CYCLES; i++)
+            begin
+                divs[i] <= divs[i-1];
+            end
+            // div_2 <= div_1;
+            // div_3 <= div_2;
+            // div_4 <= div_3;
         end
     end
 
@@ -167,7 +177,8 @@ import rv32i_types::*;
         .rd_v(rd_v_div),
         .start(~global_branch_signal && start_div),
         .valid(valid_div),
-        .hold(div_1 || div_2 || div_3 || div_4)
+        .hold(|divs)
+        // .hold(div_1 || div_2 || div_3 || div_4)
         // .global_branch_signal(global_branch_signal)
     );
 
@@ -200,7 +211,7 @@ import rv32i_types::*;
     always_comb 
     begin
         busy_mul = mul_1 || mul_2 || mul_3 || mul_4;
-        busy_div = div_1 || div_2 || div_3 || div_4;
+        busy_div = |divs;
         cdb_add = '0;
         cdb_mul = '0;
         cdb_div = '0;
