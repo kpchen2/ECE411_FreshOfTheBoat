@@ -126,23 +126,25 @@ import rv32i_types::*;
     always_comb begin
         rs1_mul_f1 = rst ? '0 : rs1_mul | rs1_mul_1 | rs1_mul_2 | rs1_mul_3 | rs1_mul_4;
         rs2_mul_f2 = rst ? '0 : rs2_mul | rs2_mul_1 | rs2_mul_2 | rs2_mul_3 | rs2_mul_4;
+        rs1_div_f1 = '0;
+        rs2_div_f2 = '0;
+        if (rst)
+        begin
+            rs1_div_f1 = '0;
+            rs2_div_f2 = '0;
+        end
+        else
+        begin
+            rs1_div_f1 = rs1_div;
+            rs2_div_f2 = rs2_div;
+            for (int i = 0; i <= NUM_DIV_CYCLES; i ++)
+            begin
+                rs1_div_f1 = rs1_div_f1 | rs1_divs[i];
+                rs2_div_f2 = rs2_div_f2 | rs2_divs[i];    
+            end
+        end
         
-        // if (rst)
-        // begin
-        //     rs1_div_f1 = '0;
-        //     rs2_div_fs = '0;
-        // end
-        // else
-        // begin
-        //     for (int i = 0; i <= NUM_DIV_CYCLES; i ++)
-        //     begin
-        //         rs1_div_f1 = rs1_div | 
-        //     end
-        // end
-        
-        rs1_div_f1 = rst ? '0 : (rs1_divs.or() | rs1_div);
         //rs1_div | rs1_div_1 | rs1_div_2 | rs1_div_3 | rs1_div_4;
-        rs2_div_f2 = rst ? '0 : (rs2_divs.or() | rs2_div);
         //rs2_div | rs2_div_1 | rs2_div_2 | rs2_div_3 | rs2_div_4;
 
         rs1_v_add = (arch_s1_add != 0) ? data[rs1_add] : '0;
