@@ -19,7 +19,7 @@ import rv32i_types::*;
     logic           cache_valid; // If bursts are ready
     logic   [255:0] cache_wdata; // bursts (equivalent to dfp_rdata for icache)
 
-    logic proper_enqueue_in;
+    logic proper_enqueue_in, pei_reg;
     /* ufp signals to send to icache */
     logic   [31:0]  ufp_addr;
     logic   [3:0]   ufp_rmask;
@@ -221,6 +221,7 @@ import rv32i_types::*;
             global_branch_signal_reg <= '0;
             // btb_out_reg <= '0;
             // btb_valid_reg <= '0;
+            pei_reg <= '0;
         end else begin
             pc <= pc_next;
             initial_flag_reg <= initial_flag;
@@ -229,6 +230,7 @@ import rv32i_types::*;
             global_branch_signal_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? global_branch_signal_reg : global_branch_signal;
             // btb_out_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? btb_out_reg : btb_out;
             // btb_valid_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? btb_valid_reg : true_btb_valid;
+            pei_reg <= proper_enqueue_in;
         end
     end
 
@@ -259,7 +261,7 @@ import rv32i_types::*;
             end
             pc_next = (proper_enqueue_in && true_btb_valid) ? btb_out + 32'd4 : pc_next;
             pc_next = (bp && ~global_branch_signal_reg && ~proper_enqueue_in && ~full_stall) ? bp_addr + 32'd4 : pc_next;
-            pc_next = (bp && ~global_branch_signal_reg && ~proper_enqueue_in && full_stall) ? bp_addr : pc_next;
+            pc_next = (bp && ~global_branch_signal_reg && (~proper_enqueue_in || full_stall)) ? bp_addr : pc_next;
             pc_next = global_branch_signal ? global_branch_addr : pc_next;
         end
     end
@@ -452,7 +454,7 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
         .wdata_in(btb_valid),
-        .enqueue_in(proper_enqueue_in),
+        .enqueue_in(pei_reg),
         .rdata_out(bp),
         .dequeue_in(dequeue),
         .full_out(),
@@ -465,7 +467,7 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
         .wdata_in(btb_out),
-        .enqueue_in(proper_enqueue_in),
+        .enqueue_in(pei_reg),
         .rdata_out(bp_addr),
         .dequeue_in(dequeue),
         .full_out(),

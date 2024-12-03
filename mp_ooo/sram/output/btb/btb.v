@@ -86,7 +86,7 @@ module btb(
 
   always @ (*)
   begin : MEM_READ1
-    dout1 = mem[addr1];
+    dout1 = mem[addr1_reg];
   end
 
 endmodule

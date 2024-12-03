@@ -90,7 +90,7 @@ import rv32i_types::*;
     // end
 
     always_comb begin
-        dout1 = internal_array[addr1];
+        dout1 = internal_array[addr1_reg];
     end
 
 endmodule : btb_valid_array
