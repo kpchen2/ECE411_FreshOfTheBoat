@@ -96,6 +96,13 @@ import rv32i_types::*;
             btb_addr = decode_info.pc[9:2];
             btb_din = pc_branch;
         end
+
+        if (decode_info.bp && decode_info.bp_addr == pc_branch) begin
+            pc_select = ~pc_select;
+            pc_branch = pc_select ? decode_info.pc + 32'd4 : '0;
+        end else if (decode_info.bp && decode_info.bp_addr != pc_branch) begin
+            pc_select = '1;
+        end
     end
 
 endmodule : fu_br

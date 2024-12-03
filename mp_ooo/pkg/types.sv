@@ -68,6 +68,9 @@ package rv32i_types;
 
         logic   [31:0]  pc;
 
+        logic           bp;
+        logic   [31:0]  bp_addr;
+
     } decode_info_t;
 
     typedef struct packed {

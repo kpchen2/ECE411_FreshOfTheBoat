@@ -41,7 +41,10 @@ import rv32i_types::*;
     output  logic   [MEM_ADDR_WIDTH - 1:0]   mem_idx_out,
     
     input   logic   [31:0]  global_branch_addr,
-    input   logic           global_branch_signal
+    input   logic           global_branch_signal,
+
+    input   logic           bp,
+    input   logic   [31:0]  bp_addr
 );
 
     // decode_info_t decode_info;
@@ -134,11 +137,14 @@ import rv32i_types::*;
             dispatch_inst = inst;
             dispatch_pc_rdata = prog;
             dispatch_pc_wdata = global_branch_signal ? global_branch_addr : prog + 32'd4;
+            dispatch_pc_wdata = bp ? bp_addr : dispatch_pc_wdata;
             dispatch_rs1_s = inst[19:15];
             dispatch_rs2_s = inst[24:20];
             dispatch_regf_we = regf_we;
 
             decode_info.pc = prog;
+            decode_info.bp = bp;
+            decode_info.bp_addr = bp_addr;
         end
 
         pd = ((inst[6:0] == op_b_br) || (inst[11:7] == '0 && (inst[6:0] inside {op_b_auipc, op_b_lui, op_b_reg, op_b_imm, op_b_jal, op_b_jalr, op_b_load})) || inst[6:0] == op_b_store) ? '0 : phys_reg;

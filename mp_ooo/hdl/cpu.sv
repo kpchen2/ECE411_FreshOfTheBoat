@@ -15,7 +15,7 @@ import rv32i_types::*;
     input   logic               bmem_rvalid
 );
 
-    logic   [31:0]  pc, pc_next, pc_in, btb_out;
+    logic   [31:0]  pc, pc_next, pc_in, btb_out, cache_addr, bp_addr;
     logic           cache_valid; // If bursts are ready
     logic   [255:0] cache_wdata; // bursts (equivalent to dfp_rdata for icache)
 
@@ -191,12 +191,16 @@ import rv32i_types::*;
 
     logic           d_cache_valid;
 
+    logic           btb_valid;
+
     // assign global_branch_signal = cdb_br.pc_select;
     // assign global_branch_addr = cdb_br.pc_branch;
 
     assign proper_enqueue_in = (global_branch_signal_reg) ? 1'b0 : i_ufp_resp;
 
     assign pc_in = pc - 32'd4;
+
+    assign cache_addr = btb_valid ? btb_out : pc;
 
     always_ff @(posedge clk) begin
 
@@ -245,6 +249,7 @@ import rv32i_types::*;
                 end
             end
             pc_next = global_branch_signal ? global_branch_addr : pc_next;
+            pc_next = (proper_enqueue_in && btb_valid) ? btb_out + 32'd4 : pc_next;
         end
     end
     
@@ -252,7 +257,7 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
 
-        .ufp_addr(pc),
+        .ufp_addr(cache_addr),
         .ufp_rmask(ufp_rmask),
         .ufp_wmask('0),             // FILL WHEN WE WANT TO WRITE
         .ufp_rdata(ufp_rdata),
@@ -285,8 +290,6 @@ import rv32i_types::*;
         .dfp_wdata(d_dfp_wdata),
         .dfp_resp(d_dfp_resp)               // CONNECT TO BMEM
     );
-
-    logic   btb_valid;
 
     logic   btb_web;
     logic   [7:0]   btb_addr;
@@ -446,6 +449,19 @@ import rv32i_types::*;
         .global_branch_signal(global_branch_signal)
     );
 
+    queue #(.DATA_WIDTH(32), .QUEUE_DEPTH(64)) queue_bp_addr
+    (
+        .clk(clk),
+        .rst(rst),
+        .wdata_in(btb_out),
+        .enqueue_in(proper_enqueue_in),
+        .rdata_out(bp_addr),
+        .dequeue_in(dequeue),
+        .full_out(),
+        .empty_out(),
+        .global_branch_signal(global_branch_signal)
+    );
+
     rename_dispatch rename_dispatch_i (
         .clk(clk),
         .rst(rst),
@@ -488,7 +504,9 @@ import rv32i_types::*;
         .mem_idx_in(queue_mem_idx),
         .mem_idx_out(dispatch_mem_idx),          // PROPAGATE THIS INTO MEM ADDER
         .global_branch_addr(global_branch_addr),
-        .global_branch_signal(global_branch_signal)
+        .global_branch_signal(global_branch_signal),
+        .bp(bp),
+        .bp_addr(bp_addr)
         );
 
     rat rat_i (
