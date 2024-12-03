@@ -314,8 +314,9 @@ import rv32i_types::*;
         .clk0       (clk),
         .rst0       (rst),
         .csb0       ('0),
-        .web0       (btb_web),   // change later
-        .addr0      (btb_addr),
+        .web0       (btb_web),
+        .addr0      (btb_addr), // address for writes only
+        .read_addr0 (ufp_rdata[9:2]),         // address for reads only
         .din0       (1'b1),
         .dout0      (btb_valid)
     );
@@ -418,18 +419,18 @@ import rv32i_types::*;
         .global_branch_signal(global_branch_signal)
     );
 
-    queue #(.DATA_WIDTH(1), .QUEUE_DEPTH(64)) queue_bp
-    (
-        .clk(clk),
-        .rst(rst),
-        .wdata_in(btb_valid),
-        .enqueue_in(proper_enqueue_in),
-        .rdata_out(bp),
-        .dequeue_in(dequeue),
-        .full_out(),
-        .empty_out(),
-        .global_branch_signal(global_branch_signal)
-    );
+    // queue #(.DATA_WIDTH(1), .QUEUE_DEPTH(64)) queue_bp
+    // (
+    //     .clk(clk),
+    //     .rst(rst),
+    //     .wdata_in(btb_valid),
+    //     .enqueue_in(proper_enqueue_in),
+    //     .rdata_out(bp),
+    //     .dequeue_in(dequeue),
+    //     .full_out(),
+    //     .empty_out(),
+    //     .global_branch_signal(global_branch_signal)
+    // );
 
     rename_dispatch rename_dispatch_i (
         .clk(clk),
