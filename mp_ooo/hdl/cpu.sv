@@ -15,7 +15,7 @@ import rv32i_types::*;
     input   logic               bmem_rvalid
 );
 
-    logic   [31:0]  pc, pc_next, pc_in;
+    logic   [31:0]  pc, pc_next, pc_in, btb_out;
     logic           cache_valid; // If bursts are ready
     logic   [255:0] cache_wdata; // bursts (equivalent to dfp_rdata for icache)
 
@@ -300,14 +300,19 @@ import rv32i_types::*;
         end
     end
 
-    btb btb_i (
+    btb btb_i (             // 0 for write, 1 for read
         .clk0       (clk),
         .csb0       ('0),
         .web0       (btb_web),     // active low
         .addr0      (btb_addr),
-        // .read_addr0 (pc_in[9:2]),         // address for reads only
         .din0       (btb_din),
-        .dout0      ()
+        .dout0      (),         // useless
+        .clk1       (clk),
+        .csb1       ('0),
+        .web1       ('1),     // active low
+        .addr1      (pc_in[9:2]),
+        .din1       ('1),         // useless
+        .dout1      (btb_out)
     );
 
     btb_valid_array #(
@@ -318,10 +323,16 @@ import rv32i_types::*;
         .rst0       (rst),
         .csb0       ('0),
         .web0       (btb_web),
-        .addr0      (~btb_web ? btb_addr : pc_in[9:2]), // address for writes only
-        // .read_addr0 (pc_in[9:2]),         // address for reads only
+        .addr0      (btb_addr), // address for writes only
         .din0       (1'b1),
-        .dout0      (btb_valid)
+        .dout0      (),         // useless, write port
+        .clk1       (clk),
+        .rst1       (rst),
+        .csb1       ('0),
+        .web1       ('1),
+        .addr1      (pc_in[9:2]), // address for writes only
+        .din1       ('1),         // useless, read port
+        .dout1      (btb_valid)
     );
 
     memory_queue memory_queue_i (
@@ -422,18 +433,18 @@ import rv32i_types::*;
         .global_branch_signal(global_branch_signal)
     );
 
-    // queue #(.DATA_WIDTH(1), .QUEUE_DEPTH(64)) queue_bp
-    // (
-    //     .clk(clk),
-    //     .rst(rst),
-    //     .wdata_in(btb_valid),
-    //     .enqueue_in(proper_enqueue_in),
-    //     .rdata_out(bp),
-    //     .dequeue_in(dequeue),
-    //     .full_out(),
-    //     .empty_out(),
-    //     .global_branch_signal(global_branch_signal)
-    // );
+    queue #(.DATA_WIDTH(1), .QUEUE_DEPTH(64)) queue_bp
+    (
+        .clk(clk),
+        .rst(rst),
+        .wdata_in(btb_valid),
+        .enqueue_in(proper_enqueue_in),
+        .rdata_out(bp),
+        .dequeue_in(dequeue),
+        .full_out(),
+        .empty_out(),
+        .global_branch_signal(global_branch_signal)
+    );
 
     rename_dispatch rename_dispatch_i (
         .clk(clk),

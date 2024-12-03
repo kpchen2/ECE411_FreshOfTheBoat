@@ -10,7 +10,15 @@ import rv32i_types::*;
     input   logic                   web0,
     input   logic   [S_INDEX-1:0]   addr0,
     input   logic   [WIDTH-1:0]     din0,
-    output  logic   [WIDTH-1:0]     dout0
+    output  logic   [WIDTH-1:0]     dout0,
+
+    input   logic                   clk1,
+    input   logic                   rst1,
+    input   logic                   csb1,
+    input   logic                   web1,
+    input   logic   [S_INDEX-1:0]   addr1,
+    input   logic   [WIDTH-1:0]     din1,
+    output  logic   [WIDTH-1:0]     dout1
 );
 
     localparam              NUM_SETS    = 2**S_INDEX;
@@ -18,6 +26,10 @@ import rv32i_types::*;
     logic                   web0_reg;
     logic   [S_INDEX-1:0]   addr0_reg;
     logic   [WIDTH-1:0]     din0_reg;
+
+    logic                   web1_reg;
+    logic   [S_INDEX-1:0]   addr1_reg;
+    logic   [WIDTH-1:0]     din1_reg;
 
     logic   [WIDTH-1:0]     internal_array [NUM_SETS];
 
@@ -49,6 +61,36 @@ import rv32i_types::*;
 
     always_comb begin
         dout0 = internal_array[addr0_reg];
+    end
+
+    always_ff @(posedge clk1) begin
+        if (rst1) begin
+            web1_reg  <= 1'b1;
+            addr1_reg <= 'x;
+            din1_reg  <= 'x;
+        end else begin
+            if (!csb1) begin
+                web1_reg  <= web1;
+                addr1_reg <= addr1;
+                din1_reg  <= din1;
+            end
+        end
+    end
+
+    // always_ff @(posedge clk1) begin
+    //     if (rst1) begin
+    //         for (int i = 0; i < NUM_SETS; i++) begin
+    //             internal_array[i] <= '0;
+    //         end
+    //     end else begin
+    //         if (!web1_reg) begin
+    //             internal_array[addr1_reg] <= din1_reg;
+    //         end
+    //     end
+    // end
+
+    always_comb begin
+        dout1 = internal_array[addr1];
     end
 
 endmodule : btb_valid_array
