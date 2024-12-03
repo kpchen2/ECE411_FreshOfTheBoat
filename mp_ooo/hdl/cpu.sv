@@ -357,7 +357,7 @@ import rv32i_types::*;
         .bmem_write(bmem_write)
     );
 
-    queue #(.DATA_WIDTH(32), .QUEUE_DEPTH(64)) queue_i (
+    queue #(.DATA_WIDTH(32), .QUEUE_DEPTH(32)) queue_i (
         .clk(clk),
         .rst(rst),
         .wdata_in(ufp_rdata),
@@ -369,7 +369,7 @@ import rv32i_types::*;
         .global_branch_signal(global_branch_signal)
     );
 
-    queue #(.DATA_WIDTH(32), .QUEUE_DEPTH(64)) queue_pc
+    queue #(.DATA_WIDTH(32), .QUEUE_DEPTH(32)) queue_pc
     (
         .clk(clk),
         .rst(rst),
