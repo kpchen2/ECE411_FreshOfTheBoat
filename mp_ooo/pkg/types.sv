@@ -18,7 +18,7 @@ package rv32i_types;
     localparam NUM_MUL_CYCLES = 3;
     localparam NUM_DIV_CYCLES = 12;
 
-    localparam ROB_DEPTH = 32;
+    localparam ROB_DEPTH = 16;
     localparam ROB_ADDR_WIDTH = $clog2(ROB_DEPTH);
     localparam FREE_LIST_DEPTH = 32;
     localparam FREE_LIST_ADDR_WIDTH = $clog2(FREE_LIST_DEPTH);
