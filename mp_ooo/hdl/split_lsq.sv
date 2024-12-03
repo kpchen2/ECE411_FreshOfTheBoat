@@ -95,7 +95,17 @@ module split_lsq
     
         // currently accessing cache ( i think)
         logic           accessing_cache;
-    
+
+        // next_free_load_entry, find the closest available load_entry
+        logic [LOAD_MEM_ADDR_WIDTH - 1:0] next_free_load_entry;
+        // next done load entry, find the nearest load that can be issued out
+        logic [LOAD_MEM_ADDR_WIDTH - 1:0] next_done_load_entry;
+
+        // if load queue is full
+        logic load_full;
+        //    found a load ready to issue
+        logic ready_load;
+
         always_ff @ (posedge clk) begin
             enqueue_reg <= enqueue_valid;
             dequeue_reg <= data_valid;
@@ -138,11 +148,126 @@ module split_lsq
             end
         end
     
+
+        // load_full logic, if the load queue is full
+        always_comb
+        begin
+            load_full = 1'b1;
+            for (int i = 0; i < LOAD_MEM_ADDR_WIDTH; i ++)
+            begin
+                if (load_mem[i].valid == 1'b0)
+                begin
+                    load_full = 1'b0;
+                    break;
+                end
+            end
+        end
+
+
+        /* load add logic order, find load_mem_next, track the youngest store older than the load */
+        always_comb
+        begin
+            load_mem_next = '0;
+            if (enqueue_valid_next && opcode == op_b_load)
+            begin
+                load_mem_next.valid = 1'b1;
+                load_mem_next.addr_ready = 1'b0;
+                load_mem_next.addr = 32'bx;
+                load_mem_next.inst = inst;
+                load_mem_next.opcode = opcode;
+                load_mem_next.funct3 = funct3;
+                load_mem_next.pd_s = phys_reg_in;
+                load_mem_next.rob_num = rob_num;
+                load_mem_next.rd_s = rd_dispatch;
+                load_mem_next.store_empty = (store_tail_reg == store_head_reg) ? 1'b1 : 1'b0;
+                if (load_mem_next.store_empty)
+                begin
+                    load_mem_next.store_ptr = '0;
+                end
+                else
+                begin
+                    for (int unsigned i = 0; i < STORE_MEM_QUEUE_DEPTH; i++)
+                    begin
+                        if (store_mem[i].rob_num < rob_num)
+                        begin
+                            load_mem_next.store_ptr = i;
+                        end
+                        else
+                        begin
+                            break;
+                        end
+                    end
+                end
+                for (int unsigned i = 0 ; i < LOAD_MEM_QUEUE_DEPTH; i++)
+                begin
+                    if (~load_mem[i].valid)
+                    begin
+                        next_free_load_entry = i;
+                        break;
+                    end
+                end
+            end
+            
+        end
+
+        /* load remove entry order. We remove a load asynchronously if its tracked store has been dequeued and */
+        always_comb
+        begin
+            ready_load = 1'b0;
+            load_mem_new = load_mem[0];
+            next_done_load_entry = '0;
+            for (int unsigned i = 0; i < LOAD_MEM_QUEUE_DEPTH; i++)
+            begin
+                
+                for (int unsigned j = 0; j < STORE_MEM_QUEUE_DEPTH; j++) 
+                begin
+                    // prior stores are still in store queue, this load cannot be issued
+                    if (store_mem[j].valid && load_mem[i].valid && store_mem[j].rob_num < load_mem[i].rob_num)
+                    begin
+                        break; 
+                    end
+
+                    // all prior stores have been issued, issue this load 
+                    else if (load_mem[i].valid && (store_mem[j].rob_num > load_mem[i].rob_num || j == store_tail_reg))
+                    begin
+                        next_done_load_entry = i;
+                        load_mem_new = load_mem[i];
+                        load_mem_new.valid = 1'b0;
+                        cdb_mem.rob_idx = load_mem_new.rob_num;
+                        cdb_mem.pd_s = load_mem_new.pd_s;
+                        cdb_mem.rd_s = load_mem_new.rd_s;
+                        cdb_mem.valid = '1;
+                        cdb_mem.inst = load_mem_new.inst;
+                        cdb_mem.addr = load_mem_new.addr;
+                        cdb_mem.rmask = load_mem_new.rmask;
+                        cdb_mem.wmask = '0;
+                        cdb_mem.rdata = data_in;
+                        cdb_mem.wdata = '0;
+                        cdb_mem.rs1_rdata = load_mem_new.rs1_rdata;
+                        cdb_mem.rdata = data_in;
+                        cdb_mem.rs2_rdata = '0;
+
+                        unique case (load_mem[i].funct3)
+                            // rd_v = rd_wdata
+                            load_f3_lb : cdb_mem.rd_v = {{24{data_in[7 +8 *load_mem[i].shift_bits]}}   , data_in[8 *load_mem[i].shift_bits    +: 8 ]};
+                            load_f3_lbu: cdb_mem.rd_v = {{24{1'b0}}                                                , data_in[8 *load_mem[i].shift_bits    +: 8 ]};
+                            load_f3_lh : cdb_mem.rd_v = {{16{data_in[15+16*load_mem[i].shift_bits[1]]}}, data_in[16*load_mem[i].shift_bits[1] +: 16]};
+                            load_f3_lhu: cdb_mem.rd_v = {{16{1'b0}}                                                , data_in[16*load_mem[i].shift_bits[1] +: 16]};
+                            load_f3_lw : cdb_mem.rd_v = data_in;
+                            default    : cdb_mem.rd_v = 'x;
+                        endcase
+                    end
+                end
+            end
+        end
+
         always_comb begin
-            tail_next = tail_reg;
-            head_next = head_reg;
-            enqueue_mem_next = '0;
-            dequeue_mem_next = '0;
+            store_tail_next = store_tail_reg;
+            store_head_next = store_head_reg;
+            store_enqueue_mem_next = '0;
+            store_dequeue_mem_next = '0;
+            load_mem_next = '0;
+            load_mem_new = '0;
             cache_mem_next = '0;
     
             full = '0;
