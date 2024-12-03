@@ -9,7 +9,6 @@ import rv32i_types::*;
     input   logic                   csb0,
     input   logic                   web0,
     input   logic   [S_INDEX-1:0]   addr0,
-    input   logic   [S_INDEX-1:0]   read_addr0,
     input   logic   [WIDTH-1:0]     din0,
     output  logic   [WIDTH-1:0]     dout0
 );
@@ -49,7 +48,7 @@ import rv32i_types::*;
     end
 
     always_comb begin
-        dout0 = internal_array[read_addr0];
+        dout0 = internal_array[addr0_reg];
     end
 
 endmodule : btb_valid_array
