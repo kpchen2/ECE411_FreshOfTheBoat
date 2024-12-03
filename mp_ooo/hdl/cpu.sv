@@ -15,7 +15,7 @@ import rv32i_types::*;
     input   logic               bmem_rvalid
 );
 
-    logic   [31:0]  pc, pc_next, pc_in, btb_out, cache_addr, bp_addr;
+    logic   [31:0]  pc, pc_next, pc_in, btb_out, cache_addr, bp_addr, btb_out_reg;
     logic           cache_valid; // If bursts are ready
     logic   [255:0] cache_wdata; // bursts (equivalent to dfp_rdata for icache)
 
@@ -191,7 +191,7 @@ import rv32i_types::*;
 
     logic           d_cache_valid;
 
-    logic           btb_valid;
+    logic           btb_valid, btb_valid_reg;
 
     // assign global_branch_signal = cdb_br.pc_select;
     // assign global_branch_addr = cdb_br.pc_branch;
@@ -214,12 +214,16 @@ import rv32i_types::*;
             order  <= '0;
             global_branch_signal_reg <= '0;
             global_branch_signal_reg <= '0;
+            btb_out_reg <= '0;
+            btb_valid_reg <= '0;
         end else begin
             pc <= pc_next;
             initial_flag_reg <= initial_flag;
             dfp_read_reg <= dfp_read;
             order <= order_next;
             global_branch_signal_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? global_branch_signal_reg : global_branch_signal;
+            btb_out_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? btb_out_reg : btb_out;
+            btb_valid_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? btb_valid_reg : btb_valid;
         end
     end
 
@@ -250,6 +254,7 @@ import rv32i_types::*;
             end
             pc_next = global_branch_signal ? global_branch_addr : pc_next;
             pc_next = (proper_enqueue_in && btb_valid) ? btb_out + 32'd4 : pc_next;
+            pc_next = (btb_valid_reg && ~proper_enqueue_in) ? btb_out_reg + 32'd4 : pc_next;
         end
     end
     
