@@ -210,7 +210,7 @@ module split_lsq
             
         end
 
-        /* load remove entry order. We remove a load asynchronously if its tracked store has been dequeued and */
+        /* load remove entry order. We remove a load asynchronously if its tracked store has been dequeued and it has a ready address*/
         always_comb
         begin
             ready_load = 1'b0;
@@ -218,7 +218,10 @@ module split_lsq
             next_done_load_entry = '0;
             for (int unsigned i = 0; i < LOAD_MEM_QUEUE_DEPTH; i++)
             begin
-                
+                if (ready_load)
+                begin
+                    break;
+                end
                 for (int unsigned j = 0; j < STORE_MEM_QUEUE_DEPTH; j++) 
                 begin
                     // prior stores are still in store queue, this load cannot be issued
@@ -228,7 +231,7 @@ module split_lsq
                     end
 
                     // all prior stores have been issued, issue this load 
-                    else if (load_mem[i].valid && (store_mem[j].rob_num > load_mem[i].rob_num || j == store_tail_reg))
+                    else if (load_mem[i].valid && (store_mem[j].rob_num > load_mem[i].rob_num || j == store_tail_reg) && data_valid)
                     begin
                         next_done_load_entry = i;
                         load_mem_new = load_mem[i];
@@ -246,7 +249,7 @@ module split_lsq
                         cdb_mem.rs1_rdata = load_mem_new.rs1_rdata;
                         cdb_mem.rdata = data_in;
                         cdb_mem.rs2_rdata = '0;
-
+                        ready_load = 1'b1;
                         unique case (load_mem[i].funct3)
                             // rd_v = rd_wdata
                             load_f3_lb : cdb_mem.rd_v = {{24{data_in[7 +8 *load_mem[i].shift_bits]}}   , data_in[8 *load_mem[i].shift_bits    +: 8 ]};
