@@ -73,18 +73,27 @@ module split_lsq
         // valids for stores. Note that enqueue is equivalent to mem_regf_we_dispatch. have to change so it only is valid for stores. Not sure if we need one for loads
         logic           enqueue_reg;
         logic           dequeue_reg;
-    
-        logic   [ROB_ADDR_WIDTH - 1:0]   rob_num_next;
-        logic   [ROB_ADDR_WIDTH - 1:0]   rob_num_next;
-        logic   [31:0]  data_in_next;
-    
+
+
+        // if we got another load/store instruction. Logic has to vary.
         logic           enqueue_valid_next;
+
+        // if ready to pop off an existing load/store instruction
         logic           data_valid_next;
+
+        // if adder done
         logic           addr_valid_next;
+
+        // next version of mem_idx_in input port
         logic   [ADDR_WIDTH - 1 :0]   mem_idx_in_next;
+
+        // next version of addr in input port
         logic   [31:0]  addr_next;
+
+        // next version of store_wdata
         logic   [31:0]  store_wdata_next;
     
+        // currently accessing cache ( i think)
         logic           accessing_cache;
     
         always_ff @ (posedge clk) begin
