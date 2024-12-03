@@ -203,6 +203,52 @@ package rv32i_types;
         logic   [31:0]  rs1_rdata;
         logic   [31:0]  rs2_rdata;
     } lsq_entry_t;
+
+    typedef struct packed {
+        logic           valid;
+        logic           addr_ready;
+        logic   [31:0]  addr;
+        logic   [31:0]  inst;
+        logic   [6:0]   opcode;
+        logic   [2:0]   funct3;
+        logic   [1:0]   shift_bits;
+        logic   [PHYS_REG_BITS - 1:0]   pd_s;
+        logic   [ROB_ADDR_WIDTH - 1:0]   rob_num;
+        logic   [31:0]  store_wdata;
+        
+        logic   [ARCH_REG_BITS - 1:0]   rd_s;
+        logic   [3:0]   rmask;
+        logic   [3:0]   wmask;
+        logic   [31:0]  rdata;
+        logic   [31:0]  wdata;
+
+        logic   [31:0]  rs1_rdata;
+        logic   [31:0]  rs2_rdata;
+    } sq_entry_t;
+
+    typedef struct packed {
+        logic           valid;
+        logic           addr_ready;
+        logic   [31:0]  addr;
+        logic   [31:0]  inst;
+        logic   [6:0]   opcode;
+        logic   [2:0]   funct3;
+        logic   [1:0]   shift_bits;
+        logic   [PHYS_REG_BITS - 1:0]   pd_s;
+        logic   [ROB_ADDR_WIDTH - 1:0]   rob_num;
+        logic   [31:0]  store_wdata;
+        
+        logic   [ARCH_REG_BITS - 1:0]   rd_s;
+        logic   [3:0]   rmask;
+        logic   [3:0]   wmask;
+        logic   [31:0]  rdata;
+        logic   [31:0]  wdata;
+
+        logic   [31:0]  rs1_rdata;
+        logic   [31:0]  rs2_rdata;
+
+        logic   [STORE_MEM_ADDR_WIDTH - 1 : 0] store_ptr; // points to where the youngest store that is older than this load is (track using rob_num)
+    } lq_entry_t;
     
     typedef struct packed {
         rvfi_info if_id_rvfi;
