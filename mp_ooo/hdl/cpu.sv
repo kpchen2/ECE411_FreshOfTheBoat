@@ -245,15 +245,6 @@ import rv32i_types::*;
             pc_next = global_branch_signal ? global_branch_addr : pc_next;
         end
     end
-
-    btb btb_i (
-        .clk0       (clk),
-        .csb0       ('0),
-        .web0       (),     // active low
-        .addr0      (),
-        .din0       (),
-        .dout0      ()
-    );
     
     cache cache_i (
         .clk(clk),
@@ -291,6 +282,42 @@ import rv32i_types::*;
         .dfp_rdata(d_dfp_rdata),            // CONNECT TO BMEM
         .dfp_wdata(d_dfp_wdata),
         .dfp_resp(d_dfp_resp)               // CONNECT TO BMEM
+    );
+
+    logic   btb_valid;
+
+    logic   btb_web;
+    logic   [7:0]   btb_addr;
+    logic   [31:0]  btb_din;
+
+    logic   bp;
+
+    always_comb begin
+        if (ufp_rdata[6:0] inside {op_b_jal, op_b_jalr, op_b_br}) begin
+            // check if valid
+        end
+    end
+
+    btb btb_i (
+        .clk0       (clk),
+        .csb0       ('0),
+        .web0       (btb_web),     // active low
+        .addr0      (btb_addr),
+        .din0       (btb_din),
+        .dout0      ()
+    );
+
+    valid_array #(
+        .S_INDEX(8),
+        .WIDTH(1)
+    ) btb_valid_array (
+        .clk0       (clk),
+        .rst0       (rst),
+        .csb0       ('0),
+        .web0       (btb_web),   // change later
+        .addr0      (btb_addr),
+        .din0       (1'b1),
+        .dout0      (btb_valid)
     );
 
     memory_queue memory_queue_i (
@@ -388,6 +415,19 @@ import rv32i_types::*;
         .dequeue_in(dequeue),
         .full_out(full_garbage),
         .empty_out(empty_garbage),
+        .global_branch_signal(global_branch_signal)
+    );
+
+    queue #(.DATA_WIDTH(1), .QUEUE_DEPTH(64)) queue_bp
+    (
+        .clk(clk),
+        .rst(rst),
+        .wdata_in(btb_valid),
+        .enqueue_in(proper_enqueue_in),
+        .rdata_out(bp),
+        .dequeue_in(dequeue),
+        .full_out(),
+        .empty_out(),
         .global_branch_signal(global_branch_signal)
     );
 
@@ -595,7 +635,10 @@ import rv32i_types::*;
         .calculated_address(calculated_address),
         .fu_rs1_v_mem(fu_rs1_v_mem),
         .fu_rs2_v_mem(fu_rs2_v_mem),
-        .global_branch_signal(global_branch_signal)
+        .global_branch_signal(global_branch_signal),
+        .btb_addr(btb_addr),
+        .btb_din(btb_din),
+        .btb_web(btb_web)
     );
 
     reservation_station reservation_stations_i (

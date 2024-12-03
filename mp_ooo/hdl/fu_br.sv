@@ -11,7 +11,10 @@ import rv32i_types::*;
     output  logic           valid,
     output  logic           busy,
     output  logic           pc_select,
-    output  logic   [31:0]  pc_branch
+    output  logic   [31:0]  pc_branch,
+    output  logic           btb_web,
+    output  logic   [7:0]   btb_addr,
+    output  logic   [31:0]  btb_din
 );
 
     logic signed   [31:0] as;
@@ -83,7 +86,16 @@ import rv32i_types::*;
                 end
             endcase
         end
+
+        btb_web = '1;
+        btb_addr = '0;
+        btb_din = '0;
         
+        if (pc_select) begin
+            btb_web = '0;
+            btb_addr = decode_info.pc[9:2];
+            btb_din = pc_branch;
+        end
     end
 
 endmodule : fu_br

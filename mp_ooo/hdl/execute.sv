@@ -54,7 +54,11 @@ import rv32i_types::*;
     output  logic           busy_mem,
     output logic    [31:0]  store_wdata,
     output logic    [31:0]  calculated_address,
-    output  logic   [31:0]  fu_rs1_v_mem, fu_rs2_v_mem
+    output  logic   [31:0]  fu_rs1_v_mem, fu_rs2_v_mem,
+
+    output  logic           btb_web,
+    output  logic   [7:0]   btb_addr,
+    output  logic   [31:0]  btb_din
 );
 
     logic   valid_add, valid_mul, valid_div, valid_br, valid_mem;
@@ -191,7 +195,10 @@ import rv32i_types::*;
         .valid(valid_br),
         .busy(busy_br),
         .pc_select(pc_select),
-        .pc_branch(pc_branch)
+        .pc_branch(pc_branch),
+        .btb_addr(btb_addr),
+        .btb_din(btb_din),
+        .btb_web(btb_web)
     );
 
     fu_mem fu_mem_i(
