@@ -240,14 +240,13 @@ package rv32i_types;
         
         logic   [ARCH_REG_BITS - 1:0]   rd_s;
         logic   [3:0]   rmask;
-        logic   [3:0]   wmask;
         logic   [31:0]  rdata;
-        logic   [31:0]  wdata;
 
         logic   [31:0]  rs1_rdata;
         logic   [31:0]  rs2_rdata;
 
         logic   [STORE_MEM_ADDR_WIDTH - 1 : 0] store_ptr; // points to where the youngest store that is older than this load is (track using rob_num)
+        logic   store_empty;
     } lq_entry_t;
     
     typedef struct packed {
