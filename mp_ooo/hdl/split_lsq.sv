@@ -45,22 +45,36 @@ module split_lsq
         output  logic   [31:0]  d_wdata
     );
     
-        localparam ADDR_WIDTH = $clog2(QUEUE_DEPTH);
+        localparam ADDR_WIDTH = $clog2(STORE_MEM_QUEUE_DEPTH);
     
-        logic   [ADDR_WIDTH:0]      tail_reg;              // extra bit for overflow
-        logic   [ADDR_WIDTH:0]      head_reg;              // extra bit for overflow
+        // store queue pointers, tail, head 
+        logic   [ADDR_WIDTH:0]      store_tail_reg;              // extra bit for overflow
+        logic   [ADDR_WIDTH:0]      store_head_reg;              // extra bit for overflow
     
-        logic   [ADDR_WIDTH:0]      tail_next;             // combinational
-        logic   [ADDR_WIDTH:0]      head_next;             // combinational
+        logic   [ADDR_WIDTH:0]      store_tail_next;             // combinational
+        logic   [ADDR_WIDTH:0]      store_head_next;             // combinational
     
-        lsq_entry_t     mem [QUEUE_DEPTH];     // extra bit for validity | QUEUE_DEPTH entries with each entry begin DATA_WIDTH+1 size
-        lsq_entry_t     enqueue_mem_next;
-        lsq_entry_t     dequeue_mem_next;
-        lsq_entry_t     cache_mem_next;
+
+        // load data and store queue 
+        lq_entry_t     load_mem [LOAD_MEM_QUEUE_DEPTH];     // extra bit for validity | QUEUE_DEPTH entries with each entry begin DATA_WIDTH+1 size
+        sq_entry_t     store_mem[STORE_MEM_QUEUE_DEPTH];
+        
+        // load data entries 
+        lq_entry_t      load_mem_next; // this is for writing a new entry
+        lq_entry_t      load_mem_new;  // this is for updating an entry, marking it as not valid     
+
+        // store data entries 
+        sq_entry_t     store_enqueue_mem_next;
+        sq_entry_t     store_dequeue_mem_next;
+
+        // ??
+        lsq_entry_t     cache_mem_next; // ???
     
+        // valids for stores. Note that enqueue is equivalent to mem_regf_we_dispatch. have to change so it only is valid for stores. Not sure if we need one for loads
         logic           enqueue_reg;
         logic           dequeue_reg;
     
+        logic   [ROB_ADDR_WIDTH - 1:0]   rob_num_next;
         logic   [ROB_ADDR_WIDTH - 1:0]   rob_num_next;
         logic   [31:0]  data_in_next;
     
