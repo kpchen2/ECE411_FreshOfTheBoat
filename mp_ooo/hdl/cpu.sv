@@ -191,33 +191,58 @@ import rv32i_types::*;
 
     logic           d_cache_valid;
 
+    /* prefetch stuff */
+    logic           prefetch_valid, prefetch_valid_reg, undo_pc, undo_pc_reg;
+    logic   [31:0]  prefetch_pc, saved_pc, saved_pc_reg;
+    logic           false_resp, dummy_false_resp;
+    logic   [31:0]  pc_in;
+    logic           prefetch_stall, dummy_prefetch_stall;
+
+    // assign  pc_in = pc - 32'd4;
+
+    always_comb begin
+        pc_in = pc - 32'd4;
+
+        if (prefetch_valid_reg) begin
+            pc_in[4:0] = '0;
+        end
+    end
+
     // assign global_branch_signal = cdb_br.pc_select;
     // assign global_branch_addr = cdb_br.pc_branch;
 
-    assign proper_enqueue_in = (global_branch_signal_reg) ? 1'b0 : i_ufp_resp;
+    assign proper_enqueue_in = (global_branch_signal_reg) ? 1'b0 : (i_ufp_resp && !false_resp);
 
     always_ff @(posedge clk) begin
-
         bmem_raddr_dummy <= bmem_raddr; // useless
-        // bmem_wdata <= '0;               // useless
 
         if (rst) begin
             pc <= 32'h1eceb000;
             initial_flag_reg <= '1;
             dfp_read_reg <= '0;
-            order  <= '0;
+            order <= '0;
             global_branch_signal_reg <= '0;
             global_branch_signal_reg <= '0;
+            undo_pc_reg <= '0;
+            saved_pc_reg <= '0;
+            prefetch_valid_reg <= '0;
+
         end else begin
             pc <= pc_next;
             initial_flag_reg <= initial_flag;
             dfp_read_reg <= dfp_read;
             order <= order_next;
             global_branch_signal_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? global_branch_signal_reg : global_branch_signal;
+            undo_pc_reg <= undo_pc;
+            saved_pc_reg <= saved_pc;
+            prefetch_valid_reg <= prefetch_valid;
         end
     end
 
     always_comb begin
+        undo_pc = undo_pc_reg;
+        saved_pc = saved_pc_reg;
+
         if (rst) begin
             pc_next = pc;
             initial_flag = '1;
@@ -226,23 +251,39 @@ import rv32i_types::*;
 
         end else begin
             // bmem_read = (!dfp_read_reg && dfp_read) ? '1 : '0;          // bmem_read high on rising dfp_read edge (DOESN'T MATCH TIMING DIAGRAM)
+            if (undo_pc_reg && !global_branch_signal) begin
+                pc_next = saved_pc_reg;
+                undo_pc = '0;
+                saved_pc = '0;
 
-            if ((initial_flag_reg || i_ufp_resp) && !full_stall && bmem_ready) begin
-                pc_next = pc + 4;
-                initial_flag = '0;
-                ufp_rmask = '1;             
             end else begin
-                if (full_stall || !bmem_ready) begin
-                    pc_next = pc;
-                    initial_flag = '1;
-                    ufp_rmask = '0;
-                end else begin
-                    pc_next = pc;
+                if (((initial_flag_reg && !prefetch_stall) || i_ufp_resp) && !full_stall && bmem_ready) begin
+                    pc_next = pc + 4;
                     initial_flag = '0;
-                    ufp_rmask = '0;
+                    ufp_rmask = '1;             
+                end else begin
+                    if (full_stall || !bmem_ready || prefetch_stall) begin
+                        pc_next = pc;
+                        initial_flag = '1;
+                        ufp_rmask = '0;
+                    end else begin
+                        pc_next = pc;
+                        initial_flag = '0;
+                        ufp_rmask = '0;
+                    end
+                end
+
+                if (global_branch_signal) begin
+                    pc_next = global_branch_addr;
+                    undo_pc = '0;
+                end else if (prefetch_valid) begin
+                    pc_next = prefetch_pc;
+                    undo_pc = '1;
+                    saved_pc = pc;
                 end
             end
-            pc_next = global_branch_signal ? global_branch_addr : pc_next;
+
+            // pc_next = global_branch_signal ? global_branch_addr : pc_next;
         end
     end
     
@@ -262,7 +303,22 @@ import rv32i_types::*;
         .dfp_write(dfp_write),
         .dfp_rdata(cache_wdata),
         .dfp_wdata(dfp_wdata),      // FILL WHEN WE WANT TO WRITE
-        .dfp_resp(dfp_resp)
+        .dfp_resp(dfp_resp),
+        .allow_prefetch('1),
+        .prefetch(prefetch_valid_reg),
+        .false_resp(false_resp),
+        .branch_signal(global_branch_signal),
+        .prefetch_stall(prefetch_stall)
+    );
+
+    prefetch prefetch_i (
+        .clk(clk),
+        .rst(rst),
+        .pc(pc),
+        .dfp_read(dfp_read),
+        .prefetch_valid(prefetch_valid),
+        .prefetch_pc(prefetch_pc),
+        .branch_signal(global_branch_signal || global_branch_signal_reg)
     );
 
     cache cache_d (
@@ -281,7 +337,12 @@ import rv32i_types::*;
         .dfp_write(d_dfp_write),
         .dfp_rdata(d_dfp_rdata),            // CONNECT TO BMEM
         .dfp_wdata(d_dfp_wdata),
-        .dfp_resp(d_dfp_resp)               // CONNECT TO BMEM
+        .dfp_resp(d_dfp_resp),              // CONNECT TO BMEM
+        .allow_prefetch('0),
+        .prefetch('0),
+        .false_resp(dummy_false_resp),
+        .branch_signal('0),
+        .prefetch_stall(dummy_prefetch_stall)
     );
 
     memory_queue memory_queue_i (
@@ -373,7 +434,7 @@ import rv32i_types::*;
     (
         .clk(clk),
         .rst(rst),
-        .wdata_in(pc),
+        .wdata_in(pc_in),
         .enqueue_in(proper_enqueue_in),
         .rdata_out(prog),
         .dequeue_in(dequeue),

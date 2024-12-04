@@ -1,7 +1,7 @@
 module stage_1
 import rv32i_types::*;
 (
-    input   logic           rst,
+    input   logic           clk, rst,
     input   logic   [31:0]  ufp_addr,
     input   logic   [3:0]   ufp_rmask,
     input   logic   [3:0]   ufp_wmask,
@@ -34,15 +34,33 @@ import rv32i_types::*;
     // output  logic   [1:0]   index,
     input   logic           dirty_halt,
     output  logic           dfp_switch,
-    input   logic           dfp_write_read
+    input   logic           dfp_write_read,
+
+    input   logic           prefetch,
+    input   logic           prefetch_stall,
+    output  logic           prefetch_save_addr,
+    input   logic           prefetch_read_halt,
+    input   logic   [31:0]  prefetch_addr,
+    output  logic           prefetch_write
 );
 
     logic   [1:0]   index;
+    logic           prefetch_next;
+
+    always_ff @(posedge clk) begin
+        if (rst) begin
+            prefetch_save_addr = '0;
+        end else begin
+            prefetch_save_addr = prefetch_next;
+        end
+    end
     
     always_comb begin
         write_done = '0;
         data_array_wmask = '1;
         dfp_switch = '0;
+        prefetch_next = '0;
+        prefetch_write = '0;
         
         for (int i = 0; i < 4; i++) begin
             web[i] = '1;
@@ -87,14 +105,22 @@ import rv32i_types::*;
             
             if (read_halt) begin
                 if (dfp_resp && !dirty_halt) begin
-                    web[index] = '0;
-                    data_in[index] = dfp_rdata;
-                    tag_in[index] = {1'b0, stage_reg.tag};
-                    valid_in[index] = '1;
+                    if (prefetch_read_halt) begin
+                        web[index] = '0;
+                        data_in[index] = dfp_rdata;
+                        tag_in[index] = {1'b0, prefetch_addr[31:9]};
+                        valid_in[index] = '1;
+                        prefetch_write = '1;
+                    end else begin
+                        web[index] = '0;
+                        data_in[index] = dfp_rdata;
+                        tag_in[index] = {1'b0, stage_reg.tag};
+                        valid_in[index] = '1;
+                    end
                 end
                 
             end else begin
-                if (write_done_reg == 1 && (stage_reg.rmask != 0 || stage_reg.wmask != 0)) begin
+                if ((write_done_reg == 1 && (stage_reg.rmask != 0 || stage_reg.wmask != 0)) || prefetch_stall) begin
                     // stall for one cycle
                 end else begin
                     stage_reg_next.addr = ufp_addr;
@@ -104,6 +130,9 @@ import rv32i_types::*;
                     stage_reg_next.rmask = ufp_rmask;
                     stage_reg_next.wmask = ufp_wmask;
                     stage_reg_next.wdata = ufp_wdata;
+                    stage_reg_next.prefetch = prefetch;
+
+                    prefetch_next = prefetch;
                 end
             end
         end

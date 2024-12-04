@@ -1,12 +1,13 @@
 module stage_2
 import rv32i_types::*;
 (
-    input   logic           rst,
+    input   logic           clk, rst,
     input   stage_reg_t     stage_reg,
     input   logic           valid_out[4],
     input   logic   [23:0]  tag_out[4],
     input   logic   [255:0] data_out[4],
     input   logic   [2:0]   lru_read,
+    // input   logic           dfp_resp,
     input   logic           dfp_resp_reg,
 
     output  logic   [31:0]  dfp_addr,
@@ -26,13 +27,37 @@ import rv32i_types::*;
     // input   logic   [1:0]   index,
     output  logic           dirty_halt,
     input   logic           dfp_switch_reg,
-    input   logic           dfp_write_read
+    input   logic           dfp_write_read,
+    
+    output  logic           false_resp,
+    output  logic           prefetch_stall,
+    input   logic           allow_prefetch,
+    input   logic           prefetch_save_addr,
+    output  logic           prefetch_read_halt,
+    output  logic   [31:0]  prefetch_addr,
+    input   logic           branch_signal
 );
 
     logic           cache_hit;
     logic   [31:0]  rmask_ext;
     logic   [2:0]   way;
     logic   [1:0]   idx;
+
+    logic           prefetch, prefetch_reg;
+    logic   [31:0]  prefetch_addr_reg;
+    logic   branch_signal_next, branch_signal_reg;
+
+    always_ff @(posedge clk) begin
+        if (rst) begin
+            prefetch_reg <= '0;
+            prefetch_addr_reg <= '0;
+            branch_signal_reg <= '0;
+        end else begin
+            prefetch_reg <= prefetch;
+            prefetch_addr_reg <= prefetch_addr;
+            branch_signal_reg <= branch_signal_next;
+        end
+    end
 
     always_comb begin
         dfp_read = '0;
@@ -47,11 +72,18 @@ import rv32i_types::*;
         dfp_wdata = '0;
         cache_hit = '0;
         rmask_ext = 'x;
-        way  = '0;
+        way = '0;
+
+        false_resp = '0;
+        prefetch_stall = '0;
+        prefetch_read_halt = '0;
+        branch_signal_next = branch_signal ? '1 : branch_signal_reg;
+
         if (rst) begin
             dfp_addr = '0;
             ufp_resp = '0;
             idx = '0;
+            prefetch = '0;
 
         end else begin
             if (lru_read[0]) begin
@@ -74,6 +106,9 @@ import rv32i_types::*;
             cache_hit = '0;
             rmask_ext = { {8{stage_reg.rmask[3]}}, {8{stage_reg.rmask[2]}}, {8{stage_reg.rmask[1]}}, {8{stage_reg.rmask[0]}} };
             way = lru_read;
+
+            prefetch = stage_reg.prefetch ? '1 : prefetch_reg;
+            prefetch_addr = prefetch_addr_reg;
 
             for (int i = 0; i < 4; i++) begin
                 if (valid_out[i] && tag_out[i][22:0] == stage_reg.tag && !write_done_reg) begin
@@ -109,26 +144,54 @@ import rv32i_types::*;
 
             if ((stage_reg.rmask != 0 || stage_reg.wmask != 0) && !write_done_reg) begin
                 if (!cache_hit) begin
-                    read_halt = '1;
+                    // if (stage_reg.prefetch) begin
+                    //     dfp_read = '1;
+                    //     cache_hit = '1;
+                    // end else begin
+                    // if (prefetch) begin
+                    //     prefetch_stall = '1;
+                    // end else begin
+                        read_halt = '1;
 
-                    if (valid_out[idx] && tag_out[idx][23] == 1 && !dfp_write_read) begin
-                        dfp_write = dfp_switch_reg ? '0 : '1;
-                        dfp_addr[31:9] = dfp_switch_reg ? dfp_addr[31:9] : tag_out[idx][22:0];
-                        dfp_read = dfp_switch_reg ? '1 : '0;
-                        dfp_wdata = data_out[idx];
-                        dirty_halt = '1;
+                        if (valid_out[idx] && tag_out[idx][23] == 1 && !dfp_write_read) begin
+                            dfp_write = dfp_switch_reg ? '0 : '1;
+                            dfp_addr[31:9] = dfp_switch_reg ? dfp_addr[31:9] : tag_out[idx][22:0];
+                            dfp_read = dfp_switch_reg ? '1 : '0;
+                            dfp_wdata = data_out[idx];
+                            dirty_halt = '1;
                         
-                    end else begin
-                        dfp_read = dfp_resp_reg ? '0 : '1;
-                    end
+                        end else begin
+                            dfp_read = dfp_resp_reg ? '0 : '1;
+                        end
+                    // end
 
                 end else begin
                     lru_write = way;
                     lru_web = '0;
                 end
+            end 
+
+
+            if (allow_prefetch && prefetch_reg && (prefetch_addr_reg - 32'd4 == stage_reg.addr || branch_signal_reg)) begin
+                read_halt = '1;
+                prefetch_stall = '1;
+                prefetch_read_halt = '1;
+            end
+            
+            if (dfp_resp_reg) begin
+                prefetch = '0;
+                branch_signal_next = '0;
+            end else if (prefetch) begin
+                dfp_read = '1;
+
+                if (prefetch_save_addr) begin
+                    prefetch_addr = stage_reg.addr;
+                end
             end
 
-            ufp_resp = cache_hit;
+            ufp_resp = (stage_reg.prefetch) ? '1 : cache_hit;
+            ufp_resp = (prefetch_stall) ? '0 : ufp_resp;
+            false_resp = stage_reg.prefetch ? '1 : '0;
         end
     end
 

@@ -45,6 +45,7 @@ module cache_arbiter
 
     logic           i_dfp_read_next, i_dfp_read_reg, i_dfp_read_reg2;
     logic   [31:0]  i_dfp_addr_next, i_dfp_addr_reg;
+    logic           i_dfp_read_ff;
 
     logic           missed_i, missed_i_reg;
     logic           missed_d, missed_d_reg;
@@ -61,6 +62,7 @@ module cache_arbiter
             d_dfp_write_reg2 <= '0;
             i_dfp_read_reg   <= '0;
             i_dfp_read_reg2  <= '0;
+            i_dfp_read_ff    <= '0;
             i_dfp_addr_reg   <= 32'h1eceb000;
             d_dfp_addr_reg   <= 32'h00000000;
             full_burst_reg   <= '0;
@@ -79,6 +81,7 @@ module cache_arbiter
             d_dfp_write_reg2 <= d_dfp_write_reg;
             i_dfp_read_reg   <= i_dfp_read_next;
             i_dfp_read_reg2  <= i_dfp_read_reg;
+            i_dfp_read_ff    <= i_dfp_read;
             i_dfp_addr_reg   <= i_dfp_addr_next;
             d_dfp_addr_reg   <= d_dfp_addr_next;
             full_burst_reg   <= full_burst_next;
@@ -97,6 +100,7 @@ module cache_arbiter
             d_dfp_write_reg2 <= d_dfp_write_reg2;
             i_dfp_read_reg   <= i_dfp_read_reg;
             i_dfp_read_reg2  <= i_dfp_read_reg2;
+            i_dfp_read_ff    <= i_dfp_read_ff;
             i_dfp_addr_reg   <= i_dfp_addr_reg;
             d_dfp_addr_reg   <= d_dfp_addr_reg;
             full_burst_reg   <= full_burst_reg;
@@ -192,7 +196,7 @@ module cache_arbiter
                 i_dfp_rdata = '0;
 
                 bmem_read  = (i_dfp_read_reg && !i_dfp_read_reg2) ? '1 : '0;
-                bmem_addr  = i_dfp_addr_reg;
+                bmem_addr  = missed_i ? missed_i_addr : i_dfp_addr_reg;
                 mem_valid  = '0;
                 full_burst = '0;
 
@@ -294,7 +298,7 @@ module cache_arbiter
                     i_dfp_read_next  = '0;
                     full_burst_next  = d_dfp_write ? d_dfp_wdata : full_burst_reg;
 
-                    if (i_dfp_read) begin
+                    if (i_dfp_read && !i_dfp_read_ff) begin
                         // GO TO I STATE AFTERWARDS
                         missed_i = '1;
                         missed_i_addr = i_dfp_addr;

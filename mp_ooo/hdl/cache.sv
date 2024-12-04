@@ -18,7 +18,13 @@ import rv32i_types::*;
     output  logic           dfp_write,
     input   logic   [255:0] dfp_rdata,
     output  logic   [255:0] dfp_wdata,
-    input   logic           dfp_resp
+    input   logic           dfp_resp,
+
+    input   logic           allow_prefetch,
+    input   logic           prefetch,
+    output  logic           false_resp,
+    input   logic           branch_signal,
+    output  logic           prefetch_stall
 );
 
     stage_reg_t     stage_reg;
@@ -50,6 +56,12 @@ import rv32i_types::*;
     logic           dfp_switch_reg;
     logic           dfp_write_read;
 
+    // logic           prefetch_stall;
+    logic           prefetch_save_addr;
+    logic           prefetch_read_halt;
+    logic   [31:0]  prefetch_addr;
+    logic           prefetch_write;
+
 
     always_ff @(posedge clk) begin
         if (rst) begin
@@ -68,6 +80,7 @@ import rv32i_types::*;
     end
 
     stage_1 stage_1_i (
+        .clk(clk),
         .rst(rst),
         .ufp_addr(ufp_addr),
         .ufp_rmask(ufp_rmask),
@@ -92,16 +105,24 @@ import rv32i_types::*;
         // .index(index),
         .dirty_halt(dirty_halt),
         .dfp_switch(dfp_switch),
-        .dfp_write_read(dfp_write_read)
+        .dfp_write_read(dfp_write_read),
+        .prefetch(prefetch),
+        .prefetch_stall(prefetch_stall),
+        .prefetch_save_addr(prefetch_save_addr),
+        .prefetch_read_halt(prefetch_read_halt),
+        .prefetch_addr(prefetch_addr),
+        .prefetch_write(prefetch_write)
     );
 
     stage_2 stage_2_i (
+        .clk(clk),
         .rst(rst),
         .stage_reg(stage_reg),
         .valid_out(valid_out),
         .tag_out(tag_out),
         .data_out(data_out),
         .lru_read(lru_read),
+        // .dfp_resp(dfp_resp),
         .dfp_resp_reg(dfp_resp_reg),
         .dfp_addr(dfp_addr),
         .dfp_read(dfp_read),
@@ -118,8 +139,24 @@ import rv32i_types::*;
         // .index(index),
         .dirty_halt(dirty_halt),
         .dfp_switch_reg(dfp_switch_reg),
-        .dfp_write_read(dfp_write_read)
+        .dfp_write_read(dfp_write_read),
+        .false_resp(false_resp),
+        .prefetch_stall(prefetch_stall),
+        .allow_prefetch(allow_prefetch),
+        .prefetch_save_addr(prefetch_save_addr),
+        .prefetch_read_halt(prefetch_read_halt),
+        .prefetch_addr(prefetch_addr),
+        .branch_signal(branch_signal)
     );
+
+    logic   [3:0]   arr_write_addr;
+    always_comb begin
+        if (prefetch_write) begin
+            arr_write_addr = prefetch_addr[8:5];
+        end else begin
+            arr_write_addr = ((read_halt || write_done) ? stage_reg.set_no : stage_reg_next.set_no);
+        end
+    end
 
     generate for (genvar i = 0; i < 4; i++) begin : arrays
         mp_cache_data_array data_array (
@@ -127,7 +164,7 @@ import rv32i_types::*;
             .csb0       ('0),
             .web0       (web_in[i]),
             .wmask0     (data_array_wmask),
-            .addr0      ((read_halt || write_done) ? stage_reg.set_no : stage_reg_next.set_no),
+            .addr0      (arr_write_addr),
             .din0       (data_in[i]),
             .dout0      (data_out[i])
         );
@@ -135,7 +172,7 @@ import rv32i_types::*;
             .clk0       (clk),
             .csb0       ('0),
             .web0       (web_in[i]),
-            .addr0      ((read_halt || write_done) ? stage_reg.set_no : stage_reg_next.set_no),
+            .addr0      (arr_write_addr),
             .din0       (tag_in[i]),
             .dout0      (tag_out[i])
         );
@@ -144,7 +181,7 @@ import rv32i_types::*;
             .rst0       (rst),
             .csb0       ('0),
             .web0       (web_in[i]),
-            .addr0      ((read_halt || write_done) ? stage_reg.set_no : stage_reg_next.set_no),
+            .addr0      (arr_write_addr),
             .din0       (valid_in[i]),
             .dout0      (valid_out[i])
         );

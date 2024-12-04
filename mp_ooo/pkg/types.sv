@@ -156,6 +156,8 @@ package rv32i_types;
 
         logic   [3:0]   wmask;
         logic   [31:0]  wdata;
+
+        logic           prefetch;
     } stage_reg_t;
 
     typedef struct packed {
