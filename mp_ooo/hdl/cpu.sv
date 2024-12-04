@@ -191,6 +191,12 @@ import rv32i_types::*;
 
     logic           d_cache_valid;
 
+    logic   btb_valid;
+
+    logic   btb_web;
+    logic   [7:0]   btb_addr;
+    logic   [31:0]  btb_din;
+
     // assign global_branch_signal = cdb_br.pc_select;
     // assign global_branch_addr = cdb_br.pc_branch;
 
@@ -244,6 +250,7 @@ import rv32i_types::*;
                     ufp_rmask = '0;
                 end
             end
+            // pc_next = btb_valid ? ((!full_stall && bmem_ready) ? btb_out + 32'd4 : btb_out) : pc_next;
             pc_next = global_branch_signal ? global_branch_addr : pc_next;
         end
     end
@@ -286,13 +293,6 @@ import rv32i_types::*;
         .dfp_resp(d_dfp_resp)               // CONNECT TO BMEM
     );
 
-    logic   btb_valid;
-
-    logic   btb_web;
-    logic   [7:0]   btb_addr;
-    logic   [31:0]  btb_din;
-
-    logic   bp;
 
     always_comb begin
         if (ufp_rdata[6:0] inside {op_b_jal, op_b_jalr, op_b_br}) begin
@@ -308,7 +308,7 @@ import rv32i_types::*;
         .din0       (btb_din),
         .dout0      (),         // useless
         .clk1       (clk),
-        .csb1       ('0),
+        .csb1       (~proper_enqueue_in),
         .web1       ('1),     // active low
         .addr1      (pc_in[9:2]),
         .din1       ('1),         // useless
@@ -328,7 +328,7 @@ import rv32i_types::*;
         .dout0      (),         // useless, write port
         .clk1       (clk),
         .rst1       (rst),
-        .csb1       ('0),
+        .csb1       (~proper_enqueue_in),
         .web1       ('1),
         .addr1      (pc_in[9:2]), // address for writes only
         .din1       ('1),         // useless, read port
@@ -433,19 +433,6 @@ import rv32i_types::*;
         .global_branch_signal(global_branch_signal)
     );
 
-    queue #(.DATA_WIDTH(1), .QUEUE_DEPTH(64)) queue_bp
-    (
-        .clk(clk),
-        .rst(rst),
-        .wdata_in(btb_valid),
-        .enqueue_in(proper_enqueue_in),
-        .rdata_out(bp),
-        .dequeue_in(dequeue),
-        .full_out(),
-        .empty_out(),
-        .global_branch_signal(global_branch_signal)
-    );
-
     rename_dispatch rename_dispatch_i (
         .clk(clk),
         .rst(rst),
@@ -489,7 +476,7 @@ import rv32i_types::*;
         .mem_idx_out(dispatch_mem_idx),          // PROPAGATE THIS INTO MEM ADDER
         .global_branch_addr(global_branch_addr),
         .global_branch_signal(global_branch_signal)
-        );
+    );
 
     rat rat_i (
         .clk(clk),
