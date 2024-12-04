@@ -198,6 +198,11 @@ import rv32i_types::*;
     logic   [7:0]   btb_addr;
     logic   [31:0]  btb_din;
 
+    logic   true_btb_valid;
+    logic   is_branch_inst;
+
+    assign true_btb_valid = is_branch_inst ? btb_valid : '0;
+
     // assign global_branch_signal = cdb_br.pc_select;
     // assign global_branch_addr = cdb_br.pc_branch;
 
@@ -205,7 +210,7 @@ import rv32i_types::*;
 
     assign pc_in = pc - 32'd4;
 
-    assign cache_addr = btb_valid ? btb_out : pc;
+    assign cache_addr = true_btb_valid ? btb_out : pc;
 
     always_ff @(posedge clk) begin
 
@@ -227,7 +232,7 @@ import rv32i_types::*;
             dfp_read_reg <= dfp_read;
             order <= order_next;
             global_branch_signal_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? global_branch_signal_reg : global_branch_signal;
-            btb_valid_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? btb_valid_reg : btb_valid;
+            btb_valid_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? btb_valid_reg : true_btb_valid;
             btb_out_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? btb_out_reg : btb_out;
         end
     end
@@ -257,7 +262,7 @@ import rv32i_types::*;
                     ufp_rmask = '0;
                 end
             end
-            pc_next = btb_valid ? ((!full_stall && bmem_ready) ? btb_out + 32'd4 : btb_out) : pc_next;
+            pc_next = (true_btb_valid && ~global_branch_signal_reg) ? ((!full_stall && bmem_ready) ? btb_out + 32'd4 : btb_out) : pc_next;
             pc_next = global_branch_signal ? global_branch_addr : pc_next;
         end
     end
@@ -301,11 +306,13 @@ import rv32i_types::*;
     );
 
 
-    // always_comb begin
-    //     if (ufp_rdata[6:0] inside {op_b_jal, op_b_jalr, op_b_br}) begin
-    //         // check if valid
-    //     end
-    // end
+    always_comb begin
+        is_branch_inst = '0;
+        if (inst[6:0] inside {op_b_jal, op_b_jalr, op_b_br}) begin
+            // check if valid
+            is_branch_inst = '1;
+        end
+    end
 
     btb btb_i (             // 0 for write, 1 for read
         .clk0       (clk),
@@ -315,7 +322,7 @@ import rv32i_types::*;
         .din0       (btb_din),
         .dout0      (),         // useless
         .clk1       (clk),
-        .csb1       (~proper_enqueue_in),
+        .csb1       (~(proper_enqueue_in && ~global_branch_signal)),
         .web1       ('1),     // active low
         .addr1      (pc_in[9:2]),
         .din1       ('1),         // useless
@@ -335,7 +342,7 @@ import rv32i_types::*;
         .dout0      (),         // useless, write port
         .clk1       (clk),
         .rst1       (rst),
-        .csb1       (~proper_enqueue_in),
+        .csb1       (~(proper_enqueue_in && ~global_branch_signal)),
         .web1       ('1),
         .addr1      (pc_in[9:2]), // address for writes only
         .din1       ('1),         // useless, read port
@@ -419,9 +426,9 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
         .wdata_in(ufp_rdata),
-        .enqueue_in(proper_enqueue_in && ~btb_valid),
+        .enqueue_in(proper_enqueue_in && ~true_btb_valid),
         .rdata_out(inst),
-        .dequeue_in(dequeue && ~btb_valid),
+        .dequeue_in(dequeue && ~true_btb_valid),
         .full_out(full_stall),
         .empty_out(iqueue_empty),
         .global_branch_signal(global_branch_signal)
@@ -432,9 +439,9 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
         .wdata_in(pc_in),
-        .enqueue_in(proper_enqueue_in && ~btb_valid),
+        .enqueue_in(proper_enqueue_in && ~true_btb_valid),
         .rdata_out(prog),
-        .dequeue_in(dequeue && ~btb_valid),
+        .dequeue_in(dequeue && ~true_btb_valid),
         .full_out(full_garbage),
         .empty_out(empty_garbage),
         .global_branch_signal(global_branch_signal)
@@ -483,7 +490,7 @@ import rv32i_types::*;
         .mem_idx_out(dispatch_mem_idx),          // PROPAGATE THIS INTO MEM ADDER
         .global_branch_addr(global_branch_addr),
         .global_branch_signal(global_branch_signal),
-        .btb_valid(btb_valid),
+        .btb_valid(true_btb_valid),
         .btb_valid_reg(btb_valid_reg),
         .btb_out_reg(btb_out_reg)
     );
