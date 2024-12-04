@@ -118,6 +118,8 @@ module split_lsq
     logic load_entry_is_tracked; // flag
     logic load_entry_is_tracked_next; // flag
 
+    logic addr_opcode_next;
+
     enum int unsigned {
         load,
         store,
@@ -148,6 +150,47 @@ module split_lsq
         else
         begin
             state <= state_next;
+            load_entry_is_tracked <= load_entry_is_tracked_next;
+            load_entry_tracked <= load_entry_tracked_next;
+            load_mem[next_free_load_entry] <= load_mem_next;
+            load_mem[next_done_load_entry] <= load_mem_new;
+            if (store_enqueue_valid_next)
+            begin
+                store_mem[store_tail_next[STORE_MEM_ADDR_WIDTH - 1:0]] <= store_enqueue_mem_next;
+            end
+
+            if (data_valid_next)
+            begin
+                if (state_next == load)
+                begin
+                    load_mem[load_entry_tracked_next] <= next_done_load_entry;
+                end
+                else if (state_next == store)
+                begin
+                    store_mem[store_head_next[STORE_MEM_ADDR_WIDTH - 1:0]] <= store_dequeue_mem_next;
+                end
+
+            end
+            
+            if (addr_valid_next && addr_opcode_next == op_b_load)
+            begin
+
+            end
+            else if (addr_valid_next && addr_opcode_next == op_b_store)
+            begin
+
+            end
+
+            if (accessing_cache && state_next == load)
+            begin
+
+            end
+            else if (accessing_cache && state_next == store)
+            begin
+
+            end
+            store_tail_reg <= store_tail_next;
+            store_head_reg <= store_head_next;
         end
     end
 
@@ -172,26 +215,27 @@ module split_lsq
         store_full = (store_tail_next[STORE_MEM_ADDR_WIDTH - 1:0] == store_head_next[STORE_MEM_ADDR_WIDTH - 1:0]) && (store_tail_next[STORE_MEM_ADDR_WIDTH] != store_head_next[STORE_MEM_ADDR_WIDTH]);    // logic if queue full
     end
 
-
+    assign full = store_full || load_full;
+    assign addr_opcode_next = addr_opcode;
     /* load add logic order, find load_mem_next, track the youngest store older than the load */
     /* store add logic order, identical to mem queue */
     always_comb
     begin
 
-        load_mem_next = load_mem[0];
-        next_free_load_entry = '0;
-        store_tail_next = store_tail_reg;
-        store_head_next = store_head_reg;
-        store_enqueue_mem_next = '0;
-        store_dequeue_mem_next = '0;
+        // load_mem_next = load_mem[0];
+        // next_free_load_entry = '0;
+        // store_tail_next = store_tail_reg;
+        // store_head_next = store_head_reg;
+        // store_enqueue_mem_next = '0;
+        // store_dequeue_mem_next = '0;
 
 
-        enqueue_valid_next = enqueue_valid; // include here or later?
-        data_valid_next = data_valid;
-        addr_valid_next = addr_valid;
-        mem_idx_in_next = mem_idx_in;
-        addr_next = addr;
-        store_wdata_next = store_wdata;
+        // enqueue_valid_next = enqueue_valid; // include here or later?
+        // data_valid_next = data_valid;
+        // addr_valid_next = addr_valid;
+        // mem_idx_in_next = mem_idx_in;
+        // addr_next = addr;
+        // store_wdata_next = store_wdata;
 
 
         // got a load to queue
@@ -328,10 +372,12 @@ module split_lsq
 
                     d_addr[1:0] = 2'b0;
                     accessing_cache = '1;
+                    state_next = load_idle;
                 end
                 else
                 begin
-
+                    accessing_cache = 1'b0;
+                    state_next = store;
                 end
             end
             load_idle: // 
@@ -405,6 +451,7 @@ module split_lsq
                 else // waiting for cache response
                 begin
                     state_next = load;
+
                 end
             end
             store_idle:
