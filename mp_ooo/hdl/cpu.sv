@@ -15,7 +15,8 @@ import rv32i_types::*;
     input   logic               bmem_rvalid
 );
 
-    logic   [31:0]  pc, pc_next, pc_in, btb_out, cache_addr;
+    logic   [31:0]  pc, pc_next, pc_in, btb_out, cache_addr, btb_out_reg;
+    logic           btb_valid_reg;
     logic           cache_valid; // If bursts are ready
     logic   [255:0] cache_wdata; // bursts (equivalent to dfp_rdata for icache)
 
@@ -218,12 +219,16 @@ import rv32i_types::*;
             order  <= '0;
             global_branch_signal_reg <= '0;
             global_branch_signal_reg <= '0;
+            btb_valid_reg <= '0;
+            btb_out_reg <= '0;
         end else begin
             pc <= pc_next;
             initial_flag_reg <= initial_flag;
             dfp_read_reg <= dfp_read;
             order <= order_next;
             global_branch_signal_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? global_branch_signal_reg : global_branch_signal;
+            btb_valid_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? btb_valid_reg : btb_valid;
+            btb_out_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? btb_out_reg : btb_out;
         end
     end
 
@@ -478,7 +483,9 @@ import rv32i_types::*;
         .mem_idx_out(dispatch_mem_idx),          // PROPAGATE THIS INTO MEM ADDER
         .global_branch_addr(global_branch_addr),
         .global_branch_signal(global_branch_signal),
-        .btb_valid(btb_valid)
+        .btb_valid(btb_valid),
+        .btb_valid_reg(btb_valid_reg),
+        .btb_out_reg(btb_out_reg)
     );
 
     rat rat_i (
