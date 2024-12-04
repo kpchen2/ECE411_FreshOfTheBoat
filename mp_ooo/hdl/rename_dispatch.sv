@@ -41,7 +41,9 @@ import rv32i_types::*;
     output  logic   [MEM_ADDR_WIDTH - 1:0]   mem_idx_out,
     
     input   logic   [31:0]  global_branch_addr,
-    input   logic           global_branch_signal
+    input   logic           global_branch_signal,
+
+    input   logic           btb_valid
 );
 
     // decode_info_t decode_info;
@@ -100,7 +102,7 @@ import rv32i_types::*;
         end
 
         // if free list empty, instruction queue empty, ROB full, corresponding RS full, don't process instruction
-        if (!is_free_list_empty_reg && !is_iqueue_empty_reg && !rob_full_reg && !((rs_full_add && (rs_signal == 3'b000)) || (rs_full_mul && (rs_signal == 3'b001)) || (rs_full_div && (rs_signal == 3'b010)) || (rs_full_br && (rs_signal == 3'b011)) || (rs_full_mem && (rs_signal == 3'b100)))) begin
+        if (!btb_valid && !is_free_list_empty_reg && !is_iqueue_empty_reg && !rob_full_reg && !((rs_full_add && (rs_signal == 3'b000)) || (rs_full_mul && (rs_signal == 3'b001)) || (rs_full_div && (rs_signal == 3'b010)) || (rs_full_br && (rs_signal == 3'b011)) || (rs_full_mem && (rs_signal == 3'b100)))) begin
         // if (!is_free_list_empty && !is_iqueue_empty && !rob_full && !rs_full_add && !rs_full_mul && !rs_full_div) begin
             dequeue = 1'b1;
             decode_info.funct3 = inst[14:12];
