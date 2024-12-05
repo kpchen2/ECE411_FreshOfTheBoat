@@ -316,6 +316,39 @@ import rv32i_types::*;
         .d_wdata(store_wdata)
     );
 
+    split_lsq split_lsq_i (
+        .clk(clk),
+        .rst(rst || global_branch_signal),
+        .inst(dispatch_inst),
+        .opcode(decode_info.opcode),
+        .funct3(decode_info.funct3),
+        .phys_reg_in(pd_dispatch),
+        .store_enqueue_valid(mem_regf_we_dispatch && decode_info.opcode == op_b_store),
+        .load_enqueue_valid(mem_regf_we_dispatch && decode_info.opcode == op_b_load),
+        .rob_num(rob_num),
+        .rd_dispatch(rd_dispatch),
+        .addr(calculated_address),
+        .addr_valid(addr_valid),
+        // .load_mem_idx_in(),
+        // .store_mem_idx_in(),
+        .mem_idx_in(fu_mem_idx),
+        .store_wdata(fu_mem_store_wdata),
+        .rs1_rdata(fu_rs1_v_mem),
+        .rs2_rdata(fu_rs2_v_mem),
+        .addr_opcode(),
+        .commited_rob(rob_head),
+        .data_in(load_rdata),
+        .data_valid(d_ufp_resp),
+        .full(mem_queue_full),
+        .cdb_mem(cdb_mem),
+        .store_mem_idx_out(),
+        .load_mem_idx_out(),
+        .d_addr(mem_addr),
+        .d_rmask(load_rmask),
+        .d_wmask(store_wmask),
+        .d_wdata(store_wdata)
+    );
+
     cache_arbiter arbiter (
         .clk(clk),
         .rst(rst),
