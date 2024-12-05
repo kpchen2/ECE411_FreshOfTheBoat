@@ -17,6 +17,7 @@ import rv32i_types::*;
 
     logic   [31:0]  pc, pc_next, pc_in, btb_out, cache_addr, btb_out_reg;
     logic   [7:0]   lht, lht_reg, lht_true;
+    logic   [1:0]   pht, pht_reg, pht_in;
     logic           lht_valid, lht_valid_reg, lht_valid_true;
     logic   [7:0]   lht_in;
     logic           btb_valid_reg;
@@ -197,12 +198,15 @@ import rv32i_types::*;
 
     logic   btb_valid;
 
-    logic   btb_web;
+    logic   btb_web, ht_web;
     logic   [7:0]   btb_addr;
+    logic   [7:0]   pht_addr;
     logic   [31:0]  btb_din;
 
     logic   true_btb_valid;
     logic   is_branch_inst;
+
+    logic   pht_valid, pht_valid_reg;
 
     assign true_btb_valid = is_branch_inst ? btb_valid : '0;
 
@@ -233,6 +237,8 @@ import rv32i_types::*;
             lht_valid_true <= '0;
             lht_reg <= '0;
             lht_true <= '0;
+            pht_reg <= '0;
+            pht_valid_reg <= '0;
         end else begin
             pc <= pc_next;
             initial_flag_reg <= initial_flag;
@@ -245,6 +251,8 @@ import rv32i_types::*;
             lht_valid_true <= (i_ufp_resp == '0 && global_branch_signal == '0) ? lht_valid_true : lht_valid_reg;
             lht_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? lht_reg : lht;
             lht_true <= (i_ufp_resp == '0 && global_branch_signal == '0) ? lht_true : lht_reg;
+            pht_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? pht_reg : pht;
+            pht_valid_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? pht_valid_reg : pht_valid;
         end
     end
 
@@ -343,7 +351,7 @@ import rv32i_types::*;
     lht lht_i (             // 0 for write, 1 for read
         .clk0       (clk),
         .csb0       ('0),
-        .web0       (btb_web),     // active low
+        .web0       (ht_web),     // active low
         .addr0      (btb_addr),
         .din0       (lht_in),
         .dout0      (),         // useless
@@ -351,7 +359,7 @@ import rv32i_types::*;
         .csb1       ('0),
         .web1       ('1),     // active low
         .addr1      (cache_addr[9:2]),
-        .din1       (),         // useless
+        .din1       ('1),         // useless
         .dout1      (lht)
     );
 
@@ -362,7 +370,7 @@ import rv32i_types::*;
         .clk0       (clk),
         .rst0       (rst),
         .csb0       ('0),
-        .web0       (btb_web),
+        .web0       (ht_web),
         .addr0      (btb_addr), // address for writes only
         .din0       ('1),
         .dout0      (),         // useless, write port
@@ -373,6 +381,41 @@ import rv32i_types::*;
         .addr1      (cache_addr[9:2]), // address for writes only
         .din1       ('1),         // useless, read port
         .dout1      (lht_valid)
+    );
+
+    pht pht_i (             // 0 for write, 1 for read
+        .clk0       (clk),
+        .csb0       ('0),
+        .web0       (ht_web),     // active low
+        .addr0      (pht_addr),
+        .din0       (pht_in),
+        .dout0      (),         // useless
+        .clk1       (clk),
+        .csb1       (~(lht_valid)),
+        .web1       ('1),     // active low
+        .addr1      (lht),
+        .din1       ('1),         // useless
+        .dout1      (pht)
+    );
+
+    btb_valid_array #(
+        .S_INDEX(8),
+        .WIDTH(1)
+    ) pht_valid_array (
+        .clk0       (clk),
+        .rst0       (rst),
+        .csb0       ('0),
+        .web0       (ht_web),
+        .addr0      (pht_addr), // address for writes only
+        .din0       ('1),
+        .dout0      (),         // useless, write port
+        .clk1       (clk),
+        .rst1       (rst),
+        .csb1       (~(lht_valid)),
+        .web1       ('1),
+        .addr1      (lht), // address for writes only
+        .din1       ('1),         // useless, read port
+        .dout1      (pht_valid)
     );
 
     btb_valid_array #(
@@ -540,7 +583,9 @@ import rv32i_types::*;
         .btb_valid_reg(btb_valid_reg),
         .btb_out_reg(btb_out_reg),
         .lht_true(lht_true),
-        .lht_valid(lht_valid_true)
+        .lht_valid(lht_valid_true),
+        .pht_valid(pht_valid_reg),
+        .pht(pht_reg)
     );
 
     rat rat_i (
@@ -706,7 +751,10 @@ import rv32i_types::*;
         .btb_addr(btb_addr),
         .btb_din(btb_din),
         .btb_web(btb_web),
-        .lht_in(lht_in)
+        .lht_in(lht_in),
+        .pht_in(pht_in),
+        .pht_addr(pht_addr),
+        .ht_web(ht_web)
     );
 
     reservation_station reservation_stations_i (

@@ -60,7 +60,11 @@ import rv32i_types::*;
     output  logic   [7:0]   btb_addr,
     output  logic   [31:0]  btb_din,
 
-    output  logic   [7:0]   lht_in
+    output  logic   [7:0]   lht_in,
+    output  logic   [1:0]   pht_in,
+
+    output  logic   [7:0]   pht_addr,
+    output  logic           ht_web
 );
 
     logic   valid_add, valid_mul, valid_div, valid_br, valid_mem;
@@ -201,7 +205,10 @@ import rv32i_types::*;
         .btb_addr(btb_addr),
         .btb_din(btb_din),
         .btb_web(btb_web),
-        .lht_in(lht_in)
+        .lht_in(lht_in),
+        .pht_in(pht_in),
+        .pht_addr(pht_addr),
+        .ht_web(ht_web)
     );
 
     fu_mem fu_mem_i(

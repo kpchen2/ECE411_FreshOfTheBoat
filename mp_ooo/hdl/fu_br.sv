@@ -13,9 +13,12 @@ import rv32i_types::*;
     output  logic           pc_select,
     output  logic   [31:0]  pc_branch,
     output  logic           btb_web,
+    output  logic           ht_web,
     output  logic   [7:0]   btb_addr,
     output  logic   [31:0]  btb_din,
-    output  logic   [7:0]   lht_in
+    output  logic   [7:0]   lht_in,
+    output  logic   [1:0]   pht_in,
+    output  logic   [7:0]   pht_addr
 );
 
     logic signed   [31:0] as;
@@ -61,8 +64,12 @@ import rv32i_types::*;
         pc_select = '0;
         temp_pc_branch = '0;
         temp_pc_select = '0;
+        pht_in = '1;
+        ht_web = 1'b1;
+        pht_addr = decode_info.lht_valid ? decode_info.lht_true : '0;
         if (start) begin
             valid = 1'b1;
+            ht_web = 1'b0;
             busy = 1'b1;
             unique case (decode_info.opcode)
                 op_b_jal  : begin
@@ -99,9 +106,30 @@ import rv32i_types::*;
         if (~decode_info.lht_valid) begin
             lht_in = '0;
             lht_in[0] = temp_pc_select;
+            pht_in = temp_pc_select ? 2'b11 : 2'b01;
         end else begin
             lht_in[7:1] = decode_info.lht_true[6:0];
             lht_in[0] = temp_pc_select;
+
+            if (decode_info.pht_valid) begin
+                unique case (decode_info.pht) 
+                    2'b00:  begin
+                        pht_in = temp_pc_select ? 2'b01 : 2'b00;
+                    end
+                    2'b01:  begin
+                        pht_in = temp_pc_select ? 2'b10 : 2'b00;
+                    end
+                    2'b10:  begin
+                        pht_in = temp_pc_select ? 2'b11 : 2'b01;
+                    end
+                    2'b11:  begin
+                        pht_in = temp_pc_select ? 2'b11 : 2'b10;
+                    end
+                    default: begin
+                        pht_in = '0; 
+                    end  // useless
+                endcase
+            end
         end
         
         if (temp_pc_select) begin

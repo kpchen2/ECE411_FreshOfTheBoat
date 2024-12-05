@@ -74,6 +74,9 @@ package rv32i_types;
         logic   [7:0]   lht_true;
         logic           lht_valid;
 
+        logic   [1:0]   pht;
+        logic           pht_valid;
+
     } decode_info_t;
 
     typedef struct packed {
