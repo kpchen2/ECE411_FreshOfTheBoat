@@ -703,7 +703,7 @@ import rv32i_types::*;
         .add_fu_busy('0),     // WAS SET TO BUSY_ADD
         .multiply_fu_busy(busy_mul),
         .divide_fu_busy(busy_div),
-        .branch_fu_busy('0),
+        .branch_fu_busy(busy_br),
         .mem_fu_busy('0), // WAS SET TO BUSY_MEM perhaps don't need?
 
         // .add_regf_we(),

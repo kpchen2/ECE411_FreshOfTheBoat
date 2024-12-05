@@ -187,6 +187,8 @@ import rv32i_types::*;
     );
 
     fu_br fu_br_i (
+        .clk(clk),
+        .rst(rst),
         .rs1_v(rs1_v_br),
         .rs2_v(rs2_v_br),
         .decode_info(decode_info_br),     // PHYS REGFILE
