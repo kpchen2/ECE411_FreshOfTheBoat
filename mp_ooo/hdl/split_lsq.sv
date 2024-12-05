@@ -19,7 +19,8 @@ module split_lsq
         // adder inputs
         input   logic   [31:0]  addr,
         input   logic           addr_valid,
-        input   logic   [$clog2(QUEUE_DEPTH) - 1:0]   mem_idx_in,
+        input   logic   [LOAD_MEM_ADDR_WIDTH - 1:0]   load_mem_idx_in,
+        input   logic   [STORE_MEM_ADDR_WIDTH - 1:0]  store_mem_idx_in,
         input   logic   [31:0]  store_wdata,
         input   logic   [31:0]  rs1_rdata,
         input   logic   [31:0]  rs2_rdata,
@@ -37,7 +38,9 @@ module split_lsq
         output  cdb_t           cdb_mem,
     
         // rename/dispatch outputs
-        output  logic   [$clog2(QUEUE_DEPTH) - 1 :0]   mem_idx_out,
+        output  logic   [STORE_MEM_ADDR_WIDTH- 1 :0]   store_mem_idx_out,
+        output  logic   [LOAD_MEM_ADDR_WIDTH - 1 :0]   load_mem_idx_out,
+
     
         // dcache outputs
         output  logic   [31:0]  d_addr,
@@ -89,7 +92,8 @@ module split_lsq
     logic           addr_valid_next;
 
     // next version of mem_idx_in input port
-    logic   [ADDR_WIDTH - 1 :0]   mem_idx_in_next;
+    logic   [STORE_MEM_ADDR_WIDTH - 1 :0]   store_mem_idx_in_next;
+    logic   [LOAD_MEM_ADDR_WIDTH - 1 :0]   load_mem_idx_in_next;
 
     // next version of addr in input port
     logic   [31:0]  addr_next;
@@ -217,17 +221,31 @@ module split_lsq
 
     assign full = store_full || load_full;
     assign addr_opcode_next = addr_opcode;
+    always_comb
+    begin
+        next_free_load_entry = '0;
+        for (int unsigned i = 0; i < LOAD_MEM_ADDR_WIDTH; i++)
+        begin
+            if (~load_mem[i].valid)
+            begin
+                next_free_load_entry = i;
+                break;
+            end
+        end
+    end
+
+
+
     /* load add logic order, find load_mem_next, track the youngest store older than the load */
     /* store add logic order, identical to mem queue */
     always_comb
     begin
 
-        // load_mem_next = load_mem[0];
-        // next_free_load_entry = '0;
-        // store_tail_next = store_tail_reg;
-        // store_head_next = store_head_reg;
-        // store_enqueue_mem_next = '0;
-        // store_dequeue_mem_next = '0;
+        load_mem_next = load_mem[load_mem_idx_in];
+        store_tail_next = store_tail_reg;
+        store_head_next = store_head_reg;
+        store_enqueue_mem_next = '0;
+        store_dequeue_mem_next = '0;
 
 
         // enqueue_valid_next = enqueue_valid; // include here or later?
@@ -278,14 +296,7 @@ module split_lsq
                 /* Find the store pointer ^^^*/
             end
 
-            for (int unsigned i = 0 ; i < LOAD_MEM_QUEUE_DEPTH; i++)
-            begin
-                if (~load_mem[i].valid)
-                begin
-                    next_free_load_entry = i;
-                    break;
-                end
-            end
+            
         end
         else if (enqueue_valid && opcode == op_b_store)// store insertion. Identical to original memory queue
         begin
@@ -335,11 +346,13 @@ module split_lsq
         store_enqueue_valid_next = enqueue_valid;
         data_valid_next = data_valid;
         addr_valid_next = addr_valid;
-        mem_idx_in_next = mem_idx_in;
+        load_mem_idx_in_next = load_mem_idx_in;
+        store_mem_idx_in_next = store_mem_idx_in;
         addr_next = addr;
         store_wdata_next = store_wdata;
 
-        mem_idx_out = tail_reg[ADDR_WIDTH - 1:0] + 1'b1;
+        store_mem_idx_out = tail_reg[ADDR_WIDTH - 1:0] + 1'b1;
+        load_mem_idx_out = next_free_load_entry;
         accessing_cache = '0;
 
         load_ready = '0;
