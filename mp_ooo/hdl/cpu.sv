@@ -196,18 +196,9 @@ import rv32i_types::*;
     logic           prefetch_valid, prefetch_valid_reg, undo_pc, undo_pc_reg;
     logic   [31:0]  prefetch_pc, saved_pc, saved_pc_reg;
     logic           false_resp, dummy_false_resp;
-    logic   [31:0]  pc_in;
+    // logic   [31:0]  pc_in;
     logic           prefetch_stall, dummy_prefetch_stall;
 
-    // assign  pc_in = pc - 32'd4;
-
-    always_comb begin
-        pc_in = pc - 32'd4;
-
-        if (prefetch_valid_reg) begin
-            pc_in[4:0] = '0;
-        end
-    end
 
     logic   btb_valid;
 
@@ -219,13 +210,22 @@ import rv32i_types::*;
     logic   is_branch_inst;
 
     assign true_btb_valid = (is_branch_inst && proper_enqueue_in) ? (btb_valid) : '0;
+    // assign  pc_in = pc - 32'd4;
+
+    always_comb begin
+        pc_in = pc - 32'd4;
+
+        if (prefetch_valid_reg) begin
+            pc_in[4:0] = '0;
+        end
+    end
 
     // assign global_branch_signal = cdb_br.pc_select;
     // assign global_branch_addr = cdb_br.pc_branch;
 
     assign proper_enqueue_in = (global_branch_signal_reg) ? 1'b0 : (i_ufp_resp && !false_resp);
 
-    assign pc_in = pc - 32'd4;
+    // assign pc_in = pc - 32'd4;
 
     assign cache_addr = (true_btb_valid && proper_enqueue_in) ? btb_out : pc;
 
@@ -295,10 +295,13 @@ import rv32i_types::*;
                         ufp_rmask = '0;
                     end
                 end
-            pc_next = true_btb_valid ? ((!full_stall && bmem_ready) ? btb_out + 32'd4 : btb_out) : pc_next;
+                // pc_next = true_btb_valid ? ((!full_stall && bmem_ready) ? btb_out + 32'd4 : btb_out) : pc_next;
 
                 if (global_branch_signal) begin
                     pc_next = global_branch_addr;
+                    undo_pc = '0;
+                end else if (true_btb_valid) begin
+                    pc_next = ((!full_stall && bmem_ready) ? btb_out + 32'd4 : btb_out);
                     undo_pc = '0;
                 end else if (prefetch_valid) begin
                     pc_next = prefetch_pc;
@@ -513,7 +516,7 @@ import rv32i_types::*;
         .global_branch_signal(global_branch_signal)
     );
 
-    queue #(.DATA_WIDTH(1), .QUEUE_DEPTH(64)) queue_bp
+    queue #(.DATA_WIDTH(1), .QUEUE_DEPTH(32)) queue_bp
     (
         .clk(clk),
         .rst(rst),
@@ -526,7 +529,7 @@ import rv32i_types::*;
         .global_branch_signal(global_branch_signal)
     );
 
-    queue #(.DATA_WIDTH(32), .QUEUE_DEPTH(64)) queue_bp_addr
+    queue #(.DATA_WIDTH(32), .QUEUE_DEPTH(32)) queue_bp_addr
     (
         .clk(clk),
         .rst(rst),
