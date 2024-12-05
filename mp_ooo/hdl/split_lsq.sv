@@ -114,6 +114,7 @@ module split_lsq
     logic load_full;
     // if store queue is full
     logic store_full;
+    logic store_full_reg;
     //    found a load ready to issue to request for cache
     logic load_ready;
 
@@ -146,6 +147,7 @@ module split_lsq
             store_tail_reg <= '1;
             store_head_reg <= '1;
             state <= load;
+            store_full_reg <= store_full;
             // load queue depth is same as store for now, may be subject to change
             for (int i = 0; i < LOAD_MEM_QUEUE_DEPTH; i++) begin
                 load_mem[i] <= '0;
@@ -232,7 +234,7 @@ module split_lsq
         store_full = (store_tail_next[STORE_MEM_ADDR_WIDTH - 1:0] == store_head_next[STORE_MEM_ADDR_WIDTH - 1:0]) && (store_tail_next[STORE_MEM_ADDR_WIDTH] != store_head_next[STORE_MEM_ADDR_WIDTH]);    // logic if queue full
     end
 
-    assign full = store_full || load_full;
+    assign full = store_full_reg || load_full;
     assign addr_opcode_next = addr_opcode;
     always_comb
     begin
@@ -311,7 +313,7 @@ module split_lsq
         end
         else if (store_enqueue_valid)// store insertion. Identical to original memory queue
         begin
-            if (~store_full || data_valid) // why is data_valid necessary? Ask Kevin
+            if (~store_full_reg || data_valid) // why is data_valid necessary? Ask Kevin
             begin
                 store_tail_next = store_tail_reg + 1'b1;
                 store_enqueue_mem_next.valid = 1'b1;
@@ -354,13 +356,14 @@ module split_lsq
         mem_idx_in_next = mem_idx_in;
         addr_next = addr;
         store_wdata_next = store_wdata;
-
+        next_done_load_entry = '0;
         store_mem_idx_out = store_tail_reg[ADDR_WIDTH - 1:0] + 1'b1;
         load_mem_idx_out = next_free_load_entry;
         accessing_cache = '0;
-
+        load_mem_new = '0;
         load_ready = '0;
-
+        load_entry_is_tracked_next = '0;
+        load_entry_tracked_next = '0;
         case (state)
             load: // send request to cache
             begin // loop and find a valid load to issue to cache
@@ -504,6 +507,10 @@ module split_lsq
                 begin
                     state_next = store_idle;
                 end
+            end
+            default:
+            begin
+                state_next = state;
             end
         endcase
 
