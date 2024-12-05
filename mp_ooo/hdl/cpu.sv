@@ -163,13 +163,15 @@ import rv32i_types::*;
     logic           dispatch_regf_we;
 
     /* load store queue, dispatch stage*/
-    logic   [MEM_ADDR_WIDTH - 1:0]   queue_mem_idx, dispatch_mem_idx;
+    logic   [STORE_MEM_ADDR_WIDTH - 1:0]   store_queue_mem_idx, store_dispatch_mem_idx;
+    logic   [LOAD_MEM_ADDR_WIDTH - 1:0]   load_queue_mem_idx, load_dispatch_mem_idx;
 
     /* rob idx for memory instructions (needed to know store) */
     logic   [ROB_ADDR_WIDTH - 1:0]   mem_rob_idx_in;
 
     /* reservation station, memory functional unit */
-    logic   [MEM_ADDR_WIDTH - 1:0]   res_dispatch_mem_idx, fu_mem_idx;
+    logic   [STORE_MEM_ADDR_WIDTH - 1:0]   store_res_dispatch_mem_idx, store_fu_mem_idx;
+    logic   [LOAD_MEM_ADDR_WIDTH - 1:0]   load_res_dispatch_mem_idx, load_fu_mem_idx;
 
      /* calculated address */
     logic [31:0]    calculated_address;
@@ -183,6 +185,7 @@ import rv32i_types::*;
 
     /* memory queue full*/
     logic           mem_queue_full;
+    logic  [6:0]    addr_opcode;
 
     /* valid address for load store queue */
     logic           addr_valid;
@@ -335,14 +338,14 @@ import rv32i_types::*;
         .store_wdata(fu_mem_store_wdata),
         .rs1_rdata(fu_rs1_v_mem),
         .rs2_rdata(fu_rs2_v_mem),
-        .addr_opcode(),
+        .addr_opcode(addr_opcode),
         .commited_rob(rob_head),
         .data_in(load_rdata),
         .data_valid(d_ufp_resp),
         .full(mem_queue_full),
         .cdb_mem(cdb_mem),
-        .store_mem_idx_out(),
-        .load_mem_idx_out(),
+        .store_mem_idx_out(store_queue_mem_idx),
+        .load_mem_idx_out(load_queue_mem_idx),
         .d_addr(mem_addr),
         .d_rmask(load_rmask),
         .d_wmask(store_wmask),
@@ -619,7 +622,8 @@ import rv32i_types::*;
         .calculated_address(calculated_address),
         .fu_rs1_v_mem(fu_rs1_v_mem),
         .fu_rs2_v_mem(fu_rs2_v_mem),
-        .global_branch_signal(global_branch_signal)
+        .global_branch_signal(global_branch_signal),
+        .mem_opcode(addr_opcode)
     );
 
     reservation_station reservation_stations_i (

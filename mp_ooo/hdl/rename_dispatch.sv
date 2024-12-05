@@ -37,8 +37,12 @@ import rv32i_types::*;
     output  logic   [31:0]                  dispatch_inst,     
     output  logic                           dispatch_regf_we,
     // to and from memory queue
-    input   logic   [MEM_ADDR_WIDTH  - 1:0]   mem_idx_in,
-    output  logic   [MEM_ADDR_WIDTH - 1:0]   mem_idx_out,
+    input   logic   [STORE_MEM_ADDR_WIDTH  - 1:0]   store_mem_idx_in,
+    input   logic   [LOAD_MEM_ADDR_WIDTH  - 1:0]   load_mem_idx_in,
+
+    output  logic   [STORE_MEM_ADDR_WIDTH - 1:0]   store_mem_idx_out,
+    output  logic   [LOAD_MEM_ADDR_WIDTH - 1:0]   load_mem_idx_out,
+
     
     input   logic   [31:0]  global_branch_addr,
     input   logic           global_branch_signal
@@ -78,7 +82,8 @@ import rv32i_types::*;
         ps2_valid_out = ps2_valid;
         // order_next = order;
         rob_num_out = rob_num;
-        mem_idx_out = mem_idx_in;
+        store_mem_idx_out = store_mem_idx_in;
+        load_mem_idx_out = load_mem_idx_in;
         dispatch_inst = '0;
         dispatch_pc_rdata = '0;
         // dispatch_order = '0;

@@ -10,7 +10,8 @@ import rv32i_types::*;
     input   decode_info_t   decode_info_add, decode_info_mul, decode_info_div, decode_info_br, decode_info_mem,
     input   logic           start_add, start_mul, start_div, start_br, start_mem,
 
-    input logic [MEM_ADDR_WIDTH - 1:0] mem_idx_in,
+    input logic [STORE_MEM_ADDR_WIDTH - 1:0] store_mem_idx_in,
+    input logic [LOAD_MEM_ADDR_WIDTH - 1:0] load_mem_idx_in,
     output logic [$clog2(MEM_QUEUE_DEPTH) - 1:0] mem_idx_out,
 
     // ADD PORTS
@@ -50,6 +51,7 @@ import rv32i_types::*;
     // input   logic   [5:0]   pd_s_mem,
     // input   logic   [4:0]   rd_s_mem,
     // output  cdb_t           cdb_mem,
+    output  logic   [6:0]   mem_opcode,
     output  logic           addr_valid,
     output  logic           busy_mem,
     output logic    [31:0]  store_wdata,
@@ -197,15 +199,18 @@ import rv32i_types::*;
     fu_mem fu_mem_i(
         .rs1_v(rs1_v_mem), .rs2_v(rs2_v_mem),
     //    .decode_info(decode_info_mem),
+        .opcode(decode_info_mem.opcode),
         .start(~global_branch_signal && start_mem),
         .addr_valid(valid_mem),
         .busy(busy_mem),
         .mem_addr(calculated_address),
         .i_imm(decode_info_mem.i_imm),
-        .dispatch_mem_idx(mem_idx_in),
+        .store_dispatch_mem_idx(store_mem_idx_in),
+        .load_dispatch_mem_idx(load_mem_idx_in),
         .mem_idx_out(mem_idx_out),
         .store_wdata(store_wdata),
-        .fu_rs1_v_mem(fu_rs1_v_mem), .fu_rs2_v_mem(fu_rs2_v_mem)
+        .fu_rs1_v_mem(fu_rs1_v_mem), .fu_rs2_v_mem(fu_rs2_v_mem),
+        .opcode_out(mem_opcode)
     );
 
     always_comb 

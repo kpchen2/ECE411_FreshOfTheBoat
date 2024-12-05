@@ -95,8 +95,10 @@ import rv32i_types::*;
         input  logic       regf_we_br,
         input  logic       global_branch_signal,
         input  logic       regf_we_mem,
-        input  logic [MEM_ADDR_WIDTH - 1:0]  mem_idx_in,
-        output logic [MEM_ADDR_WIDTH - 1:0]  mem_idx_out
+        input  logic [STORE_MEM_ADDR_WIDTH - 1:0]  store_mem_idx_in,
+        input  logic [LOAD_MEM_ADDR_WIDTH - 1:0]  load_mem_idx_in,
+        output logic [STORE_MEM_ADDR_WIDTH - 1:0]  store_mem_idx_out,
+        output logic [LOAD_MEM_ADDR_WIDTH - 1:0]  load_mem_idx_out
 
     );
 
@@ -516,7 +518,9 @@ import rv32i_types::*;
                 mem_reservation_station_entry_next.decode_info = decode_info_in;
                 mem_reservation_station_entry_next.ps1_v = ((regf_we_add && cdb_ps_id_add == ps1) || (regf_we_mul && cdb_ps_id_multiply == ps1) || (regf_we_div && cdb_ps_id_divide == ps1) || (regf_we_br && cdb_ps_id_branch == ps1)|| (regf_we_mem && cdb_ps_id_mem == ps1)) ? '1 : dispatch_ps_ready1;
                 mem_reservation_station_entry_next.ps2_v = ((regf_we_add && cdb_ps_id_add == ps2) || (regf_we_mul && cdb_ps_id_multiply == ps2) || (regf_we_div && cdb_ps_id_divide == ps2) || (regf_we_br && cdb_ps_id_branch == ps2)|| (regf_we_mem && cdb_ps_id_mem == ps2)) ? '1 : dispatch_ps_ready2;
-                mem_reservation_station_entry_next.mem_idx = mem_idx_in;
+                mem_reservation_station_entry_next.load_mem_idx = load_mem_idx_in;
+                mem_reservation_station_entry_next.store_mem_idx = store_mem_idx_in;
+
                 
                 for (int unsigned i = 0; i < NUM_MEM_REGISTERS; i++)
                 begin
