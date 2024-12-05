@@ -15,8 +15,8 @@ import rv32i_types::*;
     input   logic               bmem_rvalid
 );
 
-    logic   [31:0]  pc, pc_next, pc_in, btb_out, cache_addr, btb_out_reg;
-    logic           btb_valid_reg;
+    logic   [31:0]  pc, pc_next, pc_in, btb_out, cache_addr, branch_pc, bp_addr;
+    logic           bp;
     logic           cache_valid; // If bursts are ready
     logic   [255:0] cache_wdata; // bursts (equivalent to dfp_rdata for icache)
 
@@ -200,8 +200,9 @@ import rv32i_types::*;
 
     logic   true_btb_valid;
     logic   is_branch_inst;
+    logic number, number_next;
 
-    assign true_btb_valid = is_branch_inst ? btb_valid : '0;
+    assign true_btb_valid = (is_branch_inst && proper_enqueue_in) ? (btb_valid && number) : '0;
 
     // assign global_branch_signal = cdb_br.pc_select;
     // assign global_branch_addr = cdb_br.pc_branch;
@@ -210,7 +211,7 @@ import rv32i_types::*;
 
     assign pc_in = pc - 32'd4;
 
-    assign cache_addr = true_btb_valid ? btb_out : pc;
+    assign cache_addr = (true_btb_valid && proper_enqueue_in) ? btb_out : pc;
 
     always_ff @(posedge clk) begin
 
@@ -224,20 +225,19 @@ import rv32i_types::*;
             order  <= '0;
             global_branch_signal_reg <= '0;
             global_branch_signal_reg <= '0;
-            btb_valid_reg <= '0;
-            btb_out_reg <= '0;
+            number <= '0;
         end else begin
             pc <= pc_next;
             initial_flag_reg <= initial_flag;
             dfp_read_reg <= dfp_read;
             order <= order_next;
             global_branch_signal_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? global_branch_signal_reg : global_branch_signal;
-            btb_valid_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? btb_valid_reg : true_btb_valid;
-            btb_out_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? btb_out_reg : btb_out;
+            number <= number_next;
         end
     end
 
     always_comb begin
+        number_next = ~number;
         if (rst) begin
             pc_next = pc;
             initial_flag = '1;
@@ -262,7 +262,7 @@ import rv32i_types::*;
                     ufp_rmask = '0;
                 end
             end
-            pc_next = (true_btb_valid && ~global_branch_signal_reg) ? ((!full_stall && bmem_ready) ? btb_out + 32'd4 : btb_out) : pc_next;
+            pc_next = true_btb_valid ? ((!full_stall && bmem_ready) ? btb_out + 32'd4 : btb_out) : pc_next;
             pc_next = global_branch_signal ? global_branch_addr : pc_next;
         end
     end
@@ -308,7 +308,7 @@ import rv32i_types::*;
 
     always_comb begin
         is_branch_inst = '0;
-        if (inst[6:0] inside {op_b_jal, op_b_jalr, op_b_br}) begin
+        if (ufp_rdata[6:0] inside {op_b_jal, op_b_jalr, op_b_br}) begin
             // check if valid
             is_branch_inst = '1;
         end
@@ -324,7 +324,7 @@ import rv32i_types::*;
         .clk1       (clk),
         .csb1       (~(proper_enqueue_in && ~global_branch_signal)),
         .web1       ('1),     // active low
-        .addr1      (pc_in[9:2]),
+        .addr1      (pc[9:2]),
         .din1       ('1),         // useless
         .dout1      (btb_out)
     );
@@ -344,7 +344,7 @@ import rv32i_types::*;
         .rst1       (rst),
         .csb1       (~(proper_enqueue_in && ~global_branch_signal)),
         .web1       ('1),
-        .addr1      (pc_in[9:2]), // address for writes only
+        .addr1      (pc[9:2]), // address for writes only
         .din1       ('1),         // useless, read port
         .dout1      (btb_valid)
     );
@@ -426,9 +426,9 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
         .wdata_in(ufp_rdata),
-        .enqueue_in(proper_enqueue_in && ~true_btb_valid),
+        .enqueue_in(proper_enqueue_in),
         .rdata_out(inst),
-        .dequeue_in(dequeue && ~true_btb_valid),
+        .dequeue_in(dequeue),
         .full_out(full_stall),
         .empty_out(iqueue_empty),
         .global_branch_signal(global_branch_signal)
@@ -439,11 +439,37 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
         .wdata_in(pc_in),
-        .enqueue_in(proper_enqueue_in && ~true_btb_valid),
+        .enqueue_in(proper_enqueue_in),
         .rdata_out(prog),
-        .dequeue_in(dequeue && ~true_btb_valid),
+        .dequeue_in(dequeue),
         .full_out(full_garbage),
         .empty_out(empty_garbage),
+        .global_branch_signal(global_branch_signal)
+    );
+
+    queue #(.DATA_WIDTH(1), .QUEUE_DEPTH(64)) queue_bp
+    (
+        .clk(clk),
+        .rst(rst),
+        .wdata_in(btb_valid && number),
+        .enqueue_in(proper_enqueue_in),
+        .rdata_out(bp),
+        .dequeue_in(dequeue),
+        .full_out(),
+        .empty_out(),
+        .global_branch_signal(global_branch_signal)
+    );
+
+    queue #(.DATA_WIDTH(32), .QUEUE_DEPTH(64)) queue_bp_addr
+    (
+        .clk(clk),
+        .rst(rst),
+        .wdata_in(number ? btb_out : '0),
+        .enqueue_in(proper_enqueue_in),
+        .rdata_out(bp_addr),
+        .dequeue_in(dequeue),
+        .full_out(),
+        .empty_out(),
         .global_branch_signal(global_branch_signal)
     );
 
@@ -490,9 +516,8 @@ import rv32i_types::*;
         .mem_idx_out(dispatch_mem_idx),          // PROPAGATE THIS INTO MEM ADDER
         .global_branch_addr(global_branch_addr),
         .global_branch_signal(global_branch_signal),
-        .btb_valid(true_btb_valid),
-        .btb_valid_reg(btb_valid_reg),
-        .btb_out_reg(btb_out_reg)
+        .bp(bp),
+        .bp_addr(bp_addr)
     );
 
     rat rat_i (

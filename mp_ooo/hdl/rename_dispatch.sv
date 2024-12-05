@@ -43,9 +43,8 @@ import rv32i_types::*;
     input   logic   [31:0]  global_branch_addr,
     input   logic           global_branch_signal,
 
-    input   logic           btb_valid,
-    input   logic           btb_valid_reg,
-    input   logic   [31:0]  btb_out_reg
+    input   logic           bp,
+    input   logic   [31:0]  bp_addr
 );
 
     // decode_info_t decode_info;
@@ -104,7 +103,7 @@ import rv32i_types::*;
         end
 
         // if free list empty, instruction queue empty, ROB full, corresponding RS full, don't process instruction
-        if (!btb_valid && !is_free_list_empty_reg && !is_iqueue_empty_reg && !rob_full_reg && !((rs_full_add && (rs_signal == 3'b000)) || (rs_full_mul && (rs_signal == 3'b001)) || (rs_full_div && (rs_signal == 3'b010)) || (rs_full_br && (rs_signal == 3'b011)) || (rs_full_mem && (rs_signal == 3'b100)))) begin
+        if (!is_free_list_empty_reg && !is_iqueue_empty_reg && !rob_full_reg && !((rs_full_add && (rs_signal == 3'b000)) || (rs_full_mul && (rs_signal == 3'b001)) || (rs_full_div && (rs_signal == 3'b010)) || (rs_full_br && (rs_signal == 3'b011)) || (rs_full_mem && (rs_signal == 3'b100)))) begin
         // if (!is_free_list_empty && !is_iqueue_empty && !rob_full && !rs_full_add && !rs_full_mul && !rs_full_div) begin
             dequeue = 1'b1;
             decode_info.funct3 = inst[14:12];
@@ -138,15 +137,18 @@ import rv32i_types::*;
             dispatch_inst = inst;
             dispatch_pc_rdata = prog;
             dispatch_pc_wdata = global_branch_signal ? global_branch_addr : prog + 32'd4;
-            dispatch_pc_wdata = (btb_valid_reg && rs_signal == 3'b011) ? btb_out_reg : dispatch_pc_wdata;
+            dispatch_pc_wdata = (bp && rs_signal == 3'b011) ? bp_addr : dispatch_pc_wdata;
             dispatch_rs1_s = inst[19:15];
             dispatch_rs2_s = inst[24:20];
             dispatch_regf_we = regf_we;
 
             decode_info.pc = prog;
 
-            decode_info.bp = (rs_signal == 3'b011) ? btb_valid_reg : '0;
-            decode_info.bp_addr = (rs_signal == 3'b011) ? btb_out_reg : '0;
+            decode_info.bp = (rs_signal == 3'b011) ? bp : '0;
+            decode_info.bp_addr = (rs_signal == 3'b011) ? bp_addr : '0;
+
+            // decode_info.bp = '0;
+            // decode_info.bp_addr = '0;
         end
 
         pd = ((inst[6:0] == op_b_br) || (inst[11:7] == '0 && (inst[6:0] inside {op_b_auipc, op_b_lui, op_b_reg, op_b_imm, op_b_jal, op_b_jalr, op_b_load})) || inst[6:0] == op_b_store) ? '0 : phys_reg;
