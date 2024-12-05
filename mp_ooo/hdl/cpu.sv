@@ -634,7 +634,7 @@ import rv32i_types::*;
         .rs1_v_add(rs1_v_add), .rs1_v_mul(rs1_v_mul), .rs1_v_div(rs1_v_div), .rs1_v_br(rs1_v_br), .rs1_v_mem(rs1_v_mem),
         .rs2_v_add(rs2_v_add), .rs2_v_mul(rs2_v_mul), .rs2_v_div(rs2_v_div), .rs2_v_br(rs2_v_br), .rs2_v_mem(rs2_v_mem),
         .arch_s1_add(add_decode_info.rs1_s), .arch_s2_add(add_decode_info.rs2_s), .arch_rd_add(cdb_add.rd_s), .arch_rd_mul(cdb_mul.rd_s), .arch_rd_div(cdb_div.rd_s), .arch_rd_mem(cdb_mem.rd_s), .arch_s1_mem(mem_decode_info.rs1_s), .arch_s2_mem(mem_decode_info.rs2_s),
-        .arch_s1_br(branch_decode_info.rs1_s), .arch_s2_br(branch_decode_info.rs2_s), .arch_rd_br(cdb_br.rd_s)
+        .arch_rd_br(cdb_br.rd_s)
     );
 
     logic   start_add, start_mul, start_div, start_br , start_mem;
