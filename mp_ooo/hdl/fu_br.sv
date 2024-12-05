@@ -42,7 +42,7 @@ import rv32i_types::*;
 
     logic   [31:0]  rd_v_next;
 
-    logic           flush, flush_next;
+    logic           flush, flush_reg;
 
     assign as =   signed'(a);
     assign bs =   signed'(b);
@@ -60,18 +60,7 @@ import rv32i_types::*;
             final_decode_info <= '0;
             final_state <= '0;
             rd_v <= '0;
-            flush <= '0;
-        end else if (start_reg || final_state) begin
-            start_reg <= start;
-            decode_info_reg <= decode_info;
-            rs1_v_reg <= rs1_v;
-            rs2_v_reg <= rs2_v;
-            temp_pc_select_reg <= temp_pc_select;
-            temp_pc_branch_reg <= temp_pc_branch;
-            final_decode_info <= decode_info_reg;
-            final_state <= start_reg;
-            rd_v <= rd_v_next;
-            flush <= flush_next;
+            flush_reg <= '0;
         end else begin
             start_reg <= start;
             decode_info_reg <= decode_info;
@@ -82,7 +71,7 @@ import rv32i_types::*;
             final_decode_info <= decode_info_reg;
             final_state <= start_reg;
             rd_v <= rd_v_next;
-            flush <= '0;
+            flush_reg <= flush;
         end
     end
 
@@ -110,7 +99,7 @@ import rv32i_types::*;
         temp_pc_branch = '0;
         temp_pc_select = '0;
 
-        flush_next = global_branch_signal ? 1'b1 : flush;
+        flush = global_branch_signal && start_reg;
         if (start_reg) begin
             // valid = 1'b1;
             // busy = 1'b1;
@@ -151,7 +140,7 @@ import rv32i_types::*;
 
         if (final_state) begin
             busy = 1'b1;
-            valid = flush ? 1'b0 : 1'b1;
+            valid = 1'b1;
             if (temp_pc_select_reg) begin
                 btb_web = '0;
                 btb_addr = final_decode_info.pc[9:2];
@@ -171,9 +160,13 @@ import rv32i_types::*;
             end
         end
 
-        if (flush) begin
+        if (flush_reg) begin
             pc_select = '0;
             pc_branch = '0;
+            rd_v_next = '0;
+            btb_web = '1;
+            btb_addr = '0;
+            btb_din = '0;
         end
         
     end

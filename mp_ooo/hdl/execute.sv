@@ -68,7 +68,7 @@ import rv32i_types::*;
     logic   [ROB_ADDR_WIDTH -1:0]   rob_add_reg, rob_mul_reg, rob_div_reg,  rob_br_reg, rob_mem_reg;
     logic   [PHYS_REG_BITS - 1:0]   pd_add_reg, pd_mul_reg, pd_div_reg,     pd_br_reg, pd_mem_reg;
     logic   [ARCH_REG_BITS - 1:0]   rd_add_reg, rd_mul_reg, rd_div_reg,     rd_br_reg, rd_mem_reg;
-    logic   [31:0]  br_inst_reg;
+    // logic   [31:0]  br_inst_reg;
     
 
     logic   [31:0]  rd_v_add, rd_v_mul, rd_v_div, rd_v_br;//, rd_v_mem;
@@ -122,12 +122,12 @@ import rv32i_types::*;
             rob_br_reg <= '0;
             pd_br_reg <= '0;
             rd_br_reg <= '0;
-            br_inst_reg <= '0;
+            // br_inst_reg <= '0;
         end else if (start_br) begin
             rob_br_reg <= rob_idx_br;
             pd_br_reg <= pd_s_br;
             rd_br_reg <= rd_s_br;
-            br_inst_reg <= decode_info_br.inst;
+            // br_inst_reg <= decode_info_br.inst;
         end
     end
 
@@ -275,7 +275,7 @@ import rv32i_types::*;
         cdb_br.rd_s = rd_br_reg;
         cdb_br.rd_v = rd_v_br;
         cdb_br.valid = valid_br;
-        cdb_br.inst = br_inst_reg;
+        cdb_br.inst = decode_info_br.inst;
         cdb_br.pc_select = pc_select;
         cdb_br.pc_branch = pc_branch;
 
