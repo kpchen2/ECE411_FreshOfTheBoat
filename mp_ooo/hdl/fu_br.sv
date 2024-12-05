@@ -14,7 +14,8 @@ import rv32i_types::*;
     output  logic   [31:0]  pc_branch,
     output  logic           btb_web,
     output  logic   [7:0]   btb_addr,
-    output  logic   [31:0]  btb_din
+    output  logic   [31:0]  btb_din,
+    output  logic   [7:0]   lht_in
 );
 
     logic signed   [31:0] as;
@@ -94,6 +95,14 @@ import rv32i_types::*;
         btb_web = '1;
         btb_addr = '0;
         btb_din = '0;
+
+        if (~decode_info.lht_valid) begin
+            lht_in = '0;
+            lht_in[0] = temp_pc_select;
+        end else begin
+            lht_in[7:1] = decode_info.lht_true[6:0];
+            lht_in[0] = temp_pc_select;
+        end
         
         if (temp_pc_select) begin
             btb_web = '0;

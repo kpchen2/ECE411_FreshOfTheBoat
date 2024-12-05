@@ -16,6 +16,9 @@ import rv32i_types::*;
 );
 
     logic   [31:0]  pc, pc_next, pc_in, btb_out, cache_addr, btb_out_reg;
+    logic   [7:0]   lht, lht_reg, lht_true;
+    logic           lht_valid, lht_valid_reg, lht_valid_true;
+    logic   [7:0]   lht_in;
     logic           btb_valid_reg;
     logic           cache_valid; // If bursts are ready
     logic   [255:0] cache_wdata; // bursts (equivalent to dfp_rdata for icache)
@@ -226,6 +229,10 @@ import rv32i_types::*;
             global_branch_signal_reg <= '0;
             btb_valid_reg <= '0;
             btb_out_reg <= '0;
+            lht_valid_reg <= '0;
+            lht_valid_true <= '0;
+            lht_reg <= '0;
+            lht_true <= '0;
         end else begin
             pc <= pc_next;
             initial_flag_reg <= initial_flag;
@@ -234,6 +241,10 @@ import rv32i_types::*;
             global_branch_signal_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? global_branch_signal_reg : global_branch_signal;
             btb_valid_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? btb_valid_reg : true_btb_valid;
             btb_out_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? btb_out_reg : btb_out;
+            lht_valid_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? lht_valid_reg : lht_valid;
+            lht_valid_true <= (i_ufp_resp == '0 && global_branch_signal == '0) ? lht_valid_true : lht_valid_reg;
+            lht_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? lht_reg : lht;
+            lht_true <= (i_ufp_resp == '0 && global_branch_signal == '0) ? lht_true : lht_reg;
         end
     end
 
@@ -327,6 +338,41 @@ import rv32i_types::*;
         .addr1      (pc_in[9:2]),
         .din1       ('1),         // useless
         .dout1      (btb_out)
+    );
+
+    lht lht_i (             // 0 for write, 1 for read
+        .clk0       (clk),
+        .csb0       ('0),
+        .web0       (btb_web),     // active low
+        .addr0      (btb_addr),
+        .din0       (lht_in),
+        .dout0      (),         // useless
+        .clk1       (clk),
+        .csb1       ('0),
+        .web1       ('1),     // active low
+        .addr1      (cache_addr[9:2]),
+        .din1       (),         // useless
+        .dout1      (lht)
+    );
+
+    btb_valid_array #(
+        .S_INDEX(8),
+        .WIDTH(1)
+    ) lht_valid_array (
+        .clk0       (clk),
+        .rst0       (rst),
+        .csb0       ('0),
+        .web0       (btb_web),
+        .addr0      (btb_addr), // address for writes only
+        .din0       ('1),
+        .dout0      (),         // useless, write port
+        .clk1       (clk),
+        .rst1       (rst),
+        .csb1       ('0),
+        .web1       ('1),
+        .addr1      (cache_addr[9:2]), // address for writes only
+        .din1       ('1),         // useless, read port
+        .dout1      (lht_valid)
     );
 
     btb_valid_array #(
@@ -492,7 +538,9 @@ import rv32i_types::*;
         .global_branch_signal(global_branch_signal),
         .btb_valid(true_btb_valid),
         .btb_valid_reg(btb_valid_reg),
-        .btb_out_reg(btb_out_reg)
+        .btb_out_reg(btb_out_reg),
+        .lht_true(lht_true),
+        .lht_valid(lht_valid_true)
     );
 
     rat rat_i (
@@ -657,7 +705,8 @@ import rv32i_types::*;
         .global_branch_signal(global_branch_signal),
         .btb_addr(btb_addr),
         .btb_din(btb_din),
-        .btb_web(btb_web)
+        .btb_web(btb_web),
+        .lht_in(lht_in)
     );
 
     reservation_station reservation_stations_i (

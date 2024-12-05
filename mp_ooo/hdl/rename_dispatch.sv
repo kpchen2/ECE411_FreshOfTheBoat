@@ -45,7 +45,10 @@ import rv32i_types::*;
 
     input   logic           btb_valid,
     input   logic           btb_valid_reg,
-    input   logic   [31:0]  btb_out_reg
+    input   logic   [31:0]  btb_out_reg,
+
+    input   logic   [7:0]   lht_true,
+    input   logic           lht_valid
 );
 
     // decode_info_t decode_info;
@@ -147,6 +150,8 @@ import rv32i_types::*;
 
             decode_info.bp = (rs_signal == 3'b011) ? btb_valid_reg : '0;
             decode_info.bp_addr = (rs_signal == 3'b011) ? btb_out_reg : '0;
+            decode_info.lht_valid = lht_valid;
+            decode_info.lht_true = lht_true;
         end
 
         pd = ((inst[6:0] == op_b_br) || (inst[11:7] == '0 && (inst[6:0] inside {op_b_auipc, op_b_lui, op_b_reg, op_b_imm, op_b_jal, op_b_jalr, op_b_load})) || inst[6:0] == op_b_store) ? '0 : phys_reg;
