@@ -194,6 +194,9 @@ import rv32i_types::*;
 
     logic   btb_valid;
 
+    logic   pht_valid;
+    logic   [7:0]   pht_out;
+
     logic   btb_web;
     logic   [7:0]   btb_addr;
     logic   [31:0]  btb_din;
@@ -375,9 +378,9 @@ import rv32i_types::*;
         .clk1       (clk),
         .csb1       (~(proper_enqueue_in && ~global_branch_signal)),
         .web1       ('1),     // active low
-        .addr1      (),
+        .addr1      (gshare_next),
         .din1       ('1),         // useless
-        .dout1      ()
+        .dout1      (pht_out)
     );
 
     btb_valid_array #(
@@ -395,9 +398,9 @@ import rv32i_types::*;
         .rst1       (rst),
         .csb1       (~(proper_enqueue_in && ~global_branch_signal)),
         .web1       ('1),
-        .addr1      (), // address for reads only
+        .addr1      (gshare_next), // address for reads only
         .din1       ('1),         // useless, read port
-        .dout1      ()
+        .dout1      (pht_valid)
     );
 
     memory_queue memory_queue_i (
