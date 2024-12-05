@@ -106,6 +106,7 @@ import rv32i_types::*;
         valid = 1'b0;
         busy = 1'b0;
         pc_select = '0;
+        pc_branch = '0;
         temp_pc_branch = '0;
         temp_pc_select = '0;
 
