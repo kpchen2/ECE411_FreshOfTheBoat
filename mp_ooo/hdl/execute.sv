@@ -12,7 +12,7 @@ import rv32i_types::*;
 
     input logic [STORE_MEM_ADDR_WIDTH - 1:0] store_mem_idx_in,
     input logic [LOAD_MEM_ADDR_WIDTH - 1:0] load_mem_idx_in,
-    output logic [$clog2(MEM_QUEUE_DEPTH) - 1:0] mem_idx_out,
+    output logic [LOAD_MEM_ADDR_WIDTH - 1:0] mem_idx_out,
 
     // ADD PORTS
     input   logic   [ROB_ADDR_WIDTH -1:0]   rob_idx_add,

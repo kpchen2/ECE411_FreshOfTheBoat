@@ -20,8 +20,8 @@ module split_lsq
         // adder inputs
         input   logic   [31:0]  addr,
         input   logic           addr_valid,
-        input   logic   [LOAD_MEM_ADDR_WIDTH - 1:0]   load_mem_idx_in,
-        input   logic   [STORE_MEM_ADDR_WIDTH - 1:0]  store_mem_idx_in,
+        input   logic   [LOAD_MEM_ADDR_WIDTH - 1:0]   mem_idx_in,
+
         input   logic   [31:0]  store_wdata,
         input   logic   [31:0]  rs1_rdata,
         input   logic   [31:0]  rs2_rdata,
@@ -94,8 +94,7 @@ module split_lsq
     logic           addr_valid_next;
 
     // next version of mem_idx_in input port
-    logic   [STORE_MEM_ADDR_WIDTH - 1 :0]   store_mem_idx_in_next;
-    logic   [LOAD_MEM_ADDR_WIDTH - 1 :0]   load_mem_idx_in_next;
+    logic   [LOAD_MEM_ADDR_WIDTH - 1 :0]   mem_idx_in_next;
 
     // next version of addr in input port
     logic   [31:0]  addr_next;
@@ -116,7 +115,7 @@ module split_lsq
     // if store queue is full
     logic store_full;
     //    found a load ready to issue to request for cache
-    logic ready_load;
+    logic load_ready;
 
     logic [LOAD_MEM_ADDR_WIDTH - 1:0] load_entry_tracked; // save index into register, use it when we get data_valid
     logic [LOAD_MEM_ADDR_WIDTH - 1:0] load_entry_tracked_next; // save index into register, use it when we get data_valid
@@ -124,13 +123,13 @@ module split_lsq
     logic load_entry_is_tracked; // flag
     logic load_entry_is_tracked_next; // flag
 
-    logic addr_opcode_next;
+    logic [6:0] addr_opcode_next;
 
     enum int unsigned {
         load,
         store,
-        idle_store,
-        idle_load
+        store_idle,
+        load_idle
     } state, state_next;
 
     // enum int unsigned {
@@ -144,8 +143,8 @@ module split_lsq
         if (rst) 
         begin
             load_counter <= '1;
-            tail_reg <= '1;
-            head_reg <= '1;
+            store_tail_reg <= '1;
+            store_head_reg <= '1;
             state <= load;
             // load queue depth is same as store for now, may be subject to change
             for (int i = 0; i < LOAD_MEM_QUEUE_DEPTH; i++) begin
@@ -184,27 +183,24 @@ module split_lsq
             
             if (addr_valid_next && addr_opcode_next == op_b_load)
             begin
-                load_mem[load_mem_idx_in_next].addr_ready <= 1'b1; 
-                load_mem[load_mem_idx_in_next].addr <= addr_next;
-                load_mem[load_mem_idx_in_next].shift_bits <= addr_next[1:0];
-                load_mem[load_mem_idx_in_next].rs1_rdata <= rs1_rdata;
-                load_mem[load_mem_idx_in_next].rs2_rdata <= rs2_rdata;
+                load_mem[mem_idx_in_next].addr_ready <= 1'b1; 
+                load_mem[mem_idx_in_next].addr <= addr_next;
+                load_mem[mem_idx_in_next].shift_bits <= addr_next[1:0];
+                load_mem[mem_idx_in_next].rs1_rdata <= rs1_rdata;
             end
             else if (addr_valid_next && addr_opcode_next == op_b_store)
             begin
-                store_mem[store_mem_idx_in_next].addr_ready <= 1'b1; 
-                store_mem[store_mem_idx_in_next].addr <= addr_next;
-                store_mem[store_mem_idx_in_next].shift_bits <= addr_next[1:0];
-                store_mem[store_mem_idx_in_next].store_wdata <= store_wdata_next;
-                store_mem[store_mem_idx_in_next].rs1_rdata <= rs1_rdata;
-                store_mem[store_mem_idx_in_next].rs2_rdata <= rs2_rdata;
+                store_mem[mem_idx_in_next].addr_ready <= 1'b1; 
+                store_mem[mem_idx_in_next].addr <= addr_next;
+                store_mem[mem_idx_in_next].shift_bits <= addr_next[1:0];
+                store_mem[mem_idx_in_next].store_wdata <= store_wdata_next;
+                store_mem[mem_idx_in_next].rs1_rdata <= rs1_rdata;
+                store_mem[mem_idx_in_next].rs2_rdata <= rs2_rdata;
             end
 
             if (accessing_cache && state_next == load)
             begin
-                load_mem[load_mem_idx_in_next].rmask <= cache_mem_next.rmask; //??
-                load_mem[load_mem_idx_in_next].wmask <= cache_mem_next.wmask; //??
-                load_mem[load_mem_idx_in_next].wdata <= cache_mem_next.wdata; //??
+                load_mem[mem_idx_in_next].rmask <= cache_mem_next.rmask; //??
             end
             else if (accessing_cache && state_next == store)
             begin
@@ -245,7 +241,7 @@ module split_lsq
         begin
             if (~load_mem[i].valid)
             begin
-                next_free_load_entry = i;
+                next_free_load_entry = physicalIndexing5'(i);
                 break;
             end
         end
@@ -258,11 +254,9 @@ module split_lsq
     always_comb
     begin
 
-        load_mem_next = load_mem[load_mem_idx_in];
+        load_mem_next = '0;
         store_tail_next = store_tail_reg;
-        store_head_next = store_head_reg;
         store_enqueue_mem_next = '0;
-        store_dequeue_mem_next = '0;
 
 
         // enqueue_valid_next = enqueue_valid; // include here or later?
@@ -274,7 +268,7 @@ module split_lsq
 
 
         // got a load to queue
-        if (enqueue_valid && opcode == op_b_load)
+        if (load_enqueue_valid)
         begin
             if (~load_full || data_valid) // why is data_valid necessary? 
             begin
@@ -288,8 +282,8 @@ module split_lsq
                 load_mem_next.rob_num = rob_num;
                 load_mem_next.rd_s = rd_dispatch;
                 load_mem_next.store_empty = (store_tail_reg == store_head_reg) ? 1'b1 : 1'b0;
-                load_mem_next.idx = load_counter;
-                load_counter_next = load_counter + 1;
+                // load_mem_next.idx = load_counter;
+                // load_counter_next = load_counter + 1;
 
                 // if no stores, load does not need to point to a store
                 if (load_mem_next.store_empty)
@@ -315,27 +309,23 @@ module split_lsq
 
             
         end
-        else if (enqueue_valid && opcode == op_b_store)// store insertion. Identical to original memory queue
+        else if (store_enqueue_valid)// store insertion. Identical to original memory queue
         begin
             if (~store_full || data_valid) // why is data_valid necessary? Ask Kevin
             begin
                 store_tail_next = store_tail_reg + 1'b1;
-                store_head_next = (store_head_next == store_head_reg) ? store_head_reg : store_head_reg + 1'd1;   // don't change what dequeue set head_next to
                 store_enqueue_mem_next.valid = 1'b1;
                 store_enqueue_mem_next.addr_ready = 1'b0;
                 store_enqueue_mem_next.addr = 32'bx;
                 store_enqueue_mem_next.inst = inst;
                 store_enqueue_mem_next.opcode = opcode;
                 store_enqueue_mem_next.funct3 = funct3;
-                store_enqueue_mem_next.pd_s = phys_reg_in;
                 store_enqueue_mem_next.rob_num = rob_num;
-                store_enqueue_mem_next.rd_s = rd_dispatch;
 
             end 
             else 
             begin
                 store_tail_next = store_tail_reg; 
-                store_head_next = (store_head_next == store_head_reg) ? store_head_reg : store_head_reg + 1'd1;   // don't change what dequeue set head_next to
                 store_enqueue_mem_next = store_mem[store_tail_reg[STORE_MEM_ADDR_WIDTH - 1:0]+1'b1];
             end
             
@@ -346,13 +336,10 @@ module split_lsq
     /* store remove entry order on valid cache data. Identical to mem queue */
     always_comb
     begin
-        store_tail_next = store_tail_reg;
         store_head_next = store_head_reg;
-        store_enqueue_mem_next = '0;
         store_dequeue_mem_next = '0;
         cache_mem_next = '0;
 
-        full = '0;
         cdb_mem = '0;
 
         d_addr = '0;
@@ -360,15 +347,15 @@ module split_lsq
         d_wmask = '0;
         d_wdata = '0;
 
-        store_enqueue_valid_next = enqueue_valid;
+        store_enqueue_valid_next = '0;
+        load_enqueue_valid_next = '0;
         data_valid_next = data_valid;
         addr_valid_next = addr_valid;
-        load_mem_idx_in_next = load_mem_idx_in;
-        store_mem_idx_in_next = store_mem_idx_in;
+        mem_idx_in_next = mem_idx_in;
         addr_next = addr;
         store_wdata_next = store_wdata;
 
-        store_mem_idx_out = tail_reg[ADDR_WIDTH - 1:0] + 1'b1;
+        store_mem_idx_out = store_tail_reg[ADDR_WIDTH - 1:0] + 1'b1;
         load_mem_idx_out = next_free_load_entry;
         accessing_cache = '0;
 
@@ -379,10 +366,10 @@ module split_lsq
             begin // loop and find a valid load to issue to cache
                 for (int unsigned i = 0; i < LOAD_MEM_QUEUE_DEPTH; i++)
                 begin
-                    if (load[i].valid && load[i].addr_valid && load[i].store_ptr < store_head_reg) // find valid load that has valid address
+                    if (load_mem[i].valid && load_mem[i].addr_ready && load_mem[i].store_ptr < store_head_reg[STORE_MEM_ADDR_WIDTH - 1:0]) // find valid load that has valid address
                     begin
                         load_ready = 1'b1;
-                        load_entry_tracked_next = i;
+                        load_entry_tracked_next = physicalIndexing5'(i);
                         load_entry_is_tracked_next = 1'b1;
                         break;
                     end
@@ -414,30 +401,31 @@ module split_lsq
             begin
                 if (data_valid)
                 begin
-                    next_done_load_entry = load_mem[load_entry_tracked];
+                    next_done_load_entry = load_entry_tracked;
+                    load_mem_new = load_mem[next_done_load_entry];
                     load_entry_tracked_next = '0;
                     load_entry_is_tracked_next = 1'b0;
-                    next_done_load_entry.valid = 1'b0;
+                    load_mem_new.valid = 1'b0;
                   
 
-                    cdb_mem.rob_idx = next_done_load_entry.rob_num;
-                    cdb_mem.pd_s    = next_done_load_entry.pd_s;
-                    cdb_mem.rd_s    = next_done_load_entry.rd_s;
+                    cdb_mem.rob_idx = load_mem_new.rob_num;
+                    cdb_mem.pd_s    = load_mem_new.pd_s;
+                    cdb_mem.rd_s    = load_mem_new.rd_s;
                     cdb_mem.valid   = '1;
-                    cdb_mem.inst    = next_done_load_entry.inst;
-                    cdb_mem.addr    = next_done_load_entry.addr;
-                    cdb_mem.rmask   = next_done_load_entry.rmask;
-                    cdb_mem.wmask   = next_done_load_entry.wmask;
-                    cdb_mem.rdata   = data_in : '0;
+                    cdb_mem.inst    = load_mem_new.inst;
+                    cdb_mem.addr    = load_mem_new.addr;
+                    cdb_mem.rmask   = load_mem_new.rmask;
+                    cdb_mem.wmask   = '0;
+                    cdb_mem.rdata   = data_in;
                     cdb_mem.wdata   = '0;
-                    cdb_mem.rs1_rdata = dequeue_mem_next.rs1_rdata;
+                    cdb_mem.rs1_rdata = load_mem_new.rs1_rdata;
                     cdb_mem.rs2_rdata = '0;
-                    unique case (mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].funct3)
+                    unique case (load_mem[load_entry_tracked].funct3)
                         // rd_v = rd_wdata
-                        load_f3_lb : cdb_mem.rd_v = {{24{data_in[7 +8 *mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].shift_bits]}}   , data_in[8 *mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].shift_bits    +: 8 ]};
-                        load_f3_lbu: cdb_mem.rd_v = {{24{1'b0}}                                                , data_in[8 *mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].shift_bits    +: 8 ]};
-                        load_f3_lh : cdb_mem.rd_v = {{16{data_in[15+16*mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].shift_bits[1]]}}, data_in[16*mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].shift_bits[1] +: 16]};
-                        load_f3_lhu: cdb_mem.rd_v = {{16{1'b0}}                                                , data_in[16*mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].shift_bits[1] +: 16]};
+                        load_f3_lb : cdb_mem.rd_v = {{24{data_in[7 +8 *load_mem[load_entry_tracked].shift_bits]}}   , data_in[8 *load_mem[load_entry_tracked].shift_bits    +: 8 ]};
+                        load_f3_lbu: cdb_mem.rd_v = {{24{1'b0}}                                                , data_in[8 *load_mem[load_entry_tracked].shift_bits    +: 8 ]};
+                        load_f3_lh : cdb_mem.rd_v = {{16{data_in[15+16*load_mem[load_entry_tracked].shift_bits[1]]}}, data_in[16*load_mem[load_entry_tracked].shift_bits[1] +: 16]};
+                        load_f3_lhu: cdb_mem.rd_v = {{16{1'b0}}                                                , data_in[16*load_mem[load_entry_tracked].shift_bits[1] +: 16]};
                         load_f3_lw : cdb_mem.rd_v = data_in;
                         default    : cdb_mem.rd_v = 'x;
                     endcase
@@ -453,31 +441,35 @@ module split_lsq
             end
             store: // send request to cache
             begin
-                if (store_mem[store_head_reg[ADDR_WIDTH - 1:0]+1'b1].valid == 1'b1 && store_mem[store_head_reg[ADDR_WIDTH - 1:0]+1'b1].addr_ready == 1'b1) 
+                if (store_mem[store_head_reg[STORE_MEM_ADDR_WIDTH - 1:0]+1'b1].valid == 1'b1 && store_mem[store_head_reg[STORE_MEM_ADDR_WIDTH - 1:0]+1'b1].addr_ready == 1'b1) 
                 begin
-                    d_addr = store_mem[store_head_reg[ADDR_WIDTH - 1:0]+1'b1].addr;
-                    unique case (store_mem[store_head_reg[ADDR_WIDTH - 1:0]+1'b1].funct3)
-                        store_f3_sb: d_wmask = 4'b0001 << d_addr[1:0];
-                        store_f3_sh: d_wmask = 4'b0011 << d_addr[1:0];
-                        store_f3_sw: d_wmask = 4'b1111;
-                        default    : d_wmask = 'x;
-                    endcase
-                    
-                    unique case (store_mem[store_head_reg[ADDR_WIDTH - 1:0]+1'b1].funct3)
-                        store_f3_sb: d_wdata[8 *d_addr[1:0] +: 8 ] = store_mem[store_head_reg[ADDR_WIDTH - 1:0]+1'b1].store_wdata[7 :0];
-                        store_f3_sh: d_wdata[16*d_addr[1]   +: 16] = store_mem[store_head_reg[ADDR_WIDTH - 1:0]+1'b1].store_wdata[15:0];
-                        store_f3_sw: d_wdata = store_mem[store_head_reg[ADDR_WIDTH - 1:0]+1'b1].store_wdata;
-                        default    : d_wdata = 'x;
-                    endcase
+                    d_addr = store_mem[store_head_reg[STORE_MEM_ADDR_WIDTH - 1:0]+1'b1].addr;
+                    if (store_mem[store_head_reg[STORE_MEM_ADDR_WIDTH - 1:0] + 1'b1].rob_num == commited_rob)
+                    begin
+                        unique case (store_mem[store_head_reg[STORE_MEM_ADDR_WIDTH - 1:0]+1'b1].funct3)
+                            store_f3_sb: d_wmask = 4'b0001 << d_addr[1:0];
+                            store_f3_sh: d_wmask = 4'b0011 << d_addr[1:0];
+                            store_f3_sw: d_wmask = 4'b1111;
+                            default    : d_wmask = 'x;
+                        endcase
+                        
+                        unique case (store_mem[store_head_reg[STORE_MEM_ADDR_WIDTH - 1:0]+1'b1].funct3)
+                            store_f3_sb: d_wdata[8 *d_addr[1:0] +: 8 ] = store_mem[store_head_reg[STORE_MEM_ADDR_WIDTH - 1:0]+1'b1].store_wdata[7 :0];
+                            store_f3_sh: d_wdata[16*d_addr[1]   +: 16] = store_mem[store_head_reg[STORE_MEM_ADDR_WIDTH - 1:0]+1'b1].store_wdata[15:0];
+                            store_f3_sw: d_wdata = store_mem[store_head_reg[STORE_MEM_ADDR_WIDTH - 1:0]+1'b1].store_wdata;
+                            default    : d_wdata = 'x;
+                        endcase
+                    end
+                    cache_mem_next.rmask = '0;
+                    cache_mem_next.wmask = d_wmask;
+                    cache_mem_next.wdata = d_wdata;
+    
+                    d_addr[1:0] = 2'b00;
+                    accessing_cache = '1;
+                    state_next = store_idle;
                 end
 
-                cache_mem_next.rmask = '0;
-                cache_mem_next.wmask = d_wmask;
-                cache_mem_next.wdata = d_wdata;
-
-                d_addr[1:0] = 2'b00;
-                accessing_cache = '1;
-                state_next = store_idle;
+               
                 else // waiting for cache response
                 begin
                     state_next = load;
@@ -489,16 +481,16 @@ module split_lsq
                 if (data_valid)
                 begin
                     store_head_next = store_head_reg + 1'd1;
-                    store_dequeue_mem_next = store_mem[store_head_reg[ADDR_WIDTH - 1:0]+1'b1];
+                    store_dequeue_mem_next = store_mem[store_head_reg[STORE_MEM_ADDR_WIDTH - 1:0]+1'b1];
                     store_dequeue_mem_next.valid = 1'b0;
 
                     cdb_mem.rob_idx = store_dequeue_mem_next.rob_num;
-                    cdb_mem.pd_s    = store_dequeue_mem_next.pd_s;
-                    cdb_mem.rd_s    = store_dequeue_mem_next.rd_s;
+                    cdb_mem.pd_s    = '0;
+                    cdb_mem.rd_s    = '0;
                     cdb_mem.valid   = '1;
                     cdb_mem.inst    = store_dequeue_mem_next.inst;
                     cdb_mem.addr    = store_dequeue_mem_next.addr;
-                    cdb_mem.rmask   = store_dequeue_mem_next.rmask;
+                    cdb_mem.rmask   = '0;
                     cdb_mem.wmask   = store_dequeue_mem_next.wmask;
                     cdb_mem.rdata   = '0;
                     cdb_mem.wdata   = store_dequeue_mem_next.wdata;

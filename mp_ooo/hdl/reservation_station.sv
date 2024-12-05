@@ -606,7 +606,8 @@ import rv32i_types::*;
         mem_ps2 = '0;
         mem_ps1 = '0;
 
-        mem_idx_out = '0;
+        store_mem_idx_out = '0;
+        load_mem_idx_out = '0;
         
         if (~multiply_fu_busy && (num_issues <= 3'd5))
         begin
@@ -719,7 +720,8 @@ import rv32i_types::*;
                     remove_mem = 1'b1;
                     mem_ps1 = mem_reservation_station_entry_new.ps1;
                     mem_ps2 = mem_reservation_station_entry_new.ps2;
-                    mem_idx_out = mem_reservation_station_entry_new.mem_idx;
+                    store_mem_idx_out = mem_reservation_station_entry_new.store_mem_idx;
+                    load_mem_idx_out = mem_reservation_station_entry_new.load_mem_idx;
                     break;
                 end
             end

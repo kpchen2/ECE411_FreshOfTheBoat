@@ -11,7 +11,7 @@ import rv32i_types::*;
     input logic [31:0] i_imm,
     input logic [STORE_MEM_ADDR_WIDTH - 1:0] store_dispatch_mem_idx,
     input logic [LOAD_MEM_ADDR_WIDTH - 1:0] load_dispatch_mem_idx,
-    output logic [MEM_ADDR_WIDTH - 1:0] mem_idx_out,
+    output logic [LOAD_MEM_ADDR_WIDTH - 1:0] mem_idx_out,
     output logic [31:0] store_wdata,
     output  logic   [31:0]  fu_rs1_v_mem, fu_rs2_v_mem,
     output  logic [6:0] opcode_out

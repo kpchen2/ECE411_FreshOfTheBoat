@@ -170,9 +170,9 @@ import rv32i_types::*;
     logic   [ROB_ADDR_WIDTH - 1:0]   mem_rob_idx_in;
 
     /* reservation station, memory functional unit */
-    logic   [STORE_MEM_ADDR_WIDTH - 1:0]   store_res_dispatch_mem_idx, store_fu_mem_idx;
-    logic   [LOAD_MEM_ADDR_WIDTH - 1:0]   load_res_dispatch_mem_idx, load_fu_mem_idx;
-
+    logic   [STORE_MEM_ADDR_WIDTH - 1:0]   store_res_dispatch_mem_idx;
+    logic   [LOAD_MEM_ADDR_WIDTH - 1:0]   load_res_dispatch_mem_idx;
+    logic   [STORE_MEM_ADDR_WIDTH - 1: 0] fu_mem_idx;
      /* calculated address */
     logic [31:0]    calculated_address;
     
@@ -287,37 +287,37 @@ import rv32i_types::*;
         .dfp_resp(d_dfp_resp)               // CONNECT TO BMEM
     );
 
-    memory_queue memory_queue_i (
-        .clk(clk),
-        .rst(rst || global_branch_signal),
-        .inst(dispatch_inst),
-        .opcode(decode_info.opcode),
-        .funct3(decode_info.funct3),
-        .phys_reg_in(pd_dispatch),          // FROM RENAME DISPATCH
-        .enqueue_valid(mem_regf_we_dispatch),   // FROM RENAME DISPATCH
-        .rob_num(rob_num),
-        .rd_dispatch(rd_dispatch),
-        .addr(calculated_address),          // FROM ADDER
-        .addr_valid(addr_valid),            // FROM ADDER
-        .mem_idx_in(fu_mem_idx),            // FROM ADDER
-        .store_wdata(fu_mem_store_wdata),   // FROM ADDER/REGFILE
-        .rs1_rdata(fu_rs1_v_mem),
-        .rs2_rdata(fu_rs2_v_mem),
-        .commited_rob(rob_head),
-        .data_in(load_rdata),
-        .data_valid(d_ufp_resp),
+    // memory_queue memory_queue_i (
+    //     .clk(clk),
+    //     .rst(rst || global_branch_signal),
+    //     .inst(dispatch_inst),
+    //     .opcode(decode_info.opcode),
+    //     .funct3(decode_info.funct3),
+    //     .phys_reg_in(pd_dispatch),          // FROM RENAME DISPATCH
+    //     .enqueue_valid(mem_regf_we_dispatch),   // FROM RENAME DISPATCH
+    //     .rob_num(rob_num),
+    //     .rd_dispatch(rd_dispatch),
+    //     .addr(calculated_address),          // FROM ADDER
+    //     .addr_valid(addr_valid),            // FROM ADDER
+    //     .mem_idx_in(fu_mem_idx),            // FROM ADDER
+    //     .store_wdata(fu_mem_store_wdata),   // FROM ADDER/REGFILE
+    //     .rs1_rdata(fu_rs1_v_mem),
+    //     .rs2_rdata(fu_rs2_v_mem),
+    //     .commited_rob(rob_head),
+    //     .data_in(load_rdata),
+    //     .data_valid(d_ufp_resp),
         
-        // .phys_reg_out(cdb_mem.pd_s),        // OUTPUT RD_S
-        // .output_valid(cdb_mem.valid),       // OUTPUT SOMEWHERE
-        // .data_out(cdb_mem.rd_v),            // OUTPUT RD_V
-        .full(mem_queue_full),
-        .cdb_mem(cdb_mem),
-        .mem_idx_out(queue_mem_idx),        // OUTPUT TO RENAME DISPATCH
-        .d_addr(mem_addr),
-        .d_rmask(load_rmask),
-        .d_wmask(store_wmask),
-        .d_wdata(store_wdata)
-    );
+    //     // .phys_reg_out(cdb_mem.pd_s),        // OUTPUT RD_S
+    //     // .output_valid(cdb_mem.valid),       // OUTPUT SOMEWHERE
+    //     // .data_out(cdb_mem.rd_v),            // OUTPUT RD_V
+    //     .full(mem_queue_full),
+    //     .cdb_mem(cdb_mem),
+    //     .mem_idx_out(queue_mem_idx),        // OUTPUT TO RENAME DISPATCH
+    //     .d_addr(mem_addr),
+    //     .d_rmask(load_rmask),
+    //     .d_wmask(store_wmask),
+    //     .d_wdata(store_wdata)
+    // );
 
     split_lsq split_lsq_i (
         .clk(clk),
@@ -457,8 +457,10 @@ import rv32i_types::*;
         .dispatch_rs2_s(dispatch_rs2_s),
         .dispatch_inst(dispatch_inst),
         .dispatch_regf_we(dispatch_regf_we),
-        .mem_idx_in(queue_mem_idx),
-        .mem_idx_out(dispatch_mem_idx),          // PROPAGATE THIS INTO MEM ADDER
+        .load_mem_idx_in(load_queue_mem_idx),
+        .store_mem_idx_in(store_queue_mem_idx),
+        .load_mem_idx_out(load_dispatch_mem_idx),          // PROPAGATE THIS INTO MEM ADDER
+        .store_mem_idx_out(store_dispatch_mem_idx),          // PROPAGATE THIS INTO MEM ADDER
         .global_branch_addr(global_branch_addr),
         .global_branch_signal(global_branch_signal)
         );
@@ -616,7 +618,8 @@ import rv32i_types::*;
         // .cdb_mem(cdb_mem),
         .addr_valid(addr_valid),
         // .global_branch_signal(global_branch_signal),
-        .mem_idx_in(res_dispatch_mem_idx),
+        .store_mem_idx_in(store_res_dispatch_mem_idx),
+        .load_mem_idx_in(load_res_dispatch_mem_idx),
         .mem_idx_out(fu_mem_idx),
         .store_wdata(fu_mem_store_wdata),
         .calculated_address(calculated_address),
@@ -708,8 +711,10 @@ import rv32i_types::*;
         .regf_we_div(cdb_div.valid),
         .regf_we_br(cdb_br.valid),
         .regf_we_mem(cdb_mem.valid),
-        .mem_idx_in(dispatch_mem_idx),
-        .mem_idx_out(res_dispatch_mem_idx),
+        .load_mem_idx_in(load_dispatch_mem_idx),
+        .store_mem_idx_in(store_dispatch_mem_idx),
+        .load_mem_idx_out(load_res_dispatch_mem_idx),
+        .store_mem_idx_out(store_res_dispatch_mem_idx),
         .global_branch_signal(global_branch_signal)
     );
 

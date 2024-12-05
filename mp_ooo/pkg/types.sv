@@ -30,7 +30,7 @@ package rv32i_types;
 
 
     typedef logic [6:0] physicalIndexing;
-    
+    typedef logic  [LOAD_MEM_ADDR_WIDTH - 1:0] physicalIndexing5;
     typedef struct packed {
         logic           monitor_valid;
         logic   [63:0]  monitor_order;
@@ -116,7 +116,9 @@ package rv32i_types;
         logic [ARCH_REG_BITS - 1:0] rd;
         logic [ROB_ADDR_WIDTH - 1:0] rob_entry;
         decode_info_t decode_info;
-        logic   [$clog2(MEM_QUEUE_DEPTH) - 1:0]   mem_idx;
+        logic   [$clog2(LOAD_MEM_QUEUE_DEPTH) - 1:0]   load_mem_idx;
+        logic   [$clog2(STORE_MEM_QUEUE_DEPTH) - 1:0]  store_mem_idx;
+
     } mem_reservation_station_data;
 
     typedef struct packed {
