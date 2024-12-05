@@ -208,7 +208,15 @@ import rv32i_types::*;
 
     logic   pht_valid, pht_valid_reg;
 
+    logic   real_pht_valid;
+
+    logic bp, bp_reg;
+
+    logic ok;
+
     assign true_btb_valid = is_branch_inst ? btb_valid : '0;
+
+    assign bp = true_btb_valid ? ((is_branch_inst && real_pht_valid && proper_enqueue_in) ? pht[1] : '0) : '0;
 
     // assign global_branch_signal = cdb_br.pc_select;
     // assign global_branch_addr = cdb_br.pc_branch;
@@ -217,7 +225,9 @@ import rv32i_types::*;
 
     assign pc_in = pc - 32'd4;
 
-    assign cache_addr = true_btb_valid ? btb_out : pc;
+    assign cache_addr = bp ? btb_out : pc;
+
+    assign real_pht_valid = pht_valid;
 
     always_ff @(posedge clk) begin
 
@@ -239,20 +249,22 @@ import rv32i_types::*;
             lht_true <= '0;
             pht_reg <= '0;
             pht_valid_reg <= '0;
+            bp_reg <= '0;
         end else begin
             pc <= pc_next;
             initial_flag_reg <= initial_flag;
             dfp_read_reg <= dfp_read;
             order <= order_next;
             global_branch_signal_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? global_branch_signal_reg : global_branch_signal;
-            btb_valid_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? btb_valid_reg : true_btb_valid;
+            btb_valid_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? btb_valid_reg : bp;
             btb_out_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? btb_out_reg : btb_out;
             lht_valid_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? lht_valid_reg : lht_valid;
             lht_valid_true <= (i_ufp_resp == '0 && global_branch_signal == '0) ? lht_valid_true : lht_valid_reg;
             lht_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? lht_reg : lht;
             lht_true <= (i_ufp_resp == '0 && global_branch_signal == '0) ? lht_true : lht_reg;
             pht_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? pht_reg : pht;
-            pht_valid_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? pht_valid_reg : pht_valid;
+            pht_valid_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? pht_valid_reg : real_pht_valid;
+            bp_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? bp_reg : bp;
         end
     end
 
@@ -281,7 +293,7 @@ import rv32i_types::*;
                     ufp_rmask = '0;
                 end
             end
-            pc_next = (true_btb_valid && ~global_branch_signal_reg) ? ((!full_stall && bmem_ready) ? btb_out + 32'd4 : btb_out) : pc_next;
+            pc_next = (bp && ~global_branch_signal_reg && ~bp_reg) ? ((!full_stall && bmem_ready) ? btb_out + 32'd4 : btb_out) : pc_next;
             pc_next = global_branch_signal ? global_branch_addr : pc_next;
         end
     end
@@ -391,9 +403,9 @@ import rv32i_types::*;
         .din0       (pht_in),
         .dout0      (),         // useless
         .clk1       (clk),
-        .csb1       (~(lht_valid)),
+        .csb1       ('0),
         .web1       ('1),     // active low
-        .addr1      (lht),
+        .addr1      (lht_valid ? lht : '0),
         .din1       ('1),         // useless
         .dout1      (pht)
     );
@@ -411,9 +423,9 @@ import rv32i_types::*;
         .dout0      (),         // useless, write port
         .clk1       (clk),
         .rst1       (rst),
-        .csb1       (~(lht_valid)),
+        .csb1       ('0),
         .web1       ('1),
-        .addr1      (lht), // address for writes only
+        .addr1      (lht_valid ? lht : '0), // address for writes only
         .din1       ('1),         // useless, read port
         .dout1      (pht_valid)
     );
@@ -515,9 +527,9 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
         .wdata_in(ufp_rdata),
-        .enqueue_in(proper_enqueue_in && ~true_btb_valid),
+        .enqueue_in(proper_enqueue_in && ~bp),
         .rdata_out(inst),
-        .dequeue_in(dequeue && ~true_btb_valid),
+        .dequeue_in(dequeue && ~bp),
         .full_out(full_stall),
         .empty_out(iqueue_empty),
         .global_branch_signal(global_branch_signal)
@@ -528,9 +540,9 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
         .wdata_in(pc_in),
-        .enqueue_in(proper_enqueue_in && ~true_btb_valid),
+        .enqueue_in(proper_enqueue_in && ~bp),
         .rdata_out(prog),
-        .dequeue_in(dequeue && ~true_btb_valid),
+        .dequeue_in(dequeue && ~bp),
         .full_out(full_garbage),
         .empty_out(empty_garbage),
         .global_branch_signal(global_branch_signal)
@@ -579,13 +591,14 @@ import rv32i_types::*;
         .mem_idx_out(dispatch_mem_idx),          // PROPAGATE THIS INTO MEM ADDER
         .global_branch_addr(global_branch_addr),
         .global_branch_signal(global_branch_signal),
-        .btb_valid(true_btb_valid),
+        .btb_valid(bp),
         .btb_valid_reg(btb_valid_reg),
         .btb_out_reg(btb_out_reg),
         .lht_true(lht_true),
         .lht_valid(lht_valid_true),
         .pht_valid(pht_valid_reg),
-        .pht(pht_reg)
+        .pht(pht_reg),
+        .ok(ok)
     );
 
     rat rat_i (

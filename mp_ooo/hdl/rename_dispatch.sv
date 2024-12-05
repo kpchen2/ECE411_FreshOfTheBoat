@@ -51,7 +51,9 @@ import rv32i_types::*;
     input   logic           lht_valid,
 
     input   logic   [1:0]   pht,
-    input   logic           pht_valid
+    input   logic           pht_valid,
+
+    output  logic           ok
 );
 
     // decode_info_t decode_info;
@@ -96,6 +98,7 @@ import rv32i_types::*;
         dispatch_rs1_s = '0;
         dispatch_rs2_s = '0; 
         dispatch_regf_we = '0;
+        ok = '0;
 
 
         if (inst[6:0] == op_b_reg && inst[31:25] == 7'b0000001 && (inst[14:12] inside { mult_div_f3_mul, mult_div_f3_mulh, mult_div_f3_mulhsu, mult_div_f3_mulhu})) begin
@@ -112,52 +115,55 @@ import rv32i_types::*;
         // if free list empty, instruction queue empty, ROB full, corresponding RS full, don't process instruction
         if (!btb_valid && !is_free_list_empty_reg && !is_iqueue_empty_reg && !rob_full_reg && !((rs_full_add && (rs_signal == 3'b000)) || (rs_full_mul && (rs_signal == 3'b001)) || (rs_full_div && (rs_signal == 3'b010)) || (rs_full_br && (rs_signal == 3'b011)) || (rs_full_mem && (rs_signal == 3'b100)))) begin
         // if (!is_free_list_empty && !is_iqueue_empty && !rob_full && !rs_full_add && !rs_full_mul && !rs_full_div) begin
-            dequeue = 1'b1;
-            decode_info.funct3 = inst[14:12];
-            decode_info.funct7 = inst[31:25];
-            decode_info.opcode = inst[6:0];
-            decode_info.i_imm  = decode_info.opcode == op_b_store ? {{21{inst[31]}}, inst[30:25], inst[11:7]} : {{21{inst[31]}}, inst[30:20]};
-            decode_info.s_imm  = {{21{inst[31]}}, inst[30:25], inst[11:7]};
-            decode_info.b_imm  = {{20{inst[31]}}, inst[7], inst[30:25], inst[11:8], 1'b0};
-            decode_info.u_imm  = {inst[31:12], 12'h000};
-            decode_info.j_imm  = {{12{inst[31]}}, inst[19:12], inst[20], inst[30:21], 1'b0};
-            decode_info.rd_s   = inst[11:7];
-            decode_info.rs1_s  = inst[19:15];
-            decode_info.rs2_s  = inst[24:20];
-            decode_info.inst   = inst;
-            regf_we = 1'b1;
-            dequeue_free_list = ((inst[6:0] == op_b_br) || (inst[11:7] == '0 && (inst[6:0] inside {op_b_auipc, op_b_lui, op_b_reg, op_b_imm, op_b_jal, op_b_jalr, op_b_load})) || inst[6:0] == op_b_store) ? 1'b0 : 1'b1; // also if store
+            ok = '1;
+            if (~btb_valid) begin
+                dequeue = 1'b1;
+                decode_info.funct3 = inst[14:12];
+                decode_info.funct7 = inst[31:25];
+                decode_info.opcode = inst[6:0];
+                decode_info.i_imm  = decode_info.opcode == op_b_store ? {{21{inst[31]}}, inst[30:25], inst[11:7]} : {{21{inst[31]}}, inst[30:20]};
+                decode_info.s_imm  = {{21{inst[31]}}, inst[30:25], inst[11:7]};
+                decode_info.b_imm  = {{20{inst[31]}}, inst[7], inst[30:25], inst[11:8], 1'b0};
+                decode_info.u_imm  = {inst[31:12], 12'h000};
+                decode_info.j_imm  = {{12{inst[31]}}, inst[19:12], inst[20], inst[30:21], 1'b0};
+                decode_info.rd_s   = inst[11:7];
+                decode_info.rs1_s  = inst[19:15];
+                decode_info.rs2_s  = inst[24:20];
+                decode_info.inst   = inst;
+                regf_we = 1'b1;
+                dequeue_free_list = ((inst[6:0] == op_b_br) || (inst[11:7] == '0 && (inst[6:0] inside {op_b_auipc, op_b_lui, op_b_reg, op_b_imm, op_b_jal, op_b_jalr, op_b_load})) || inst[6:0] == op_b_store) ? 1'b0 : 1'b1; // also if store
 
-            // if (decode_info.opcode == op_b_store) begin
-            //     regf_we = '0;
-            // end
+                // if (decode_info.opcode == op_b_store) begin
+                //     regf_we = '0;
+                // end
 
-            if (rs_signal == 3'b100 && !rs_full_mem)
-            begin
-                mem_regf_we = 1'b1;
+                if (rs_signal == 3'b100 && !rs_full_mem)
+                begin
+                    mem_regf_we = 1'b1;
+                end
+
+                rd = (inst[6:0] == op_b_br) ? '0 : decode_info.rd_s;
+                rs1 = decode_info.rs1_s;
+                rs2 = decode_info.rs2_s;
+
+                dispatch_inst = inst;
+                dispatch_pc_rdata = prog;
+                dispatch_pc_wdata = global_branch_signal ? global_branch_addr : prog + 32'd4;
+                dispatch_pc_wdata = (btb_valid_reg && rs_signal == 3'b011) ? btb_out_reg : dispatch_pc_wdata;
+                dispatch_rs1_s = inst[19:15];
+                dispatch_rs2_s = inst[24:20];
+                dispatch_regf_we = regf_we;
+
+                decode_info.pc = prog;
+
+                decode_info.bp = (rs_signal == 3'b011) ? btb_valid_reg : '0;
+                decode_info.bp_addr = (rs_signal == 3'b011) ? btb_out_reg : '0;
+                decode_info.lht_valid = lht_valid;
+                decode_info.lht_true = lht_true;
+
+                decode_info.pht_valid = lht_valid ? pht_valid : '0;
+                decode_info.pht = pht;
             end
-
-            rd = (inst[6:0] == op_b_br) ? '0 : decode_info.rd_s;
-            rs1 = decode_info.rs1_s;
-            rs2 = decode_info.rs2_s;
-
-            dispatch_inst = inst;
-            dispatch_pc_rdata = prog;
-            dispatch_pc_wdata = global_branch_signal ? global_branch_addr : prog + 32'd4;
-            dispatch_pc_wdata = (btb_valid_reg && rs_signal == 3'b011) ? btb_out_reg : dispatch_pc_wdata;
-            dispatch_rs1_s = inst[19:15];
-            dispatch_rs2_s = inst[24:20];
-            dispatch_regf_we = regf_we;
-
-            decode_info.pc = prog;
-
-            decode_info.bp = (rs_signal == 3'b011) ? btb_valid_reg : '0;
-            decode_info.bp_addr = (rs_signal == 3'b011) ? btb_out_reg : '0;
-            decode_info.lht_valid = lht_valid;
-            decode_info.lht_true = lht_true;
-
-            decode_info.pht_valid = pht_valid;
-            decode_info.pht = pht;
         end
 
         pd = ((inst[6:0] == op_b_br) || (inst[11:7] == '0 && (inst[6:0] inside {op_b_auipc, op_b_lui, op_b_reg, op_b_imm, op_b_jal, op_b_jalr, op_b_load})) || inst[6:0] == op_b_store) ? '0 : phys_reg;

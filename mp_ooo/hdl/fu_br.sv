@@ -100,7 +100,7 @@ import rv32i_types::*;
         end
 
         btb_web = '1;
-        btb_addr = '0;
+        btb_addr = decode_info.pc[9:2];;
         btb_din = '0;
 
         if (~decode_info.lht_valid) begin
@@ -134,7 +134,7 @@ import rv32i_types::*;
         
         if (temp_pc_select) begin
             btb_web = '0;
-            btb_addr = decode_info.pc[9:2];
+            // btb_addr = decode_info.pc[9:2];
             btb_din = temp_pc_branch;
             pc_select = temp_pc_select;
         end
