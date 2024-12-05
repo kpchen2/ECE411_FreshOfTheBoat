@@ -12,7 +12,8 @@ module split_lsq
         input   logic   [6:0]   opcode,
         input   logic   [2:0]   funct3,
         input   logic   [PHYS_REG_BITS - 1:0]   phys_reg_in,
-        input   logic           enqueue_valid,
+        input   logic           store_enqueue_valid,    
+        input   logic           load_enqueue_valid,
         input   logic   [ROB_ADDR_WIDTH- 1:0]   rob_num,
         input   logic   [ARCH_REG_BITS - 1:0]   rd_dispatch,
     
@@ -83,7 +84,8 @@ module split_lsq
 
 
     // if we got another load/store instruction. Logic has to vary.
-    logic           enqueue_valid_next;
+    logic           store_enqueue_valid_next;
+    logic           load_enqueue_valid_next;
 
     // if ready to pop off an existing load/store instruction
     logic           data_valid_next;
@@ -162,12 +164,16 @@ module split_lsq
             begin
                 store_mem[store_tail_next[STORE_MEM_ADDR_WIDTH - 1:0]] <= store_enqueue_mem_next;
             end
+            else if (load_enqueue_valid_next)
+            begin
+                load_mem[next_free_load_entry] <= load_mem_next;
+            end
 
             if (data_valid_next)
             begin
                 if (state_next == load)
                 begin
-                    load_mem[load_entry_tracked_next] <= next_done_load_entry;
+                    load_mem[load_entry_tracked_next] <= load_mem_new;
                 end
                 else if (state_next == store)
                 begin
@@ -178,16 +184,27 @@ module split_lsq
             
             if (addr_valid_next && addr_opcode_next == op_b_load)
             begin
-
+                load_mem[load_mem_idx_in_next].addr_ready <= 1'b1; 
+                load_mem[load_mem_idx_in_next].addr <= addr_next;
+                load_mem[load_mem_idx_in_next].shift_bits <= addr_next[1:0];
+                load_mem[load_mem_idx_in_next].rs1_rdata <= rs1_rdata;
+                load_mem[load_mem_idx_in_next].rs2_rdata <= rs2_rdata;
             end
             else if (addr_valid_next && addr_opcode_next == op_b_store)
             begin
-
+                store_mem[store_mem_idx_in_next].addr_ready <= 1'b1; 
+                store_mem[store_mem_idx_in_next].addr <= addr_next;
+                store_mem[store_mem_idx_in_next].shift_bits <= addr_next[1:0];
+                store_mem[store_mem_idx_in_next].store_wdata <= store_wdata_next;
+                store_mem[store_mem_idx_in_next].rs1_rdata <= rs1_rdata;
+                store_mem[store_mem_idx_in_next].rs2_rdata <= rs2_rdata;
             end
 
             if (accessing_cache && state_next == load)
             begin
-
+                load_mem[load_mem_idx_in_next].rmask <= cache_mem_next.rmask; //??
+                load_mem[load_mem_idx_in_next].wmask <= cache_mem_next.wmask; //??
+                load_mem[load_mem_idx_in_next].wdata <= cache_mem_next.wdata; //??
             end
             else if (accessing_cache && state_next == store)
             begin
