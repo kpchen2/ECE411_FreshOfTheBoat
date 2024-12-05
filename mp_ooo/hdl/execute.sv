@@ -133,15 +133,16 @@ import rv32i_types::*;
 
     always_ff @(posedge clk) begin
         if (rst) begin
-            mul_1 <= 1'b0;
+            mul_1 <= 1'b1;
             mul_2 <= 1'b0;
             mul_3 <= 1'b0;
             mul_4 <= 1'b0;
 
-            for (int i = 0; i <= NUM_DIV_CYCLES; i++)
+            for (int i = 1; i <= NUM_DIV_CYCLES; i++)
             begin
                 divs[i] <= 1'b0;
             end
+            divs[0] <= 1'b1;
             // div_1 <= 1'b0;
             // div_2 <= 1'b0;
             // div_3 <= 1'b0;
@@ -215,7 +216,8 @@ import rv32i_types::*;
         .pc_branch(pc_branch),
         .btb_addr(btb_addr),
         .btb_din(btb_din),
-        .btb_web(btb_web)
+        .btb_web(btb_web),
+        .global_branch_signal(global_branch_signal)
     );
 
     fu_mem fu_mem_i(

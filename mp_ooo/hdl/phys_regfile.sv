@@ -59,7 +59,7 @@ import rv32i_types::*;
     logic   [5:0]   rs1_mul_1, rs1_mul_2, rs1_mul_3, rs1_mul_4;
     logic   [5:0]   rs2_mul_1, rs2_mul_2, rs2_mul_3, rs2_mul_4;
 
-    logic   [5:0]   rs1_br_reg, rs2_br_reg;
+    logic   [5:0]   rs1_br_reg, rs2_br_reg, rs1_br_2, rs2_br_2;
 
 
     logic [5:0] rs1_divs [NUM_DIV_CYCLES + 1];
@@ -81,6 +81,8 @@ import rv32i_types::*;
 
             rs1_br_reg <= '0;
             rs2_br_reg <= '0;
+            rs1_br_2 <= '0;
+            rs2_br_2 <= '0;
 
 
             for (int i = 0; i <= NUM_DIV_CYCLES; i++)
@@ -108,6 +110,8 @@ import rv32i_types::*;
 
             rs1_br_reg <= rs1_br;
             rs2_br_reg <= rs2_br;
+            rs1_br_2 <= rs1_br_reg;
+            rs2_br_2 <= rs2_br_reg;
 
 
             rs1_divs[0] <= rs1_div;
@@ -139,8 +143,8 @@ import rv32i_types::*;
         rs1_div_f1 = '0;
         rs2_div_f2 = '0;
 
-        rs1_br_f1 = rst ? '0 : rs1_br | rs1_br_reg;
-        rs2_br_f2 = rst ? '0 : rs2_br | rs2_br_reg;
+        rs1_br_f1 = rst ? '0 : rs1_br | rs1_br_reg | rs1_br_2;
+        rs2_br_f2 = rst ? '0 : rs2_br | rs2_br_reg | rs2_br_2;
         if (rst)
         begin
             rs1_div_f1 = '0;

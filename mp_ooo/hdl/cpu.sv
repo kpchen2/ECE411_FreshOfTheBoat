@@ -223,7 +223,6 @@ import rv32i_types::*;
             dfp_read_reg <= '0;
             order  <= '0;
             global_branch_signal_reg <= '0;
-            global_branch_signal_reg <= '0;
         end else begin
             pc <= pc_next;
             initial_flag_reg <= initial_flag;
@@ -418,7 +417,7 @@ import rv32i_types::*;
         .bmem_write(bmem_write)
     );
 
-    queue #(.DATA_WIDTH(32), .QUEUE_DEPTH(64)) queue_i (
+    queue #(.DATA_WIDTH(32), .QUEUE_DEPTH(32)) queue_i (
         .clk(clk),
         .rst(rst),
         .wdata_in(ufp_rdata),
@@ -430,7 +429,7 @@ import rv32i_types::*;
         .global_branch_signal(global_branch_signal)
     );
 
-    queue #(.DATA_WIDTH(32), .QUEUE_DEPTH(64)) queue_pc
+    queue #(.DATA_WIDTH(32), .QUEUE_DEPTH(32)) queue_pc
     (
         .clk(clk),
         .rst(rst),
@@ -443,7 +442,7 @@ import rv32i_types::*;
         .global_branch_signal(global_branch_signal)
     );
 
-    queue #(.DATA_WIDTH(1), .QUEUE_DEPTH(64)) queue_bp
+    queue #(.DATA_WIDTH(1), .QUEUE_DEPTH(32)) queue_bp
     (
         .clk(clk),
         .rst(rst),
@@ -456,7 +455,7 @@ import rv32i_types::*;
         .global_branch_signal(global_branch_signal)
     );
 
-    queue #(.DATA_WIDTH(32), .QUEUE_DEPTH(64)) queue_bp_addr
+    queue #(.DATA_WIDTH(32), .QUEUE_DEPTH(32)) queue_bp_addr
     (
         .clk(clk),
         .rst(rst),
