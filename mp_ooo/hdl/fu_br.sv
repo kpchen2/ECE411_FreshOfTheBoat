@@ -4,6 +4,7 @@ import rv32i_types::*;
     parameter PHYS_REG_BITS = 6
 )
 (
+    input   logic           clk, rst,
     input   logic   [31:0]  rs1_v, rs2_v,
     input   decode_info_t   decode_info,
     output  logic   [31:0]  rd_v,
@@ -11,7 +12,10 @@ import rv32i_types::*;
     output  logic           valid,
     output  logic           busy,
     output  logic           pc_select,
-    output  logic   [31:0]  pc_branch
+    output  logic   [31:0]  pc_branch,
+    output  logic           btb_web,
+    output  logic   [7:0]   btb_addr,
+    output  logic   [31:0]  btb_din
 );
 
     logic signed   [31:0] as;
@@ -27,10 +31,31 @@ import rv32i_types::*;
     logic   [31:0]  aluout;
     logic           br_en;
 
+    logic   [31:0]  temp_pc_branch;
+    logic           temp_pc_select;
+
+    logic           start_reg;
+    decode_info_t   decode_info_reg;
+    logic   [31:0]  rs1_v_reg, rs2_v_reg;
+
     assign as =   signed'(a);
     assign bs =   signed'(b);
     assign au = unsigned'(a);
     assign bu = unsigned'(b);
+
+    always_ff @(posedge clk) begin
+        if (rst) begin
+            start_reg <= '0;
+            decode_info_reg <= '0;
+            rs1_v_reg <= '0;
+            rs2_v_reg <= '0;
+        end else begin
+            start_reg <= start;
+            decode_info_reg <= decode_info;
+            rs1_v_reg <= rs1_v;
+            rs2_v_reg <= rs2_v;
+        end
+    end
 
     always_comb begin
         unique case (cmpop)
@@ -52,30 +77,31 @@ import rv32i_types::*;
         valid = 1'b0;
         busy = 1'b0;
         pc_select = '0;
-        pc_branch = '0;
-        if (start) begin
+        temp_pc_branch = '0;
+        temp_pc_select = '0;
+        if (start_reg) begin
             valid = 1'b1;
             busy = 1'b1;
-            unique case (decode_info.opcode)
+            unique case (decode_info_reg.opcode)
                 op_b_jal  : begin
-                    rd_v = decode_info.pc + 'd4;
-                    pc_select = '1;
-                    pc_branch = decode_info.pc + decode_info.j_imm;
+                    rd_v = decode_info_reg.pc + 'd4;
+                    temp_pc_select = '1;
+                    temp_pc_branch = decode_info_reg.pc + decode_info_reg.j_imm;
                 end
                 op_b_jalr : begin
-                    rd_v = decode_info.pc + 'd4;
-                    pc_select = '1;
-                    pc_branch = (rs1_v + decode_info.i_imm) & 32'hfffffffe;
+                    rd_v = decode_info_reg.pc + 'd4;
+                    temp_pc_select = '1;
+                    temp_pc_branch = (rs1_v_reg + decode_info_reg.i_imm) & 32'hfffffffe;
                 end
                 op_b_br   : begin
-                    cmpop = decode_info.funct3;
-                    a = rs1_v;
-                    b = rs2_v;
+                    cmpop = decode_info_reg.funct3;
+                    a = rs1_v_reg;
+                    b = rs2_v_reg;
                     if (br_en) begin
-                        pc_select = '1;
-                        pc_branch = decode_info.pc + decode_info.b_imm;
+                        temp_pc_select = '1;
+                        temp_pc_branch = decode_info_reg.pc + decode_info_reg.b_imm;
                     end else begin
-                        pc_select = '0;
+                        temp_pc_select = '0;
                     end                    
                 end
                 default : begin
@@ -83,7 +109,28 @@ import rv32i_types::*;
                 end
             endcase
         end
+
+        btb_web = '1;
+        btb_addr = '0;
+        btb_din = '0;
         
+        if (temp_pc_select) begin
+            btb_web = '0;
+            btb_addr = decode_info_reg.pc[9:2];
+            btb_din = temp_pc_branch;
+            pc_select = temp_pc_select;
+        end
+
+        if (decode_info_reg.bp && temp_pc_select && decode_info_reg.bp_addr == temp_pc_branch) begin
+            pc_select = '0;
+            pc_branch = '0;
+        end else if (decode_info_reg.bp && ~temp_pc_select) begin
+            pc_select = '1;
+            pc_branch = decode_info_reg.pc + 32'd4;
+        end else begin
+            pc_select = temp_pc_select;
+            pc_branch = temp_pc_branch;
+        end
     end
 
 endmodule : fu_br
