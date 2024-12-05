@@ -54,7 +54,11 @@ import rv32i_types::*;
     output  logic           busy_mem,
     output logic    [31:0]  store_wdata,
     output logic    [31:0]  calculated_address,
-    output  logic   [31:0]  fu_rs1_v_mem, fu_rs2_v_mem
+    output  logic   [31:0]  fu_rs1_v_mem, fu_rs2_v_mem,
+
+    output  logic           btb_web,
+    output  logic   [7:0]   btb_addr,
+    output  logic   [31:0]  btb_din
 );
 
     logic   valid_add, valid_mul, valid_div, valid_br, valid_mem;
@@ -64,6 +68,7 @@ import rv32i_types::*;
     logic   [ROB_ADDR_WIDTH -1:0]   rob_add_reg, rob_mul_reg, rob_div_reg,  rob_br_reg, rob_mem_reg;
     logic   [PHYS_REG_BITS - 1:0]   pd_add_reg, pd_mul_reg, pd_div_reg,     pd_br_reg, pd_mem_reg;
     logic   [ARCH_REG_BITS - 1:0]   rd_add_reg, rd_mul_reg, rd_div_reg,     rd_br_reg, rd_mem_reg;
+    logic   [31:0]  br_inst_reg;
     
 
     logic   [31:0]  rd_v_add, rd_v_mul, rd_v_div, rd_v_br;//, rd_v_mem;
@@ -83,9 +88,9 @@ import rv32i_types::*;
             rob_add_reg <= '0;
             pd_add_reg <= '0;
             rd_add_reg <= '0;
-            rob_br_reg <= '0;
-            pd_br_reg <= '0;
-            rd_br_reg <= '0;
+            // rob_br_reg <= '0;
+            // pd_br_reg <= '0;
+            // rd_br_reg <= '0;
            
             rob_mul_reg <= '0;
             pd_mul_reg <= '0;
@@ -114,15 +119,30 @@ import rv32i_types::*;
 
     always_ff @(posedge clk) begin
         if (rst) begin
-            mul_1 <= 1'b0;
+            rob_br_reg <= '0;
+            pd_br_reg <= '0;
+            rd_br_reg <= '0;
+            br_inst_reg <= '0;
+        end else if (start_br) begin
+            rob_br_reg <= rob_idx_br;
+            pd_br_reg <= pd_s_br;
+            rd_br_reg <= rd_s_br;
+            br_inst_reg <= decode_info_br.inst;
+        end
+    end
+
+    always_ff @(posedge clk) begin
+        if (rst) begin
+            mul_1 <= 1'b1;
             mul_2 <= 1'b0;
             mul_3 <= 1'b0;
             mul_4 <= 1'b0;
 
-            for (int i = 0; i <= NUM_DIV_CYCLES; i++)
+            for (int i = 1; i <= NUM_DIV_CYCLES; i++)
             begin
                 divs[i] <= 1'b0;
             end
+            divs[0] <= 1'b1;
             // div_1 <= 1'b0;
             // div_2 <= 1'b0;
             // div_3 <= 1'b0;
@@ -183,6 +203,8 @@ import rv32i_types::*;
     );
 
     fu_br fu_br_i (
+        .clk(clk),
+        .rst(rst),
         .rs1_v(rs1_v_br),
         .rs2_v(rs2_v_br),
         .decode_info(decode_info_br),     // PHYS REGFILE
@@ -191,7 +213,11 @@ import rv32i_types::*;
         .valid(valid_br),
         .busy(busy_br),
         .pc_select(pc_select),
-        .pc_branch(pc_branch)
+        .pc_branch(pc_branch),
+        .btb_addr(btb_addr),
+        .btb_din(btb_din),
+        .btb_web(btb_web),
+        .global_branch_signal(global_branch_signal)
     );
 
     fu_mem fu_mem_i(
@@ -244,12 +270,12 @@ import rv32i_types::*;
         cdb_div.pc_select = '0;
         cdb_div.pc_branch = '0;
 
-        cdb_br.rob_idx = rob_idx_br;
-        cdb_br.pd_s = pd_s_br;
-        cdb_br.rd_s = rd_s_br;
+        cdb_br.rob_idx = rob_br_reg;
+        cdb_br.pd_s = pd_br_reg;
+        cdb_br.rd_s = rd_br_reg;
         cdb_br.rd_v = rd_v_br;
         cdb_br.valid = valid_br;
-        cdb_br.inst = decode_info_br.inst;
+        cdb_br.inst = br_inst_reg;
         cdb_br.pc_select = pc_select;
         cdb_br.pc_branch = pc_branch;
 

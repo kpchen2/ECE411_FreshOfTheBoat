@@ -15,7 +15,8 @@ import rv32i_types::*;
     input   logic               bmem_rvalid
 );
 
-    logic   [31:0]  pc, pc_next;
+    logic   [31:0]  pc, pc_next, pc_in, btb_out, cache_addr, branch_pc, bp_addr;
+    logic           bp;
     logic           cache_valid; // If bursts are ready
     logic   [255:0] cache_wdata; // bursts (equivalent to dfp_rdata for icache)
 
@@ -191,10 +192,25 @@ import rv32i_types::*;
 
     logic           d_cache_valid;
 
+    logic   btb_valid;
+
+    logic   btb_web;
+    logic   [7:0]   btb_addr;
+    logic   [31:0]  btb_din;
+
+    logic   true_btb_valid;
+    logic   is_branch_inst;
+
+    assign true_btb_valid = (is_branch_inst && proper_enqueue_in) ? (btb_valid) : '0;
+
     // assign global_branch_signal = cdb_br.pc_select;
     // assign global_branch_addr = cdb_br.pc_branch;
 
     assign proper_enqueue_in = (global_branch_signal_reg) ? 1'b0 : i_ufp_resp;
+
+    assign pc_in = pc - 32'd4;
+
+    assign cache_addr = (true_btb_valid && proper_enqueue_in) ? btb_out : pc;
 
     always_ff @(posedge clk) begin
 
@@ -206,7 +222,6 @@ import rv32i_types::*;
             initial_flag_reg <= '1;
             dfp_read_reg <= '0;
             order  <= '0;
-            global_branch_signal_reg <= '0;
             global_branch_signal_reg <= '0;
         end else begin
             pc <= pc_next;
@@ -242,6 +257,7 @@ import rv32i_types::*;
                     ufp_rmask = '0;
                 end
             end
+            pc_next = true_btb_valid ? ((!full_stall && bmem_ready) ? btb_out + 32'd4 : btb_out) : pc_next;
             pc_next = global_branch_signal ? global_branch_addr : pc_next;
         end
     end
@@ -250,7 +266,7 @@ import rv32i_types::*;
         .clk(clk),
         .rst(rst),
 
-        .ufp_addr(pc),
+        .ufp_addr(cache_addr),
         .ufp_rmask(ufp_rmask),
         .ufp_wmask('0),             // FILL WHEN WE WANT TO WRITE
         .ufp_rdata(ufp_rdata),
@@ -282,6 +298,50 @@ import rv32i_types::*;
         .dfp_rdata(d_dfp_rdata),            // CONNECT TO BMEM
         .dfp_wdata(d_dfp_wdata),
         .dfp_resp(d_dfp_resp)               // CONNECT TO BMEM
+    );
+
+
+    always_comb begin
+        is_branch_inst = '0;
+        if (ufp_rdata[6:0] inside {op_b_jal, op_b_jalr, op_b_br}) begin
+            // check if valid
+            is_branch_inst = '1;
+        end
+    end
+
+    btb btb_i (             // 0 for write, 1 for read
+        .clk0       (clk),
+        .csb0       ('0),
+        .web0       (btb_web),     // active low
+        .addr0      (btb_addr),
+        .din0       (btb_din),
+        .dout0      (),         // useless
+        .clk1       (clk),
+        .csb1       (~(proper_enqueue_in && ~global_branch_signal)),
+        .web1       ('1),     // active low
+        .addr1      (pc[9:2]),
+        .din1       ('1),         // useless
+        .dout1      (btb_out)
+    );
+
+    btb_valid_array #(
+        .S_INDEX(8),
+        .WIDTH(1)
+    ) btb_valid_array (
+        .clk0       (clk),
+        .rst0       (rst),
+        .csb0       ('0),
+        .web0       (btb_web),
+        .addr0      (btb_addr), // address for writes only
+        .din0       (1'b1),
+        .dout0      (),         // useless, write port
+        .clk1       (clk),
+        .rst1       (rst),
+        .csb1       (~(proper_enqueue_in && ~global_branch_signal)),
+        .web1       ('1),
+        .addr1      (pc[9:2]), // address for writes only
+        .din1       ('1),         // useless, read port
+        .dout1      (btb_valid)
     );
 
     memory_queue memory_queue_i (
@@ -373,12 +433,38 @@ import rv32i_types::*;
     (
         .clk(clk),
         .rst(rst),
-        .wdata_in(pc),
+        .wdata_in(pc_in),
         .enqueue_in(proper_enqueue_in),
         .rdata_out(prog),
         .dequeue_in(dequeue),
         .full_out(full_garbage),
         .empty_out(empty_garbage),
+        .global_branch_signal(global_branch_signal)
+    );
+
+    queue #(.DATA_WIDTH(1), .QUEUE_DEPTH(32)) queue_bp
+    (
+        .clk(clk),
+        .rst(rst),
+        .wdata_in(btb_valid),
+        .enqueue_in(proper_enqueue_in),
+        .rdata_out(bp),
+        .dequeue_in(dequeue),
+        .full_out(),
+        .empty_out(),
+        .global_branch_signal(global_branch_signal)
+    );
+
+    queue #(.DATA_WIDTH(32), .QUEUE_DEPTH(32)) queue_bp_addr
+    (
+        .clk(clk),
+        .rst(rst),
+        .wdata_in(btb_out),
+        .enqueue_in(proper_enqueue_in),
+        .rdata_out(bp_addr),
+        .dequeue_in(dequeue),
+        .full_out(),
+        .empty_out(),
         .global_branch_signal(global_branch_signal)
     );
 
@@ -424,8 +510,10 @@ import rv32i_types::*;
         .mem_idx_in(queue_mem_idx),
         .mem_idx_out(dispatch_mem_idx),          // PROPAGATE THIS INTO MEM ADDER
         .global_branch_addr(global_branch_addr),
-        .global_branch_signal(global_branch_signal)
-        );
+        .global_branch_signal(global_branch_signal),
+        .bp(bp),
+        .bp_addr(bp_addr)
+    );
 
     rat rat_i (
         .clk(clk),
@@ -545,7 +633,7 @@ import rv32i_types::*;
         .rs1_v_add(rs1_v_add), .rs1_v_mul(rs1_v_mul), .rs1_v_div(rs1_v_div), .rs1_v_br(rs1_v_br), .rs1_v_mem(rs1_v_mem),
         .rs2_v_add(rs2_v_add), .rs2_v_mul(rs2_v_mul), .rs2_v_div(rs2_v_div), .rs2_v_br(rs2_v_br), .rs2_v_mem(rs2_v_mem),
         .arch_s1_add(add_decode_info.rs1_s), .arch_s2_add(add_decode_info.rs2_s), .arch_rd_add(cdb_add.rd_s), .arch_rd_mul(cdb_mul.rd_s), .arch_rd_div(cdb_div.rd_s), .arch_rd_mem(cdb_mem.rd_s), .arch_s1_mem(mem_decode_info.rs1_s), .arch_s2_mem(mem_decode_info.rs2_s),
-        .arch_s1_br(branch_decode_info.rs1_s), .arch_s2_br(branch_decode_info.rs2_s), .arch_rd_br(cdb_br.rd_s)
+        .arch_rd_br(cdb_br.rd_s)
     );
 
     logic   start_add, start_mul, start_div, start_br , start_mem;
@@ -586,7 +674,10 @@ import rv32i_types::*;
         .calculated_address(calculated_address),
         .fu_rs1_v_mem(fu_rs1_v_mem),
         .fu_rs2_v_mem(fu_rs2_v_mem),
-        .global_branch_signal(global_branch_signal)
+        .global_branch_signal(global_branch_signal),
+        .btb_addr(btb_addr),
+        .btb_din(btb_din),
+        .btb_web(btb_web)
     );
 
     reservation_station reservation_stations_i (
@@ -611,7 +702,7 @@ import rv32i_types::*;
         .add_fu_busy('0),     // WAS SET TO BUSY_ADD
         .multiply_fu_busy(busy_mul),
         .divide_fu_busy(busy_div),
-        .branch_fu_busy('0),
+        .branch_fu_busy(busy_br),
         .mem_fu_busy('0), // WAS SET TO BUSY_MEM perhaps don't need?
 
         // .add_regf_we(),

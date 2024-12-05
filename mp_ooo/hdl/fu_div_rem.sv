@@ -25,6 +25,8 @@ import rv32i_types::*;
 
     logic           flush, flush_next;
 
+    logic           init, init_next;
+
     decode_info_t decode_info_reg;
 
     logic           divide_by_0;
@@ -34,14 +36,17 @@ import rv32i_types::*;
             complete_prev <= 1'b0;
             decode_info_reg <= '0;
             flush <= '0;
+            init <= '1;
         end else if (hold) begin
             complete_prev <= complete_inst;
             decode_info_reg <= decode_info_reg;
             flush <= flush_next;
+            init <= init_next;
         end else begin
             complete_prev <= complete_inst;
             decode_info_reg <= decode_info;
             flush <= '0;
+            init <= '0;
         end
     end
 
@@ -73,9 +78,11 @@ import rv32i_types::*;
         a_final = '0;
         b_final = '0;
 
+        init_next = init;
+
         valid = (complete_prev) ? 1'b0 : complete_inst;
 
-        valid = flush ? 1'b0 : valid;
+        valid = (flush || init) ? 1'b0 : valid;
 
         flush_next = global_branch_signal ? 1'b1 : flush;
         a = rs1_v;
