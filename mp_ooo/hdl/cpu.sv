@@ -195,7 +195,7 @@ import rv32i_types::*;
     logic   btb_valid;
 
     logic   pht_valid;
-    logic   [7:0]   pht_out;
+    logic   [1:0]   pht_out, pht_in;
 
     logic   btb_web;
     logic   [7:0]   btb_addr;
@@ -204,7 +204,12 @@ import rv32i_types::*;
     logic   branch_pred;
     logic   is_branch_inst;
 
-    logic   [7:0]   gshare, gshare_ret, gshare_next, gshare_ret_next;
+    logic   pht_valid_out;
+    logic   [1:0]   pht_value;
+    logic   pht_web;
+    logic   [7:0]   pht_addr;
+
+    logic   [7:0]   gshare, gshare_ret, gshare_next, gshare_ret_next, gshare_out;
 
     assign branch_pred = (is_branch_inst && proper_enqueue_in) ? (btb_valid) : '0;
 
@@ -371,9 +376,9 @@ import rv32i_types::*;
     pht pht_i (             // 0 for write, 1 for read
         .clk0       (clk),
         .csb0       ('0),
-        .web0       (),     // active low
-        .addr0      (),
-        .din0       (),
+        .web0       (pht_web),     // active low
+        .addr0      (pht_addr),
+        .din0       (pht_in),
         .dout0      (),         // useless
         .clk1       (clk),
         .csb1       (~(proper_enqueue_in && ~global_branch_signal)),
@@ -390,8 +395,8 @@ import rv32i_types::*;
         .clk0       (clk),
         .rst0       (rst),
         .csb0       ('0),
-        .web0       (),
-        .addr0      (), // address for writes only
+        .web0       (pht_web),
+        .addr0      (pht_addr), // address for writes only
         .din0       (1'b1),
         .dout0      (),         // useless, write port
         .clk1       (clk),
@@ -527,6 +532,45 @@ import rv32i_types::*;
         .global_branch_signal(global_branch_signal)
     );
 
+    queue #(.DATA_WIDTH(2), .QUEUE_DEPTH(32)) queue_pht_value
+    (
+        .clk(clk),
+        .rst(rst),
+        .wdata_in(pht_out),
+        .enqueue_in(proper_enqueue_in),
+        .rdata_out(pht_value),
+        .dequeue_in(dequeue),
+        .full_out(),
+        .empty_out(),
+        .global_branch_signal(global_branch_signal)
+    );
+
+    queue #(.DATA_WIDTH(1), .QUEUE_DEPTH(32)) queue_pht_valid
+    (
+        .clk(clk),
+        .rst(rst),
+        .wdata_in(pht_valid),
+        .enqueue_in(proper_enqueue_in),
+        .rdata_out(pht_valid_out),
+        .dequeue_in(dequeue),
+        .full_out(),
+        .empty_out(),
+        .global_branch_signal(global_branch_signal)
+    );
+
+    queue #(.DATA_WIDTH(8), .QUEUE_DEPTH(32)) queue_gshare
+    (
+        .clk(clk),
+        .rst(rst),
+        .wdata_in(gshare),
+        .enqueue_in(proper_enqueue_in),
+        .rdata_out(gshare_out),
+        .dequeue_in(dequeue),
+        .full_out(),
+        .empty_out(),
+        .global_branch_signal(global_branch_signal)
+    );
+
     rename_dispatch rename_dispatch_i (
         .clk(clk),
         .rst(rst),
@@ -571,7 +615,10 @@ import rv32i_types::*;
         .global_branch_addr(global_branch_addr),
         .global_branch_signal(global_branch_signal),
         .bp(bp),
-        .bp_addr(bp_addr)
+        .bp_addr(bp_addr),
+        .pht_valid_out(pht_valid_out),
+        .pht_value(pht_value),
+        .gshare(gshare_out)
     );
 
     rat rat_i (
@@ -737,7 +784,10 @@ import rv32i_types::*;
         .global_branch_signal(global_branch_signal),
         .btb_addr(btb_addr),
         .btb_din(btb_din),
-        .btb_web(btb_web)
+        .btb_web(btb_web),
+        .pht_in(pht_in),
+        .pht_web(pht_web),
+        .pht_addr(pht_addr)
     );
 
     reservation_station reservation_stations_i (

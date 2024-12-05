@@ -71,6 +71,11 @@ package rv32i_types;
         logic           bp;
         logic   [31:0]  bp_addr;
 
+        logic           pht_valid;
+        logic   [1:0]   pht_value;
+
+        logic   [7:0]   gshare;
+
     } decode_info_t;
 
     typedef struct packed {

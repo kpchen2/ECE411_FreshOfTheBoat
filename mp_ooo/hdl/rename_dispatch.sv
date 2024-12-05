@@ -44,7 +44,12 @@ import rv32i_types::*;
     input   logic           global_branch_signal,
 
     input   logic           bp,
-    input   logic   [31:0]  bp_addr
+    input   logic   [31:0]  bp_addr,
+
+    input   logic           pht_valid_out,
+    input   logic   [1:0]   pht_value,
+
+    input   logic   [7:0]   gshare
 );
 
     // decode_info_t decode_info;
@@ -149,6 +154,10 @@ import rv32i_types::*;
 
             // decode_info.bp = '0;
             // decode_info.bp_addr = '0;
+            decode_info.pht_valid = pht_valid_out;
+            decode_info.pht_value = pht_valid_out ? pht_value : 2'b10;
+
+            decode_info.gshare = gshare;
         end
 
         pd = ((inst[6:0] == op_b_br) || (inst[11:7] == '0 && (inst[6:0] inside {op_b_auipc, op_b_lui, op_b_reg, op_b_imm, op_b_jal, op_b_jalr, op_b_load})) || inst[6:0] == op_b_store) ? '0 : phys_reg;

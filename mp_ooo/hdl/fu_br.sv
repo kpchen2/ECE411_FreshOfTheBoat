@@ -17,7 +17,10 @@ import rv32i_types::*;
     output  logic   [7:0]   btb_addr,
     output  logic   [31:0]  btb_din,
     input   logic           global_branch_signal,
-    output  logic           branch_taken
+    output  logic           branch_taken,
+    output  logic   [1:0]   pht_in,
+    output  logic           pht_web,
+    output  logic   [7:0]   pht_addr
 );
 
     logic signed   [31:0] as;
@@ -138,11 +141,32 @@ import rv32i_types::*;
         btb_addr = '0;
         btb_din = '0;
 
+        pht_in = '0;
+        pht_web = '1;
+        pht_addr = '0;
 
+        unique case (final_decode_info.pht_value)
+            2'b00: begin
+                pht_in = temp_pc_select_reg ? 2'b01 : 2'b00;
+            end
+            2'b01 : begin
+                pht_in = temp_pc_select_reg ? 2'b10 : 2'b00;
+            end
+            2'b10 : begin
+                pht_in = temp_pc_select_reg ? 2'b11 : 2'b01;
+            end
+            2'b11 : begin
+                pht_in = temp_pc_select_reg ? 2'b11 : 2'b10;
+            end
+            default : begin
+            end
+        endcase
 
         if (final_state) begin
             busy = 1'b1;
             valid = 1'b1;
+            pht_web = '0;
+            pht_addr = final_decode_info.gshare;
             if (temp_pc_select_reg) begin
                 btb_web = '0;
                 btb_addr = final_decode_info.pc[9:2];
@@ -169,6 +193,9 @@ import rv32i_types::*;
             btb_web = '1;
             btb_addr = '0;
             btb_din = '0;
+            pht_in = '0;
+            pht_web = '1;
+            pht_addr = '0;
         end
 
         
