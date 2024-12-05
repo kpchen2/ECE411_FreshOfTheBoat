@@ -254,6 +254,8 @@ import rv32i_types::*;
                 pc_next = saved_pc_reg;
                 undo_pc = '0;
                 saved_pc = '0;
+                initial_flag = '0;
+                ufp_rmask = '0;
 
             end else begin
                 if ((initial_flag_reg || i_ufp_resp) && !full_stall && bmem_ready) begin
@@ -261,7 +263,11 @@ import rv32i_types::*;
                         pc_next = pc + 4;
                         initial_flag = '0;
                         ufp_rmask = '1;   
-                    end          
+                    end else begin
+                        pc_next = pc;
+                        initial_flag = '0;
+                        ufp_rmask = '0;
+                    end
                 end else begin
                     if (full_stall || !bmem_ready) begin
                         pc_next = pc;

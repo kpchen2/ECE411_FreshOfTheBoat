@@ -83,6 +83,7 @@ import rv32i_types::*;
         false_resp = '0;
         prefetch_stall = '0;
         prefetch_read_halt = '0;
+        prefetch_addr = '0;
         branch_signal_next = branch_signal ? '1 : branch_signal_reg;
 
         if (rst) begin
@@ -178,7 +179,7 @@ import rv32i_types::*;
             end 
 
 
-            if (allow_prefetch && (prefetch || prefetch_reg) && ((prefetch_addr_reg - 32'd4 == stage_reg.addr && !full_stall && !full_stall_reg) || branch_signal_reg)) begin
+            if (allow_prefetch && (prefetch || prefetch_reg) && ((prefetch_addr_reg - 32'd4 == stage_reg.addr && !full_stall_reg) || branch_signal_reg)) begin
                 read_halt = '1;
                 prefetch_stall = '1;
                 prefetch_read_halt = '1;

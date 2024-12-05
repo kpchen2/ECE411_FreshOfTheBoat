@@ -50,9 +50,9 @@ import rv32i_types::*;
 
     always_ff @(posedge clk) begin
         if (rst) begin
-            prefetch_save_addr = '0;
+            prefetch_save_addr <= '0;
         end else begin
-            prefetch_save_addr = prefetch_next;
+            prefetch_save_addr <= prefetch_next;
         end
     end
     
