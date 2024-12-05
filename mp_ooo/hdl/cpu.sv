@@ -200,9 +200,8 @@ import rv32i_types::*;
 
     logic   true_btb_valid;
     logic   is_branch_inst;
-    logic number, number_next;
 
-    assign true_btb_valid = (is_branch_inst && proper_enqueue_in) ? (btb_valid && number) : '0;
+    assign true_btb_valid = (is_branch_inst && proper_enqueue_in) ? (btb_valid) : '0;
 
     // assign global_branch_signal = cdb_br.pc_select;
     // assign global_branch_addr = cdb_br.pc_branch;
@@ -225,19 +224,16 @@ import rv32i_types::*;
             order  <= '0;
             global_branch_signal_reg <= '0;
             global_branch_signal_reg <= '0;
-            number <= '0;
         end else begin
             pc <= pc_next;
             initial_flag_reg <= initial_flag;
             dfp_read_reg <= dfp_read;
             order <= order_next;
             global_branch_signal_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? global_branch_signal_reg : global_branch_signal;
-            number <= number_next;
         end
     end
 
     always_comb begin
-        number_next = ~number;
         if (rst) begin
             pc_next = pc;
             initial_flag = '1;
@@ -451,7 +447,7 @@ import rv32i_types::*;
     (
         .clk(clk),
         .rst(rst),
-        .wdata_in(btb_valid && number),
+        .wdata_in(btb_valid),
         .enqueue_in(proper_enqueue_in),
         .rdata_out(bp),
         .dequeue_in(dequeue),
@@ -464,7 +460,7 @@ import rv32i_types::*;
     (
         .clk(clk),
         .rst(rst),
-        .wdata_in(number ? btb_out : '0),
+        .wdata_in(btb_out),
         .enqueue_in(proper_enqueue_in),
         .rdata_out(bp_addr),
         .dequeue_in(dequeue),
