@@ -77,7 +77,8 @@ import rv32i_types::*;
 
     // branch signals
     output  logic                               global_branch_signal,
-    output  logic   [31:0]                      global_branch_addr
+    output  logic   [31:0]                      global_branch_addr,
+    input   logic                               branch_taken
 
     // memory inputs
     // input   logic                               mem_output_valid,
@@ -203,6 +204,7 @@ import rv32i_types::*;
                 mem[br_rob_idx_in_next].rvfi.monitor_pc_wdata <= branch_pc_select ? branch_pc_branch : mem[br_rob_idx_in_next].rvfi.monitor_pc_wdata;
                 mem[br_rob_idx_in_next].pc_select <= branch_pc_select;
                 mem[br_rob_idx_in_next].pc_branch <= branch_pc_branch;
+                mem[br_rob_idx_in_next].branch_taken <= branch_taken;
             end
 
             if (mem_cdb_valid_next) begin

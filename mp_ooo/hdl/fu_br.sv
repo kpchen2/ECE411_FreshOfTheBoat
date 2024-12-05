@@ -16,7 +16,8 @@ import rv32i_types::*;
     output  logic           btb_web,
     output  logic   [7:0]   btb_addr,
     output  logic   [31:0]  btb_din,
-    input   logic           global_branch_signal
+    input   logic           global_branch_signal,
+    output  logic           branch_taken
 );
 
     logic signed   [31:0] as;
@@ -98,6 +99,7 @@ import rv32i_types::*;
         pc_branch = '0;
         temp_pc_branch = '0;
         temp_pc_select = '0;
+        branch_taken = temp_pc_select_reg;
 
         flush = global_branch_signal && start_reg;
         if (start_reg) begin
@@ -168,6 +170,7 @@ import rv32i_types::*;
             btb_addr = '0;
             btb_din = '0;
         end
+
         
     end
 

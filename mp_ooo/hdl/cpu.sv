@@ -198,10 +198,12 @@ import rv32i_types::*;
     logic   [7:0]   btb_addr;
     logic   [31:0]  btb_din;
 
-    logic   true_btb_valid;
+    logic   branch_pred;
     logic   is_branch_inst;
 
-    assign true_btb_valid = (is_branch_inst && proper_enqueue_in) ? (btb_valid) : '0;
+    logic   [7:0]   gshare, gshare_ret, gshare_next, gshare_ret_next;
+
+    assign branch_pred = (is_branch_inst && proper_enqueue_in) ? (btb_valid) : '0;
 
     // assign global_branch_signal = cdb_br.pc_select;
     // assign global_branch_addr = cdb_br.pc_branch;
@@ -210,7 +212,7 @@ import rv32i_types::*;
 
     assign pc_in = pc - 32'd4;
 
-    assign cache_addr = (true_btb_valid && proper_enqueue_in) ? btb_out : pc;
+    assign cache_addr = (branch_pred && proper_enqueue_in) ? btb_out : pc;
 
     always_ff @(posedge clk) begin
 
@@ -223,12 +225,16 @@ import rv32i_types::*;
             dfp_read_reg <= '0;
             order  <= '0;
             global_branch_signal_reg <= '0;
+            gshare <= '0;
+            gshare_ret <= '0;
         end else begin
             pc <= pc_next;
             initial_flag_reg <= initial_flag;
             dfp_read_reg <= dfp_read;
             order <= order_next;
             global_branch_signal_reg <= (i_ufp_resp == '0 && global_branch_signal == '0) ? global_branch_signal_reg : global_branch_signal;
+            gshare <= gshare_next;
+            gshare_ret <= gshare_ret_next;
         end
     end
 
@@ -238,9 +244,11 @@ import rv32i_types::*;
             initial_flag = '1;
             ufp_rmask = '0;
             // bmem_read = '0;
+            gshare_next = '0;
 
         end else begin
             // bmem_read = (!dfp_read_reg && dfp_read) ? '1 : '0;          // bmem_read high on rising dfp_read edge (DOESN'T MATCH TIMING DIAGRAM)
+            gshare_next = gshare;
 
             if ((initial_flag_reg || i_ufp_resp) && !full_stall && bmem_ready) begin
                 pc_next = pc + 4;
@@ -257,8 +265,21 @@ import rv32i_types::*;
                     ufp_rmask = '0;
                 end
             end
-            pc_next = true_btb_valid ? ((!full_stall && bmem_ready) ? btb_out + 32'd4 : btb_out) : pc_next;
+            pc_next = branch_pred ? ((!full_stall && bmem_ready) ? btb_out + 32'd4 : btb_out) : pc_next;
             pc_next = global_branch_signal ? global_branch_addr : pc_next;
+
+            if (is_branch_inst) begin
+                gshare_next[7:1] = gshare[6:0];
+                gshare_next[0] = branch_pred;
+            end
+
+            gshare_ret_next = gshare_ret;
+            if (~global_branch_signal && rob_entry.rvfi.monitor_inst[6:0] inside {op_b_jal, op_b_jalr, op_b_br}) begin
+                gshare_ret_next[7:1] = gshare_ret[6:0];
+                gshare_ret_next[0] = rob_entry.branch_taken;
+            end
+
+            gshare_next = global_branch_signal ? gshare_ret_next : gshare_next;
         end
     end
     
@@ -339,9 +360,44 @@ import rv32i_types::*;
         .rst1       (rst),
         .csb1       (~(proper_enqueue_in && ~global_branch_signal)),
         .web1       ('1),
-        .addr1      (pc[9:2]), // address for writes only
+        .addr1      (pc[9:2]), // address for reads only
         .din1       ('1),         // useless, read port
         .dout1      (btb_valid)
+    );
+
+    pht pht_i (             // 0 for write, 1 for read
+        .clk0       (clk),
+        .csb0       ('0),
+        .web0       (),     // active low
+        .addr0      (),
+        .din0       (),
+        .dout0      (),         // useless
+        .clk1       (clk),
+        .csb1       (~(proper_enqueue_in && ~global_branch_signal)),
+        .web1       ('1),     // active low
+        .addr1      (),
+        .din1       ('1),         // useless
+        .dout1      ()
+    );
+
+    btb_valid_array #(
+        .S_INDEX(8),
+        .WIDTH(1)
+    ) pht_valid_array (
+        .clk0       (clk),
+        .rst0       (rst),
+        .csb0       ('0),
+        .web0       (),
+        .addr0      (), // address for writes only
+        .din0       (1'b1),
+        .dout0      (),         // useless, write port
+        .clk1       (clk),
+        .rst1       (rst),
+        .csb1       (~(proper_enqueue_in && ~global_branch_signal)),
+        .web1       ('1),
+        .addr1      (), // address for reads only
+        .din1       ('1),         // useless, read port
+        .dout1      ()
     );
 
     memory_queue memory_queue_i (
@@ -446,7 +502,7 @@ import rv32i_types::*;
     (
         .clk(clk),
         .rst(rst),
-        .wdata_in(btb_valid),
+        .wdata_in(branch_pred),
         .enqueue_in(proper_enqueue_in),
         .rdata_out(bp),
         .dequeue_in(dequeue),
@@ -559,6 +615,7 @@ import rv32i_types::*;
         .br_rob_idx_in(cdb_br.rob_idx),
         .br_cdb_valid(cdb_br.valid),
         .br_inst(cdb_br.inst),
+        .branch_taken(cdb_br.branch_taken),
         .mem_rob_idx_in(cdb_mem.rob_idx),
         .mem_cdb_valid(cdb_mem.valid),
         .mem_inst(cdb_mem.inst),

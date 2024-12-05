@@ -79,6 +79,7 @@ import rv32i_types::*;
 
     logic           pc_select;
     logic   [31:0]  pc_branch;
+    logic           branch_taken;
 
 
     // logic           busy_add;
@@ -217,7 +218,8 @@ import rv32i_types::*;
         .btb_addr(btb_addr),
         .btb_din(btb_din),
         .btb_web(btb_web),
-        .global_branch_signal(global_branch_signal)
+        .global_branch_signal(global_branch_signal),
+        .branch_taken(branch_taken)
     );
 
     fu_mem fu_mem_i(
@@ -278,6 +280,11 @@ import rv32i_types::*;
         cdb_br.inst = decode_info_br.inst;
         cdb_br.pc_select = pc_select;
         cdb_br.pc_branch = pc_branch;
+
+        cdb_br.branch_taken = branch_taken;
+        cdb_mul.branch_taken = '0;
+        cdb_div.branch_taken = '0;
+        cdb_add.branch_taken = '0;
 
         addr_valid = valid_mem;
 

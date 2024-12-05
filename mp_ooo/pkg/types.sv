@@ -150,6 +150,7 @@ package rv32i_types;
         logic   [31:0]  wdata;
         logic   [31:0]  rs1_rdata;
         logic   [31:0]  rs2_rdata;
+        logic           branch_taken;
     } cdb_t;
 
     typedef struct packed {
@@ -183,6 +184,7 @@ package rv32i_types;
         rvfi_info rvfi;
         logic pc_select;
         logic [31:0] pc_branch;
+        logic branch_taken;
     } rob_entry_t;
     
     typedef struct packed {
