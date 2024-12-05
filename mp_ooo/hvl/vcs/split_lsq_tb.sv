@@ -175,35 +175,39 @@ task standard_task(
     end
 endtask
 
-task simple_store;
+task simple_store_stall;
     standard_task
     (
-        32'h00410083,
-        op_B_load  ,
+        // rename/dispatch inputs
+        32'h08208223,
+        op_b_store  ,
         3'b000 ,
         PHYS_REG_BITS'd32,
-        1'b0,
         1'b1,
-        '0,
-        rd_dispatch,
-        addr = addr_,
-        addr_valid,
-        load_mem_idx_in,
-        store_mem_idx_in,
-        store_wdata,
-        rs1_rdata,
-        rs2_rdata,
-        addr_opcode,
-        commited_rob,
-        data_in,
-        data_valid,
+        1'b0,
+        ROB_ADDR_WIDTH'd0,
+        ARCH_REG_BITS'd0,
+        // adder inputs
+        32'd0,
+        1'b0,
+        LOAD_MEM_ADDR_WIDTH'd0,
+        STORE_MEM_ADDR_WIDTH'd0,
+        32'heceb2022,
+        32'd4,
+        32'd8,
+        6'd0,
+        // rob inputs
+        ROB_ADDR_WIDTH'd0,
+        // dcache inputs
+        32'd0,
+        1'b0,
     )
 endtask
 
 initial
 begin
     generate_reset;
-    
+    simple_store;
     #100000;
     $finish;
 end
