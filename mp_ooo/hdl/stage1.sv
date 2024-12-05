@@ -41,7 +41,8 @@ import rv32i_types::*;
     output  logic           prefetch_save_addr,
     input   logic           prefetch_read_halt,
     input   logic   [31:0]  prefetch_addr,
-    output  logic           prefetch_write
+    output  logic           prefetch_write,
+    input   logic           branch_signal
 );
 
     logic   [1:0]   index;
@@ -130,7 +131,7 @@ import rv32i_types::*;
                     stage_reg_next.rmask = ufp_rmask;
                     stage_reg_next.wmask = ufp_wmask;
                     stage_reg_next.wdata = ufp_wdata;
-                    stage_reg_next.prefetch = prefetch;
+                    stage_reg_next.prefetch = branch_signal ? '0 : prefetch;
 
                     prefetch_next = prefetch;
                 end

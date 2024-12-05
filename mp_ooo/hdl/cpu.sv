@@ -222,7 +222,6 @@ import rv32i_types::*;
             dfp_read_reg <= '0;
             order <= '0;
             global_branch_signal_reg <= '0;
-            global_branch_signal_reg <= '0;
             undo_pc_reg <= '0;
             saved_pc_reg <= '0;
             prefetch_valid_reg <= '0;
@@ -257,12 +256,14 @@ import rv32i_types::*;
                 saved_pc = '0;
 
             end else begin
-                if (((initial_flag_reg && !prefetch_stall) || i_ufp_resp) && !full_stall && bmem_ready) begin
-                    pc_next = pc + 4;
-                    initial_flag = '0;
-                    ufp_rmask = '1;             
+                if ((initial_flag_reg || i_ufp_resp) && !full_stall && bmem_ready) begin
+                    if (!prefetch_stall) begin
+                        pc_next = pc + 4;
+                        initial_flag = '0;
+                        ufp_rmask = '1;   
+                    end          
                 end else begin
-                    if (full_stall || !bmem_ready || prefetch_stall) begin
+                    if (full_stall || !bmem_ready) begin
                         pc_next = pc;
                         initial_flag = '1;
                         ufp_rmask = '0;
@@ -308,7 +309,8 @@ import rv32i_types::*;
         .prefetch(prefetch_valid_reg),
         .false_resp(false_resp),
         .branch_signal(global_branch_signal),
-        .prefetch_stall(prefetch_stall)
+        .prefetch_stall(prefetch_stall),
+        .full_stall(full_stall)
     );
 
     prefetch prefetch_i (
@@ -342,7 +344,8 @@ import rv32i_types::*;
         .prefetch('0),
         .false_resp(dummy_false_resp),
         .branch_signal('0),
-        .prefetch_stall(dummy_prefetch_stall)
+        .prefetch_stall(dummy_prefetch_stall),
+        .full_stall(full_stall)
     );
 
     memory_queue memory_queue_i (

@@ -35,7 +35,8 @@ import rv32i_types::*;
     input   logic           prefetch_save_addr,
     output  logic           prefetch_read_halt,
     output  logic   [31:0]  prefetch_addr,
-    input   logic           branch_signal
+    input   logic           branch_signal,
+    input   logic           full_stall
 );
 
     logic           cache_hit;
@@ -45,17 +46,22 @@ import rv32i_types::*;
 
     logic           prefetch, prefetch_reg;
     logic   [31:0]  prefetch_addr_reg;
-    logic   branch_signal_next, branch_signal_reg;
+    logic           branch_signal_next, branch_signal_reg;
+    logic           full_stall_next, full_stall_reg;
+
+    assign  full_stall_next = full_stall;
 
     always_ff @(posedge clk) begin
         if (rst) begin
             prefetch_reg <= '0;
             prefetch_addr_reg <= '0;
             branch_signal_reg <= '0;
+            full_stall_reg <= '0;
         end else begin
             prefetch_reg <= prefetch;
             prefetch_addr_reg <= prefetch_addr;
             branch_signal_reg <= branch_signal_next;
+            full_stall_reg <= full_stall_next;
         end
     end
 
@@ -172,7 +178,7 @@ import rv32i_types::*;
             end 
 
 
-            if (allow_prefetch && prefetch_reg && (prefetch_addr_reg - 32'd4 == stage_reg.addr || branch_signal_reg)) begin
+            if (allow_prefetch && (prefetch || prefetch_reg) && ((prefetch_addr_reg - 32'd4 == stage_reg.addr && !full_stall && !full_stall_reg) || branch_signal_reg)) begin
                 read_halt = '1;
                 prefetch_stall = '1;
                 prefetch_read_halt = '1;
