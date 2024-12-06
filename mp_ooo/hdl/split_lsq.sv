@@ -69,7 +69,8 @@ module split_lsq
     
     // load data entries 
     lq_entry_t      load_mem_next; // this is for writing a new entry
-    lq_entry_t      load_mem_new;  // this is for updating an entry, marking it as not valid     
+    lq_entry_t      load_mem_new;  // this is for updating an entry, marking it as not valid   
+    lq_entry_t      load_mem_addr; // when an address comes in  
 
     // store data entries 
     sq_entry_t     store_enqueue_mem_next;
@@ -183,22 +184,20 @@ module split_lsq
 
             // end
             
-            // if (addr_valid_next && addr_opcode_next == op_b_load)
-            // begin
-            //     load_mem[mem_idx_in_next].addr_ready <= 1'b1; 
-            //     load_mem[mem_idx_in_next].addr <= addr_next;
-            //     load_mem[mem_idx_in_next].shift_bits <= addr_next[1:0];
-            //     load_mem[mem_idx_in_next].rs1_rdata <= rs1_rdata;
-            // end
-            // else if (addr_valid_next && addr_opcode_next == op_b_store)
-            // begin
-            //     store_mem[mem_idx_in_next].addr_ready <= 1'b1; 
-            //     store_mem[mem_idx_in_next].addr <= addr_next;
-            //     store_mem[mem_idx_in_next].shift_bits <= addr_next[1:0];
-            //     store_mem[mem_idx_in_next].store_wdata <= store_wdata_next;
-            //     store_mem[mem_idx_in_next].rs1_rdata <= rs1_rdata;
-            //     store_mem[mem_idx_in_next].rs2_rdata <= rs2_rdata;
-            // end
+
+            if (addr_valid_next && addr_opcode_next == op_b_load)
+            begin
+                load_mem[mem_idx_in_next] <= load_mem_addr;
+            end
+            else if (addr_valid_next && addr_opcode_next == op_b_store)
+            begin
+                store_mem[mem_idx_in_next].addr_ready <= 1'b1; 
+                store_mem[mem_idx_in_next].addr <= addr_next;
+                store_mem[mem_idx_in_next].shift_bits <= addr_next[1:0];
+                store_mem[mem_idx_in_next].store_wdata <= store_wdata_next;
+                store_mem[mem_idx_in_next].rs1_rdata <= rs1_rdata;
+                store_mem[mem_idx_in_next].rs2_rdata <= rs2_rdata;
+            end
 
             // if (accessing_cache && state_next == load)
             // begin
@@ -331,6 +330,18 @@ module split_lsq
                 store_enqueue_mem_next = store_mem[store_tail_reg[STORE_MEM_ADDR_WIDTH - 1:0]+1'b1];
             end
             
+        end
+    end
+
+    always_comb 
+    begin
+        load_mem_addr = load_mem[mem_idx_in];
+        if (addr_valid && addr_opcode == op_b_load)
+        begin
+            load_mem_addr.addr_ready = 1'b1;
+            load_mem_addr.addr = addr;
+            load_mem_addr.shift_bits = 1'b1;
+            load_mem_addr.rs1_rdata = rs1_rdata;
         end
     end
 
