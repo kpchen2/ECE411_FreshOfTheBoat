@@ -6,7 +6,6 @@ import rv32i_types::*;
 (
     input   logic           clk,
     input   logic           rst,
-    input   logic           branch_signal,
 
     // rename/dispatch inputs
     input   logic   [31:0]  inst,
@@ -73,7 +72,6 @@ import rv32i_types::*;
     logic   [31:0]  store_wdata_next;
 
     logic           accessing_cache;
-    logic           discard_next, discard_next_reg;
 
     always_ff @ (posedge clk) begin
         enqueue_reg <= enqueue_valid;
@@ -86,18 +84,6 @@ import rv32i_types::*;
             for (int i = 0; i < QUEUE_DEPTH; i++) begin
                 mem[i] <= '0;
             end
-
-            discard_next_reg <= '0;
-
-        end else if (branch_signal) begin
-            tail_reg <= '1;
-            head_reg <= '1;
-
-            for (int i = 0; i < QUEUE_DEPTH; i++) begin
-                mem[i] <= '0;
-            end
-
-            discard_next_reg <= '1;
 
         end else begin
             // enqueue
@@ -126,8 +112,6 @@ import rv32i_types::*;
   
             tail_reg <= tail_next;
             head_reg <= head_next;
-
-            discard_next_reg <= discard_next;
         end
     end
 
@@ -155,55 +139,49 @@ import rv32i_types::*;
 
         mem_idx_out = tail_reg[ADDR_WIDTH - 1:0] + 1'b1;
         accessing_cache = '0;
-        discard_next = discard_next_reg;
         
-        if (!rst && !branch_signal) begin
+        if (!rst) begin
             full = (tail_reg[ADDR_WIDTH - 1:0] == head_reg[ADDR_WIDTH - 1:0]) && (tail_reg[ADDR_WIDTH] != head_reg[ADDR_WIDTH]);    // logic if queue full
 
             // send dequeue inst same cycle; update queue next cycle
             if (data_valid) begin
-                if (discard_next_reg) begin
-                    discard_next = '0;
-                    
+                head_next = head_reg + 1'd1;
+                dequeue_mem_next = mem[head_reg[ADDR_WIDTH - 1:0]+1'b1];
+                dequeue_mem_next.valid = 1'b0;
+
+                cdb_mem.rob_idx = dequeue_mem_next.rob_num;
+                cdb_mem.pd_s    = dequeue_mem_next.pd_s;
+                cdb_mem.rd_s    = dequeue_mem_next.rd_s;
+                cdb_mem.valid   = '1;
+                cdb_mem.inst    = dequeue_mem_next.inst;
+                cdb_mem.addr    = dequeue_mem_next.addr;
+                cdb_mem.rmask   = dequeue_mem_next.rmask;
+                cdb_mem.wmask   = dequeue_mem_next.wmask;
+                cdb_mem.rdata   = (dequeue_mem_next.opcode == op_b_load)  ? data_in : '0;
+                cdb_mem.wdata   = (dequeue_mem_next.opcode == op_b_store) ? dequeue_mem_next.wdata : '0;
+                cdb_mem.rs1_rdata = dequeue_mem_next.rs1_rdata;
+                cdb_mem.rs2_rdata = dequeue_mem_next.rs2_rdata;
+
+                if (dequeue_mem_next.opcode == op_b_load) begin
+                    unique case (mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].funct3)
+                        // rd_v = rd_wdata
+                        load_f3_lb : cdb_mem.rd_v = {{24{data_in[7 +8 *mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].shift_bits]}}   , data_in[8 *mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].shift_bits    +: 8 ]};
+                        load_f3_lbu: cdb_mem.rd_v = {{24{1'b0}}                                                , data_in[8 *mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].shift_bits    +: 8 ]};
+                        load_f3_lh : cdb_mem.rd_v = {{16{data_in[15+16*mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].shift_bits[1]]}}, data_in[16*mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].shift_bits[1] +: 16]};
+                        load_f3_lhu: cdb_mem.rd_v = {{16{1'b0}}                                                , data_in[16*mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].shift_bits[1] +: 16]};
+                        load_f3_lw : cdb_mem.rd_v = data_in;
+                        default    : cdb_mem.rd_v = 'x;
+                    endcase
                 end else begin
-                    head_next = head_reg + 1'd1;
-                    dequeue_mem_next = mem[head_reg[ADDR_WIDTH - 1:0]+1'b1];
-                    dequeue_mem_next.valid = 1'b0;
-
-                    cdb_mem.rob_idx = dequeue_mem_next.rob_num;
-                    cdb_mem.pd_s    = dequeue_mem_next.pd_s;
-                    cdb_mem.rd_s    = dequeue_mem_next.rd_s;
-                    cdb_mem.valid   = '1;
-                    cdb_mem.inst    = dequeue_mem_next.inst;
-                    cdb_mem.addr    = dequeue_mem_next.addr;
-                    cdb_mem.rmask   = dequeue_mem_next.rmask;
-                    cdb_mem.wmask   = dequeue_mem_next.wmask;
-                    cdb_mem.rdata   = (dequeue_mem_next.opcode == op_b_load)  ? data_in : '0;
-                    cdb_mem.wdata   = (dequeue_mem_next.opcode == op_b_store) ? dequeue_mem_next.wdata : '0;
-                    cdb_mem.rs1_rdata = dequeue_mem_next.rs1_rdata;
-                    cdb_mem.rs2_rdata = dequeue_mem_next.rs2_rdata;
-
-                    if (dequeue_mem_next.opcode == op_b_load) begin
-                        unique case (mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].funct3)
-                            // rd_v = rd_wdata
-                            load_f3_lb : cdb_mem.rd_v = {{24{data_in[7 +8 *mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].shift_bits]}}   , data_in[8 *mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].shift_bits    +: 8 ]};
-                            load_f3_lbu: cdb_mem.rd_v = {{24{1'b0}}                                                , data_in[8 *mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].shift_bits    +: 8 ]};
-                            load_f3_lh : cdb_mem.rd_v = {{16{data_in[15+16*mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].shift_bits[1]]}}, data_in[16*mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].shift_bits[1] +: 16]};
-                            load_f3_lhu: cdb_mem.rd_v = {{16{1'b0}}                                                , data_in[16*mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].shift_bits[1] +: 16]};
-                            load_f3_lw : cdb_mem.rd_v = data_in;
-                            default    : cdb_mem.rd_v = 'x;
-                        endcase
-                    end else begin
-                        cdb_mem.rd_s = '0;
-                        cdb_mem.rd_v = '0;
-                    end
+                    cdb_mem.rd_s = '0;
+                    cdb_mem.rd_v = '0;
                 end
 
             // ready to access cache
             end else if (mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].valid == 1'b1 && mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].addr_ready == 1'b1) begin
                 d_addr = mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].addr;
                 
-                if (mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].opcode == op_b_load) begin
+                if (mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].opcode == op_b_load && mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].rob_num == commited_rob) begin
                     unique case (mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].funct3)
                         load_f3_lb, load_f3_lbu: d_rmask = 4'b0001 << d_addr[1:0];
                         load_f3_lh, load_f3_lhu: d_rmask = 4'b0011 << d_addr[1:0];
