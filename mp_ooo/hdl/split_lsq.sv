@@ -70,15 +70,15 @@ module split_lsq
     // load data entries 
     lq_entry_t      load_mem_next; // this is for writing a new entry after get from rename dispatch
     lq_entry_t      load_mem_new;  // this is for updating an entry, marking it as not valid after data in  
-    lq_entry_t      load_mem_addr; // when an address comes in  
-    lq_entry_t      load_mem_tracked;
+    lq_entry_t      load_mem_addr; // when an address comes in , update with the address
+    lq_entry_t      load_mem_tracked; // when we send to the cache, update the r and w masks (just r mask)
 
     // store data entries 
     sq_entry_t     store_enqueue_mem_next;
     sq_entry_t     store_dequeue_mem_next;
 
     // ??
-    lsq_entry_t     cache_mem_next; // ???
+    sq_entry_t     cache_mem_next; // only for stores
 
     // valids for stores. Note that enqueue is equivalent to mem_regf_we_dispatch. have to change so it only is valid for stores. Not sure if we need one for loads
     logic           enqueue_reg;
@@ -204,14 +204,12 @@ module split_lsq
                 store_mem[mem_idx_in_next].rs2_rdata <= rs2_rdata;
             end
 
-            // if (accessing_cache && state_next == load)
-            // begin
-            //     load_mem[mem_idx_in_next].rmask <= cache_mem_next.rmask; //??
-            // end
-            // else if (accessing_cache && state_next == store)
-            // begin
-
-            // end
+            
+            else if (accessing_cache && state == store)
+            begin
+                store_mem[store_head_next[ADDR_WIDTH - 1:0]+1'b1].wmask <= cache_mem_next.wmask;
+                store_mem[store_head_next[ADDR_WIDTH - 1:0]+1'b1].wdata <= cache_mem_next.wdata;
+            end
             store_tail_reg <= store_tail_next;
             store_head_reg <= store_head_next;
         end
@@ -484,7 +482,6 @@ module split_lsq
                             default    : d_wdata = 'x;
                         endcase
                     end
-                    cache_mem_next.rmask = '0;
                     cache_mem_next.wmask = d_wmask;
                     cache_mem_next.wdata = d_wdata;
     
