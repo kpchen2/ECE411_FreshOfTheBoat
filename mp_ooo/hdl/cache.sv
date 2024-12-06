@@ -25,7 +25,8 @@ import rv32i_types::*;
     output  logic           false_resp,
     input   logic           branch_signal,
     output  logic           prefetch_stall,
-    input   logic           full_stall
+    input   logic           full_stall,
+    output  logic   [31:0]  stream_prefetch_addr
 );
 
     stage_reg_t     stage_reg;
@@ -52,7 +53,7 @@ import rv32i_types::*;
 
     logic           dfp_resp_reg;
     logic           write_done_reg;
-    // logic   [1:0]   index;
+    logic   [1:0]   index;
     logic           dfp_switch;
     logic           dfp_switch_reg;
     logic           dfp_write_read;
@@ -102,7 +103,7 @@ import rv32i_types::*;
         .write_done_reg(write_done_reg),
         .write_halt(write_halt),
         .data_array_wmask(data_array_wmask),
-        // .index(index),
+        .index(index),
         .dirty_halt(dirty_halt),
         .dfp_switch(dfp_switch),
         .dfp_write_read(dfp_write_read),
@@ -137,7 +138,7 @@ import rv32i_types::*;
         .write_way(write_way),
         .write_halt(write_halt),
         .write_done_reg(write_done_reg),
-        // .index(index),
+        .index(index),
         .dirty_halt(dirty_halt),
         .dfp_switch_reg(dfp_switch_reg),
         .dfp_write_read(dfp_write_read),
@@ -148,7 +149,8 @@ import rv32i_types::*;
         .prefetch_read_halt(prefetch_read_halt),
         .prefetch_addr(prefetch_addr),
         .branch_signal(branch_signal),
-        .full_stall(full_stall)
+        .full_stall(full_stall),
+        .stream_prefetch_addr(stream_prefetch_addr)
     );
 
     logic   [3:0]   arr_write_addr;
