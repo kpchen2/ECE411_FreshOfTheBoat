@@ -18,7 +18,12 @@ import rv32i_types::*;
     output  logic           dfp_write,
     input   logic   [255:0] dfp_rdata,
     output  logic   [255:0] dfp_wdata,
-    input   logic           dfp_resp
+    input   logic           dfp_resp,
+
+    output  logic   [31:0]  load_data,
+    output  logic           load_resp,
+    output  logic           store_resp,
+    output  logic           sb_full
 );
 
     stage_reg_t     stage_reg;
@@ -45,10 +50,15 @@ import rv32i_types::*;
 
     logic           dfp_resp_reg;
     logic           write_done_reg;
-    // logic   [1:0]   index;
+    logic   [1:0]   index;
     logic           dfp_switch;
     logic           dfp_switch_reg;
     logic           dfp_write_read;
+
+    logic   [31:0]  sb_ufp_addr;
+    logic   [3:0]   sb_ufp_rmask;
+    logic   [3:0]   sb_ufp_wmask;
+    logic   [31:0]  sb_ufp_wdata;
 
 
     always_ff @(posedge clk) begin
@@ -69,10 +79,10 @@ import rv32i_types::*;
 
     dstage_1 stage_1_i (
         .rst(rst),
-        .ufp_addr(ufp_addr),
-        .ufp_rmask(ufp_rmask),
-        .ufp_wmask(ufp_wmask),
-        .ufp_wdata(ufp_wdata),
+        .ufp_addr(sb_ufp_addr),
+        .ufp_rmask(sb_ufp_rmask),
+        .ufp_wmask(sb_ufp_wmask),
+        .ufp_wdata(sb_ufp_wdata),
         .dfp_resp(dfp_resp),
         .dfp_write(dfp_write),
         .dfp_rdata(dfp_rdata),
@@ -89,7 +99,7 @@ import rv32i_types::*;
         .write_done_reg(write_done_reg),
         .write_halt(write_halt),
         .data_array_wmask(data_array_wmask),
-        // .index(index),
+        .index(index),
         .dirty_halt(dirty_halt),
         .dfp_switch(dfp_switch),
         .dfp_write_read(dfp_write_read)
@@ -115,10 +125,28 @@ import rv32i_types::*;
         .write_way(write_way),
         .write_halt(write_halt),
         .write_done_reg(write_done_reg),
-        // .index(index),
+        .index(index),
         .dirty_halt(dirty_halt),
         .dfp_switch_reg(dfp_switch_reg),
         .dfp_write_read(dfp_write_read)
+    );
+
+    store_buffer store_buffer_i (
+        .clk(clk),
+        .rst(rst),
+        .store_data(ufp_wdata),
+        .store_addr(ufp_addr),
+        .load_addr(ufp_addr),
+        .store_mask(ufp_wmask),
+        .load_mask(ufp_rmask),
+        .full(sb_full),
+        .load_data(load_data),
+        .load_resp(load_resp),
+        .store_resp(store_resp),
+        .sb_ufp_addr(sb_ufp_addr),
+        .sb_ufp_rmask(sb_ufp_rmask),
+        .sb_ufp_wmask(sb_ufp_wmask),
+        .sb_ufp_wdata(sb_ufp_wdata)
     );
 
     generate for (genvar i = 0; i < 4; i++) begin : arrays

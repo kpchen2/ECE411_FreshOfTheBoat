@@ -339,7 +339,11 @@ import rv32i_types::*;
         .stream_prefetch_addr(stream_prefetch_addr)
     );
 
-    cache cache_d (
+    logic   [31:0]      load_rdata;
+    logic               sb_load_resp, sb_store_resp;
+    logic               sb_full;
+
+    dcache cache_d (
         .clk(clk),
         .rst(rst),
 
@@ -356,19 +360,16 @@ import rv32i_types::*;
         .dfp_rdata(d_dfp_rdata),            // CONNECT TO BMEM
         .dfp_wdata(d_dfp_wdata),
         .dfp_resp(d_dfp_resp),              // CONNECT TO BMEM
-        .allow_prefetch('0),
-        .prefetch('0),
-        .false_resp(dummy_false_resp),
-        .branch_signal('0),
-        .prefetch_stall(dummy_prefetch_stall),
-        .full_stall(full_stall),
-        .stream_prefetch_addr(dummy_stream_prefetch_addr)
+
+        .load_data(sb_load_rdata),
+        .load_resp(sb_load_resp),
+        .store_resp(sb_store_resp),
+        .sb_full(sb_full)
     );
 
     memory_queue memory_queue_i (
         .clk(clk),
-        .rst(rst),
-        .branch_signal(global_branch_signal),
+        .rst(rst || global_branch_signal),
         .inst(dispatch_inst),
         .opcode(decode_info.opcode),
         .funct3(decode_info.funct3),
@@ -395,7 +396,12 @@ import rv32i_types::*;
         .d_addr(mem_addr),
         .d_rmask(load_rmask),
         .d_wmask(store_wmask),
-        .d_wdata(store_wdata)
+        .d_wdata(store_wdata),
+
+        .sb_data_in(sb_load_rdata),
+        .sb_data_valid(sb_load_resp),
+        .sb_store_resp(sb_store_resp),
+        .sb_full(sb_full)
     );
 
     cache_arbiter arbiter (

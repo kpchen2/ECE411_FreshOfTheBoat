@@ -31,13 +31,13 @@ import rv32i_types::*;
     input   logic           write_done_reg,
     input   logic           write_halt,
     output  logic   [31:0]  data_array_wmask,
-    // output  logic   [1:0]   index,
+    output  logic   [1:0]   index,
     input   logic           dirty_halt,
     output  logic           dfp_switch,
     input   logic           dfp_write_read
 );
 
-    logic   [1:0]   index;
+    // logic   [1:0]   index;
     
     always_comb begin
         write_done = '0;
