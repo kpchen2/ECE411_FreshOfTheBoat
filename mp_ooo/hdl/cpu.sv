@@ -211,7 +211,7 @@ import rv32i_types::*;
 
     logic   [7:0]   gshare, gshare_ret, gshare_next, gshare_ret_next, gshare_out;
 
-    assign branch_pred = (is_branch_inst && proper_enqueue_in) ? (btb_valid) : '0;
+    assign branch_pred = (is_branch_inst && proper_enqueue_in) ? (pht_valid ? pht_out[1] : btb_valid) : '0;
 
     // assign global_branch_signal = cdb_br.pc_select;
     // assign global_branch_addr = cdb_br.pc_branch;
