@@ -176,18 +176,18 @@ module split_lsq
                 load_mem[next_free_load_entry] <= load_mem_next;
             end
 
-            // if (data_valid_next)
-            // begin
+            if (data_valid_next && state == store_idle)
+            begin
             //     if (state_next == load)
             //     begin
             //         load_mem[load_entry_tracked_next] <= load_mem_new;
             //     end
-            //     else if (state_next == store)
-            //     begin
-            //         store_mem[store_head_next[STORE_MEM_ADDR_WIDTH - 1:0]] <= store_dequeue_mem_next;
-            //     end
-
+            // if (state_next == store)
+            // begin
+                    store_mem[store_head_next[STORE_MEM_ADDR_WIDTH - 1:0]] <= store_dequeue_mem_next;
             // end
+
+            end
             
 
             if (addr_valid_next && addr_opcode_next == op_b_load)
@@ -205,10 +205,10 @@ module split_lsq
             end
 
             
-            else if (accessing_cache && state == store)
+            if (accessing_cache && state == store)
             begin
-                store_mem[store_head_next[ADDR_WIDTH - 1:0]+1'b1].wmask <= cache_mem_next.wmask;
-                store_mem[store_head_next[ADDR_WIDTH - 1:0]+1'b1].wdata <= cache_mem_next.wdata;
+                store_mem[store_head_next[STORE_MEM_ADDR_WIDTH - 1:0]+1'b1].wmask <= d_wmask;
+                store_mem[store_head_next[STORE_MEM_ADDR_WIDTH - 1:0]+1'b1].wdata <= d_wdata;
             end
             store_tail_reg <= store_tail_next;
             store_head_reg <= store_head_next;
