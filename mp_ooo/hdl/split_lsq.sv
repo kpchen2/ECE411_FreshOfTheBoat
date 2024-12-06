@@ -6,6 +6,7 @@ module split_lsq
     (
         input   logic           clk,
         input   logic           rst,
+        input   logic           global_branch_signal,
     
         // rename/dispatch inputs
         input   logic   [31:0]  inst,
@@ -107,6 +108,7 @@ module split_lsq
     // currently accessing cache ( i think)
     logic           accessing_cache;
 
+    logic           discard_next, discard_next_reg;
     // next_free_load_entry, find the closest available load_entry
     logic [LOAD_MEM_ADDR_WIDTH - 1:0] next_free_load_entry;
     // next done load entry, find the nearest load that can be issued out
@@ -155,6 +157,19 @@ module split_lsq
                 load_mem[i] <= '0;
                 store_mem[i] <= '0;
             end
+        end
+        else if (global_branch_signal) 
+        begin
+            store_tail_reg <= '1;
+            store_head_reg <= '1;
+            store_full_reg <= store_full;
+
+            for (int i = 0; i < LOAD_MEM_QUEUE_DEPTH; i++) 
+            begin
+                store_mem[i] <= '0;
+                load_mem[i] <= '0;
+            end
+            discard_next_reg <= '1;
         end
         else
         begin
@@ -213,6 +228,7 @@ module split_lsq
             end
             store_tail_reg <= store_tail_next;
             store_head_reg <= store_head_next;
+            discard_next_reg <= discard_next;
         end
     end
 
@@ -380,6 +396,7 @@ module split_lsq
         load_entry_is_tracked_next = '0;
         load_entry_tracked_next = '0;
         load_mem_tracked = load_mem[load_entry_tracked_next];
+        discard_next = discard_next_reg;
         case (state)
             load: // send request to cache
             begin // loop and find a valid load to issue to cache
@@ -423,36 +440,44 @@ module split_lsq
             begin
                 if (data_valid)
                 begin
-                    next_done_load_entry = load_entry_tracked;
-                    load_mem_new = load_mem[next_done_load_entry];
-                    load_entry_tracked_next = '0;
-                    load_entry_is_tracked_next = 1'b0;
-                    load_mem_new.valid = 1'b0;
-                  
+                    if (discard_next_reg) 
+                    begin
+                        discard_next = '0;
+                        state_next = store;
+                    end 
+                    else 
+                    begin
+                        next_done_load_entry = load_entry_tracked;
+                        load_mem_new = load_mem[next_done_load_entry];
+                        load_entry_tracked_next = '0;
+                        load_entry_is_tracked_next = 1'b0;
+                        load_mem_new.valid = 1'b0;
+                    
 
-                    cdb_mem.rob_idx = load_mem_new.rob_num;
-                    cdb_mem.pd_s    = load_mem_new.pd_s;
-                    cdb_mem.rd_s    = load_mem_new.rd_s;
-                    cdb_mem.valid   = '1;
-                    cdb_mem.inst    = load_mem_new.inst;
-                    cdb_mem.addr    = load_mem_new.addr;
-                    cdb_mem.rmask   = load_mem_new.rmask;
-                    cdb_mem.wmask   = '0;
-                    cdb_mem.rdata   = data_in;
-                    cdb_mem.wdata   = '0;
-                    cdb_mem.rs1_rdata = load_mem_new.rs1_rdata;
-                    cdb_mem.rs2_rdata = '0;
+                        cdb_mem.rob_idx = load_mem_new.rob_num;
+                        cdb_mem.pd_s    = load_mem_new.pd_s;
+                        cdb_mem.rd_s    = load_mem_new.rd_s;
+                        cdb_mem.valid   = '1;
+                        cdb_mem.inst    = load_mem_new.inst;
+                        cdb_mem.addr    = load_mem_new.addr;
+                        cdb_mem.rmask   = load_mem_new.rmask;
+                        cdb_mem.wmask   = '0;
+                        cdb_mem.rdata   = data_in;
+                        cdb_mem.wdata   = '0;
+                        cdb_mem.rs1_rdata = load_mem_new.rs1_rdata;
+                        cdb_mem.rs2_rdata = '0;
 
-                    unique case (load_mem[load_entry_tracked].funct3)
-                        // rd_v = rd_wdata
-                        load_f3_lb : cdb_mem.rd_v = {{24{data_in[7 +8 *load_mem[load_entry_tracked].shift_bits]}}   , data_in[8 *load_mem[load_entry_tracked].shift_bits    +: 8 ]};
-                        load_f3_lbu: cdb_mem.rd_v = {{24{1'b0}}                                                , data_in[8 *load_mem[load_entry_tracked].shift_bits    +: 8 ]};
-                        load_f3_lh : cdb_mem.rd_v = {{16{data_in[15+16*load_mem[load_entry_tracked].shift_bits[1]]}}, data_in[16*load_mem[load_entry_tracked].shift_bits[1] +: 16]};
-                        load_f3_lhu: cdb_mem.rd_v = {{16{1'b0}}                                                , data_in[16*load_mem[load_entry_tracked].shift_bits[1] +: 16]};
-                        load_f3_lw : cdb_mem.rd_v = data_in;
-                        default    : cdb_mem.rd_v = 'x;
-                    endcase
-                    state_next = store;
+                        unique case (load_mem[load_entry_tracked].funct3)
+                            // rd_v = rd_wdata
+                            load_f3_lb : cdb_mem.rd_v = {{24{data_in[7 +8 *load_mem[load_entry_tracked].shift_bits]}}   , data_in[8 *load_mem[load_entry_tracked].shift_bits    +: 8 ]};
+                            load_f3_lbu: cdb_mem.rd_v = {{24{1'b0}}                                                , data_in[8 *load_mem[load_entry_tracked].shift_bits    +: 8 ]};
+                            load_f3_lh : cdb_mem.rd_v = {{16{data_in[15+16*load_mem[load_entry_tracked].shift_bits[1]]}}, data_in[16*load_mem[load_entry_tracked].shift_bits[1] +: 16]};
+                            load_f3_lhu: cdb_mem.rd_v = {{16{1'b0}}                                                , data_in[16*load_mem[load_entry_tracked].shift_bits[1] +: 16]};
+                            load_f3_lw : cdb_mem.rd_v = data_in;
+                            default    : cdb_mem.rd_v = 'x;
+                        endcase
+                        state_next = store;
+                    end
                 end
                 else
                 begin
@@ -460,7 +485,6 @@ module split_lsq
                     load_entry_is_tracked_next = load_entry_is_tracked;
                     load_entry_tracked_next = load_entry_tracked_next;
                 end
-                
             end
             store: // send request to cache
             begin
@@ -494,39 +518,43 @@ module split_lsq
                     begin
                         state_next = load;
                     end
-                    
                 end
-
-               
                 else // waiting for cache response
                 begin
                     state_next = load;
-
                 end
             end
             store_idle:
             begin
                 if (data_valid)
                 begin
-                    store_head_next = store_head_reg + 1'd1;
-                    store_dequeue_mem_next = store_mem[store_head_reg[STORE_MEM_ADDR_WIDTH - 1:0]+1'b1];
-                    store_dequeue_mem_next.valid = 1'b0;
+                    if (discard_next_reg) 
+                    begin
+                        discard_next = '0;    
+                        state_next = load;
+                    end 
+                    else 
+                    begin
+                        store_head_next = store_head_reg + 1'd1;
+                        store_dequeue_mem_next = store_mem[store_head_reg[STORE_MEM_ADDR_WIDTH - 1:0]+1'b1];
+                        store_dequeue_mem_next.valid = 1'b0;
 
-                    cdb_mem.rob_idx = store_dequeue_mem_next.rob_num;
-                    cdb_mem.pd_s    = '0;
-                    cdb_mem.rd_s    = '0;
-                    cdb_mem.valid   = '1;
-                    cdb_mem.inst    = store_dequeue_mem_next.inst;
-                    cdb_mem.addr    = store_dequeue_mem_next.addr;
-                    cdb_mem.rmask   = '0;
-                    cdb_mem.wmask   = store_dequeue_mem_next.wmask;
-                    cdb_mem.rdata   = '0;
-                    cdb_mem.wdata   = store_dequeue_mem_next.wdata;
-                    cdb_mem.rs1_rdata = store_dequeue_mem_next.rs1_rdata;
-                    cdb_mem.rs2_rdata = store_dequeue_mem_next.rs2_rdata;
-                    cdb_mem.rd_s = '0;
-                    cdb_mem.rd_v = '0;
-                    state_next = load;
+                        cdb_mem.rob_idx = store_dequeue_mem_next.rob_num;
+                        cdb_mem.pd_s    = '0;
+                        cdb_mem.rd_s    = '0;
+                        cdb_mem.valid   = '1;
+                        cdb_mem.inst    = store_dequeue_mem_next.inst;
+                        cdb_mem.addr    = store_dequeue_mem_next.addr;
+                        cdb_mem.rmask   = '0;
+                        cdb_mem.wmask   = store_dequeue_mem_next.wmask;
+                        cdb_mem.rdata   = '0;
+                        cdb_mem.wdata   = store_dequeue_mem_next.wdata;
+                        cdb_mem.rs1_rdata = store_dequeue_mem_next.rs1_rdata;
+                        cdb_mem.rs2_rdata = store_dequeue_mem_next.rs2_rdata;
+                        cdb_mem.rd_s = '0;
+                        cdb_mem.rd_v = '0;
+                        state_next = load;
+                    end
                 end
                 else
                 begin

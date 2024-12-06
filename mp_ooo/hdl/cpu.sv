@@ -321,7 +321,8 @@ import rv32i_types::*;
 
     split_lsq split_lsq_i (
         .clk(clk),
-        .rst(rst || global_branch_signal),
+        .rst(rst),
+        .global_branch_signal(global_branch_signal),
         .inst(dispatch_inst),
         .opcode(decode_info.opcode),
         .funct3(decode_info.funct3),
