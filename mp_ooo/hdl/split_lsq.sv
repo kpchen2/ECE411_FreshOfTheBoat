@@ -170,44 +170,44 @@ module split_lsq
                 load_mem[next_free_load_entry] <= load_mem_next;
             end
 
-            if (data_valid_next)
-            begin
-                if (state_next == load)
-                begin
-                    load_mem[load_entry_tracked_next] <= load_mem_new;
-                end
-                else if (state_next == store)
-                begin
-                    store_mem[store_head_next[STORE_MEM_ADDR_WIDTH - 1:0]] <= store_dequeue_mem_next;
-                end
+            // if (data_valid_next)
+            // begin
+            //     if (state_next == load)
+            //     begin
+            //         load_mem[load_entry_tracked_next] <= load_mem_new;
+            //     end
+            //     else if (state_next == store)
+            //     begin
+            //         store_mem[store_head_next[STORE_MEM_ADDR_WIDTH - 1:0]] <= store_dequeue_mem_next;
+            //     end
 
-            end
+            // end
             
-            if (addr_valid_next && addr_opcode_next == op_b_load)
-            begin
-                load_mem[mem_idx_in_next].addr_ready <= 1'b1; 
-                load_mem[mem_idx_in_next].addr <= addr_next;
-                load_mem[mem_idx_in_next].shift_bits <= addr_next[1:0];
-                load_mem[mem_idx_in_next].rs1_rdata <= rs1_rdata;
-            end
-            else if (addr_valid_next && addr_opcode_next == op_b_store)
-            begin
-                store_mem[mem_idx_in_next].addr_ready <= 1'b1; 
-                store_mem[mem_idx_in_next].addr <= addr_next;
-                store_mem[mem_idx_in_next].shift_bits <= addr_next[1:0];
-                store_mem[mem_idx_in_next].store_wdata <= store_wdata_next;
-                store_mem[mem_idx_in_next].rs1_rdata <= rs1_rdata;
-                store_mem[mem_idx_in_next].rs2_rdata <= rs2_rdata;
-            end
+            // if (addr_valid_next && addr_opcode_next == op_b_load)
+            // begin
+            //     load_mem[mem_idx_in_next].addr_ready <= 1'b1; 
+            //     load_mem[mem_idx_in_next].addr <= addr_next;
+            //     load_mem[mem_idx_in_next].shift_bits <= addr_next[1:0];
+            //     load_mem[mem_idx_in_next].rs1_rdata <= rs1_rdata;
+            // end
+            // else if (addr_valid_next && addr_opcode_next == op_b_store)
+            // begin
+            //     store_mem[mem_idx_in_next].addr_ready <= 1'b1; 
+            //     store_mem[mem_idx_in_next].addr <= addr_next;
+            //     store_mem[mem_idx_in_next].shift_bits <= addr_next[1:0];
+            //     store_mem[mem_idx_in_next].store_wdata <= store_wdata_next;
+            //     store_mem[mem_idx_in_next].rs1_rdata <= rs1_rdata;
+            //     store_mem[mem_idx_in_next].rs2_rdata <= rs2_rdata;
+            // end
 
-            if (accessing_cache && state_next == load)
-            begin
-                load_mem[mem_idx_in_next].rmask <= cache_mem_next.rmask; //??
-            end
-            else if (accessing_cache && state_next == store)
-            begin
+            // if (accessing_cache && state_next == load)
+            // begin
+            //     load_mem[mem_idx_in_next].rmask <= cache_mem_next.rmask; //??
+            // end
+            // else if (accessing_cache && state_next == store)
+            // begin
 
-            end
+            // end
             store_tail_reg <= store_tail_next;
             store_head_reg <= store_head_next;
         end
@@ -349,8 +349,8 @@ module split_lsq
         d_wmask = '0;
         d_wdata = '0;
 
-        store_enqueue_valid_next = '0;
-        load_enqueue_valid_next = '0;
+        store_enqueue_valid_next = store_enqueue_valid;
+        load_enqueue_valid_next = load_enqueue_valid;
         data_valid_next = data_valid;
         addr_valid_next = addr_valid;
         mem_idx_in_next = mem_idx_in;
