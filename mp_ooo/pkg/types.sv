@@ -204,6 +204,8 @@ package rv32i_types;
 
         logic   [31:0]  rs1_rdata;
         logic   [31:0]  rs2_rdata;
+
+        logic   [ROB_ADDR_WIDTH - 1:0]   tracked_rob_num;
     } lsq_entry_t;
     
     typedef struct packed {
