@@ -149,7 +149,7 @@ module split_lsq
             store_tail_reg <= '1;
             store_head_reg <= '1;
             state <= load;
-            store_full_reg <= store_full;
+            store_full_reg <= '0;
             // load queue depth is same as store for now, may be subject to change
             for (int i = 0; i < LOAD_MEM_QUEUE_DEPTH; i++) begin
                 load_mem[i] <= '0;
@@ -159,6 +159,7 @@ module split_lsq
         else
         begin
             state <= state_next;
+            store_full_reg <= store_full;
             load_entry_is_tracked <= load_entry_is_tracked_next;
             load_entry_tracked <= load_entry_tracked_next;
             load_mem[next_free_load_entry] <= load_mem_next;
