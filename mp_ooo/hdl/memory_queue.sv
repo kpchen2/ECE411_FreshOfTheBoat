@@ -6,7 +6,6 @@ import rv32i_types::*;
 (
     input   logic           clk,
     input   logic           rst,
-    input   logic           branch_signal,
 
     // rename/dispatch inputs
     input   logic   [31:0]  inst,
@@ -93,14 +92,6 @@ import rv32i_types::*;
                 mem[i] <= '0;
             end
 
-        end else if (branch_signal) begin
-            tail_reg <= '1;
-            head_reg <= '1;
-
-            for (int i = 0; i < QUEUE_DEPTH; i++) begin
-                mem[i] <= '0;
-            end
-
         end else begin
             // enqueue
             if (enqueue_valid_next) begin
@@ -158,7 +149,7 @@ import rv32i_types::*;
 
         load_data_in = '0;
         
-        if (!rst && !branch_signal) begin
+        if (!rst) begin
             full = (tail_reg[ADDR_WIDTH - 1:0] == head_reg[ADDR_WIDTH - 1:0]) && (tail_reg[ADDR_WIDTH] != head_reg[ADDR_WIDTH]);    // logic if queue full
 
             // send dequeue inst same cycle; update queue next cycle
@@ -209,7 +200,7 @@ import rv32i_types::*;
                         default                : d_rmask = 'x;
                     endcase
 
-                end else if (mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].rob_num == commited_rob) begin
+                end else if (mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].rob_num == commited_rob && !sb_full) begin
                     unique case (mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].funct3)
                         store_f3_sb: d_wmask = 4'b0001 << d_addr[1:0];
                         store_f3_sh: d_wmask = 4'b0011 << d_addr[1:0];

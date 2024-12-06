@@ -51,7 +51,6 @@ import rv32i_types::*;
         if (rst) begin
             dfp_addr = '0;
             ufp_resp = '0;
-            idx = '0;
 
         end else begin
             dfp_addr = stage_reg.addr;

@@ -339,7 +339,7 @@ import rv32i_types::*;
         .stream_prefetch_addr(stream_prefetch_addr)
     );
 
-    logic   [31:0]      load_rdata;
+    logic   [31:0]      sb_load_rdata;
     logic               sb_load_resp, sb_store_resp;
     logic               sb_full;
 

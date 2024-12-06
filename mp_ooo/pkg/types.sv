@@ -35,6 +35,7 @@ package rv32i_types;
         logic   [31:0]  data;
         logic   [31:0]  addr;
         logic   [3:0]   mask;
+        logic           sent_to_cache;
     } sb_info;
     
     typedef struct packed {
