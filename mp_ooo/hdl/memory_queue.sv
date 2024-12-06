@@ -65,7 +65,7 @@ import rv32i_types::*;
     lsq_entry_t     cache_mem_next;
 
     logic           enqueue_reg;
-    logic           dequeue_reg;
+    // logic           dequeue_reg;
 
     logic   [ROB_ADDR_WIDTH - 1:0]   rob_num_next;
     logic   [31:0]  data_in_next;
@@ -77,12 +77,15 @@ import rv32i_types::*;
     logic   [31:0]  addr_next;
     logic   [31:0]  store_wdata_next;
 
-    logic           accessing_cache;
+    logic           accessing_cache_next;
     logic   [31:0]  load_data_in;
+
+    logic           sb_data_valid_next;
+    logic           sb_store_resp_next;
 
     always_ff @ (posedge clk) begin
         enqueue_reg <= enqueue_valid;
-        dequeue_reg <= data_valid;
+        // dequeue_reg <= data_valid;
 
         if (rst) begin
             tail_reg <= '1;
@@ -98,7 +101,7 @@ import rv32i_types::*;
                 mem[tail_next[ADDR_WIDTH - 1:0]] <= enqueue_mem_next;
             end
             // dequeue
-            if (data_valid_next) begin
+            if (sb_data_valid_next || sb_store_resp_next) begin
                 mem[head_next[ADDR_WIDTH - 1:0]] <= dequeue_mem_next;
             end
             // adder done
@@ -111,10 +114,11 @@ import rv32i_types::*;
                 mem[mem_idx_in_next].rs2_rdata <= rs2_rdata;
             end
             // accessing cache
-            if (accessing_cache) begin
+            if (accessing_cache_next) begin
                 mem[head_next[ADDR_WIDTH - 1:0]+1'b1].rmask <= cache_mem_next.rmask;
                 mem[head_next[ADDR_WIDTH - 1:0]+1'b1].wmask <= cache_mem_next.wmask;
                 mem[head_next[ADDR_WIDTH - 1:0]+1'b1].wdata <= cache_mem_next.wdata;
+                mem[head_next[ADDR_WIDTH - 1:0]+1'b1].accessing_cache <= cache_mem_next.accessing_cache;
             end
   
             tail_reg <= tail_next;
@@ -138,22 +142,25 @@ import rv32i_types::*;
         d_wdata = '0;
 
         enqueue_valid_next = enqueue_valid;
-        data_valid_next = data_valid;
+        // data_valid_next = data_valid;
         addr_valid_next = addr_valid;
         mem_idx_in_next = mem_idx_in;
         addr_next = addr;
         store_wdata_next = store_wdata;
 
         mem_idx_out = tail_reg[ADDR_WIDTH - 1:0] + 1'b1;
-        accessing_cache = '0;
+        accessing_cache_next = '0;
 
         load_data_in = '0;
+
+        sb_data_valid_next = sb_data_valid;
+        sb_store_resp_next = sb_store_resp;
         
         if (!rst) begin
             full = (tail_reg[ADDR_WIDTH - 1:0] == head_reg[ADDR_WIDTH - 1:0]) && (tail_reg[ADDR_WIDTH] != head_reg[ADDR_WIDTH]);    // logic if queue full
 
             // send dequeue inst same cycle; update queue next cycle
-            if (data_valid || sb_store_resp || sb_data_valid) begin
+            if (sb_store_resp || sb_data_valid) begin
                 head_next = head_reg + 1'd1;
                 dequeue_mem_next = mem[head_reg[ADDR_WIDTH - 1:0]+1'b1];
                 dequeue_mem_next.valid = 1'b0;
@@ -189,10 +196,12 @@ import rv32i_types::*;
                 end
 
             // ready to access cache
-            end else if (mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].valid == 1'b1 && mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].addr_ready == 1'b1) begin
-                d_addr = mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].addr;
+            end else if (mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].valid == 1'b1 && mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].addr_ready == 1'b1 && mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].accessing_cache == 1'b0) begin
+                // d_addr = mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].addr;
                 
                 if (mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].opcode == op_b_load && mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].rob_num == commited_rob) begin
+                    d_addr = mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].addr;
+
                     unique case (mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].funct3)
                         load_f3_lb, load_f3_lbu: d_rmask = 4'b0001 << d_addr[1:0];
                         load_f3_lh, load_f3_lhu: d_rmask = 4'b0011 << d_addr[1:0];
@@ -200,7 +209,17 @@ import rv32i_types::*;
                         default                : d_rmask = 'x;
                     endcase
 
-                end else if (mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].rob_num == commited_rob && !sb_full) begin
+                    cache_mem_next.rmask = d_rmask;
+                    cache_mem_next.wmask = d_wmask;
+                    cache_mem_next.wdata = d_wdata;
+                    cache_mem_next.accessing_cache = '1;
+
+                    d_addr[1:0] = 2'b0;
+                    accessing_cache_next = '1;
+
+                end else if (mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].rob_num == commited_rob) begin
+                    d_addr = mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].addr;
+
                     unique case (mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].funct3)
                         store_f3_sb: d_wmask = 4'b0001 << d_addr[1:0];
                         store_f3_sh: d_wmask = 4'b0011 << d_addr[1:0];
@@ -214,18 +233,26 @@ import rv32i_types::*;
                         store_f3_sw: d_wdata = mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].store_wdata;
                         default    : d_wdata = 'x;
                     endcase
+
+                    cache_mem_next.rmask = d_rmask;
+                    cache_mem_next.wmask = d_wmask;
+                    cache_mem_next.wdata = d_wdata;
+                    cache_mem_next.accessing_cache = '1;
+
+                    d_addr[1:0] = 2'b0;
+                    accessing_cache_next = '1;
                 end
 
-                cache_mem_next.rmask = d_rmask;
-                cache_mem_next.wmask = d_wmask;
-                cache_mem_next.wdata = d_wdata;
+                // cache_mem_next.rmask = d_rmask;
+                // cache_mem_next.wmask = d_wmask;
+                // cache_mem_next.wdata = d_wdata;
 
-                d_addr[1:0] = 2'b0;
-                accessing_cache = '1;
+                // d_addr[1:0] = 2'b0;
+                // accessing_cache = '1;
             end
             
             if (enqueue_valid) begin
-                if (~full || data_valid) begin
+                if (~full || sb_store_resp || sb_data_valid) begin
                     tail_next = tail_reg + 1'b1;
                     head_next = (head_next == head_reg) ? head_reg : head_reg + 1'd1;   // don't change what dequeue set head_next to
                     enqueue_mem_next.valid = 1'b1;

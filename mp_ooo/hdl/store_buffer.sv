@@ -14,7 +14,7 @@ import rv32i_types::*;
     input   logic           dfp_resp,
 
     // outputs to memory
-    output  logic           empty,      // if not empty, don't let memory instruction go to cache
+    // output  logic           empty,      // if not empty, don't let memory instruction go to cache
     output  logic           full,       // if full, don't let stores come in
     output  logic   [31:0]  load_data,
     output  logic           load_resp,
@@ -30,7 +30,9 @@ import rv32i_types::*;
     sb_info             store_buffer [4];
     sb_info             store_buffer_reg [4];
     logic   [1:0]       index;
-    logic               full_reg, empty_reg;
+    logic               empty;
+    logic               full_reg;
+    // logic               empty_reg;
     logic               hit;
     logic               store_resp_next;
 
@@ -41,7 +43,7 @@ import rv32i_types::*;
         if (rst) begin
             // store_buffer_reg <= '0;
             full_reg <= '0;
-            empty_reg <= '0;
+            // empty_reg <= '0;
             store_resp <= '0;
             load_addr_reg <= '0;
             load_mask_reg <= '0;
@@ -53,7 +55,7 @@ import rv32i_types::*;
         end else begin
             // store_buffer_reg <= store_buffer;
             full_reg <= full;
-            empty_reg <= empty;
+            // empty_reg <= empty;
             store_resp <= store_resp_next;
             load_addr_reg <= load_addr_next;
             load_mask_reg <= load_mask_next;
@@ -76,22 +78,23 @@ import rv32i_types::*;
         sb_ufp_wmask = '0;
         sb_ufp_wdata = '0;
         store_buffer = store_buffer_reg;
-        empty = empty_reg;
+        // empty = empty_reg;
+        empty = (store_buffer_reg[0] == '0);
 
         store_resp_next = (store_mask != '0);
 
-        load_addr_next = load_addr_reg;
-        load_mask_next = load_mask_reg;
+        load_addr_next = load_addr;
+        load_mask_next = load_mask;
 
         // if dfp_resp and no stores, load must've finished
-        if (dfp_resp && empty_reg) begin
+        if (dfp_resp && empty) begin
             load_resp = '1;
         end
 
         // check queue for load data
-        if (load_mask != '0) begin
+        if (load_mask_reg != '0) begin
             for (int i = 0; i < 4; i++) begin
-                if (store_buffer_reg[i].addr == load_addr && store_buffer_reg[i].mask == load_mask) begin
+                if (store_buffer_reg[i].addr == load_addr_reg && store_buffer_reg[i].mask == load_mask_reg) begin
                     if (i == 0) begin
                         index = '0;
                     end else if (i == 1) begin
@@ -109,19 +112,20 @@ import rv32i_types::*;
             if (hit) begin
                 load_data = store_buffer_reg[index].data;
                 load_resp = '1;
-            end else begin
-                if (!empty_reg) begin
-                    load_addr_next = load_addr;
-                    load_mask_next = load_mask;
-                end else begin
-                    sb_ufp_addr = load_addr;
-                    sb_ufp_rmask = load_mask;
-                end
             end
+            // else begin
+            //     if (!empty_reg) begin
+            //         load_addr_next = load_addr;
+            //         load_mask_next = load_mask;
+            //     end else begin
+            //         sb_ufp_addr = load_addr;
+            //         sb_ufp_rmask = load_mask;
+            //     end
+            // end
         end
 
         // send store to cache
-        if (!empty_reg) begin
+        if (!empty) begin
             if (store_buffer_reg[0].sent_to_cache && dfp_resp) begin
                 for (int i = 0; i < 3; i++) begin
                     store_buffer[i] = store_buffer_reg[i+1];
@@ -134,7 +138,7 @@ import rv32i_types::*;
                 full = '0;
             end
 
-            if (store_buffer_reg[0].sent_to_cache == '0) begin
+            if (store_buffer_reg[0].sent_to_cache == '0 && store_buffer_reg[0].mask != '0) begin
                 store_buffer[0].sent_to_cache = '1;
 
                 sb_ufp_addr = store_buffer_reg[0].addr;
@@ -152,10 +156,11 @@ import rv32i_types::*;
                 load_addr_next = '0;
                 load_mask_next = '0;
 
-            end else if (load_mask != '0) begin
-                sb_ufp_addr = load_addr;
-                sb_ufp_rmask = load_mask;
             end
+            //  else if (load_mask != '0) begin
+            //     sb_ufp_addr = load_addr;
+            //     sb_ufp_rmask = load_mask;
+            // end
         end
 
         // add store to queue
