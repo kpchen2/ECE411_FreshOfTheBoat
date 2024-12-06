@@ -30,6 +30,12 @@ package rv32i_types;
 
 
     typedef logic [6:0] physicalIndexing;
+
+    typedef struct packed {
+        logic   [31:0]  data;
+        logic   [31:0]  addr;
+        logic   [3:0]   mask;
+    } sb_info;
     
     typedef struct packed {
         logic           monitor_valid;
