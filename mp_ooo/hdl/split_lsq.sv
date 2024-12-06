@@ -165,7 +165,7 @@ module split_lsq
             load_mem[next_done_load_entry] <= load_mem_new;
             if (load_entry_is_tracked_next)
             begin
-                load_mem[load_entry_tracked] <= load_mem_tracked;
+                load_mem[load_entry_tracked_next] <= load_mem_tracked;
             end
             if (store_enqueue_valid_next)
             begin
@@ -343,7 +343,7 @@ module split_lsq
         begin
             load_mem_addr.addr_ready = 1'b1;
             load_mem_addr.addr = addr;
-            load_mem_addr.shift_bits = 1'b1;
+            load_mem_addr.shift_bits = addr[1:0];
             load_mem_addr.rs1_rdata = rs1_rdata;
         end
     end
@@ -488,6 +488,10 @@ module split_lsq
                         d_addr[1:0] = 2'b00;
                         accessing_cache = '1;
                         state_next = store_idle;
+                    end
+                    else
+                    begin
+                        state_next = load;
                     end
                     
                 end
