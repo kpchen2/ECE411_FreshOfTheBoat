@@ -51,7 +51,7 @@ import rv32i_types::*;
                 last_addr = stream_prefetch_addr;
             end
 
-            flip_prefetch = (neg_counter > 2);
+            flip_prefetch = (neg_counter > 4);
         end
     end
 

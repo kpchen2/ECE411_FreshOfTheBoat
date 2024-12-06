@@ -19,6 +19,44 @@ _start:
 
     bne x1, x2, label1
 
+label8:
+    li x1, 10
+    li x2, 20
+    li x5, 50
+    li x6, 60
+    li x8, 21
+    li x9, 28
+    li x11, 8
+    li x12, 4
+
+    li x1, 10
+    li x2, 20
+    li x5, 50
+    li x6, 60
+    li x8, 21
+    li x9, 28
+    li x11, 8
+    bne x1, x2, label9
+
+label7:
+    li x1, 10
+    li x2, 20
+    li x5, 50
+    li x6, 60
+    li x8, 21
+    li x9, 28
+    li x11, 8
+    li x12, 4
+
+    li x1, 10
+    li x2, 20
+    li x5, 50
+    li x6, 60
+    li x8, 21
+    li x9, 28
+    li x11, 8
+    bne x1, x2, label8
+
 label6:
     li x1, 10
     li x2, 20
@@ -134,7 +172,7 @@ label1:
     li x11, 8
     bne x1, x2, label2
 
-label7:
+label9:
     li x1, 10
     li x2, 20
     li x5, 50
