@@ -466,28 +466,33 @@ module split_lsq
                 if (store_mem[store_head_reg[STORE_MEM_ADDR_WIDTH - 1:0]+1'b1].valid == 1'b1 && store_mem[store_head_reg[STORE_MEM_ADDR_WIDTH - 1:0]+1'b1].addr_ready == 1'b1) 
                 begin
                     d_addr = store_mem[store_head_reg[STORE_MEM_ADDR_WIDTH - 1:0]+1'b1].addr;
-                    if (store_mem[store_head_reg[STORE_MEM_ADDR_WIDTH - 1:0] + 1'b1].rob_num == commited_rob)
-                    begin
-                        unique case (store_mem[store_head_reg[STORE_MEM_ADDR_WIDTH - 1:0]+1'b1].funct3)
-                            store_f3_sb: d_wmask = 4'b0001 << d_addr[1:0];
-                            store_f3_sh: d_wmask = 4'b0011 << d_addr[1:0];
-                            store_f3_sw: d_wmask = 4'b1111;
-                            default    : d_wmask = 'x;
-                        endcase
-                        
-                        unique case (store_mem[store_head_reg[STORE_MEM_ADDR_WIDTH - 1:0]+1'b1].funct3)
-                            store_f3_sb: d_wdata[8 *d_addr[1:0] +: 8 ] = store_mem[store_head_reg[STORE_MEM_ADDR_WIDTH - 1:0]+1'b1].store_wdata[7 :0];
-                            store_f3_sh: d_wdata[16*d_addr[1]   +: 16] = store_mem[store_head_reg[STORE_MEM_ADDR_WIDTH - 1:0]+1'b1].store_wdata[15:0];
-                            store_f3_sw: d_wdata = store_mem[store_head_reg[STORE_MEM_ADDR_WIDTH - 1:0]+1'b1].store_wdata;
-                            default    : d_wdata = 'x;
-                        endcase
-                    end
+                    unique case (store_mem[store_head_reg[STORE_MEM_ADDR_WIDTH - 1:0]+1'b1].funct3)
+                        store_f3_sb: d_wmask = 4'b0001 << d_addr[1:0];
+                        store_f3_sh: d_wmask = 4'b0011 << d_addr[1:0];
+                        store_f3_sw: d_wmask = 4'b1111;
+                        default    : d_wmask = 'x;
+                    endcase
+                    
+                    unique case (store_mem[store_head_reg[STORE_MEM_ADDR_WIDTH - 1:0]+1'b1].funct3)
+                        store_f3_sb: d_wdata[8 *d_addr[1:0] +: 8 ] = store_mem[store_head_reg[STORE_MEM_ADDR_WIDTH - 1:0]+1'b1].store_wdata[7 :0];
+                        store_f3_sh: d_wdata[16*d_addr[1]   +: 16] = store_mem[store_head_reg[STORE_MEM_ADDR_WIDTH - 1:0]+1'b1].store_wdata[15:0];
+                        store_f3_sw: d_wdata = store_mem[store_head_reg[STORE_MEM_ADDR_WIDTH - 1:0]+1'b1].store_wdata;
+                        default    : d_wdata = 'x;
+                    endcase
+
                     cache_mem_next.wmask = d_wmask;
                     cache_mem_next.wdata = d_wdata;
     
                     d_addr[1:0] = 2'b00;
                     accessing_cache = '1;
                     state_next = store_idle;
+                    
+                    if (store_mem[store_head_reg[STORE_MEM_ADDR_WIDTH - 1:0] + 1'b1].rob_num == commited_rob)
+                    begin
+                        
+                        state_next = load;
+                    end
+                    
                 end
 
                
