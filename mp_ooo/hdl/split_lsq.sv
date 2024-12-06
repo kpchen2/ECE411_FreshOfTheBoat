@@ -68,9 +68,10 @@ module split_lsq
     sq_entry_t     store_mem[STORE_MEM_QUEUE_DEPTH];
     
     // load data entries 
-    lq_entry_t      load_mem_next; // this is for writing a new entry
-    lq_entry_t      load_mem_new;  // this is for updating an entry, marking it as not valid   
+    lq_entry_t      load_mem_next; // this is for writing a new entry after get from rename dispatch
+    lq_entry_t      load_mem_new;  // this is for updating an entry, marking it as not valid after data in  
     lq_entry_t      load_mem_addr; // when an address comes in  
+    lq_entry_t      load_mem_tracked;
 
     // store data entries 
     sq_entry_t     store_enqueue_mem_next;
@@ -162,6 +163,10 @@ module split_lsq
             load_entry_tracked <= load_entry_tracked_next;
             load_mem[next_free_load_entry] <= load_mem_next;
             load_mem[next_done_load_entry] <= load_mem_new;
+            if (load_entry_is_tracked_next)
+            begin
+                load_mem[load_entry_tracked] <= load_mem_tracked;
+            end
             if (store_enqueue_valid_next)
             begin
                 store_mem[store_tail_next[STORE_MEM_ADDR_WIDTH - 1:0]] <= store_enqueue_mem_next;
@@ -255,7 +260,7 @@ module split_lsq
     always_comb
     begin
 
-        load_mem_next = '0;
+        load_mem_next = load_mem[next_free_load_entry];
         store_tail_next = store_tail_reg;
         store_enqueue_mem_next = '0;
 
@@ -371,10 +376,11 @@ module split_lsq
         store_mem_idx_out = store_tail_reg[ADDR_WIDTH - 1:0] + 1'b1;
         load_mem_idx_out = next_free_load_entry;
         accessing_cache = '0;
-        load_mem_new = '0;
+        load_mem_new = load_mem[next_done_load_entry];
         load_ready = '0;
         load_entry_is_tracked_next = '0;
         load_entry_tracked_next = '0;
+        load_mem_tracked = load_mem[load_entry_tracked_next];
         case (state)
             load: // send request to cache
             begin // loop and find a valid load to issue to cache
@@ -397,9 +403,12 @@ module split_lsq
                         load_f3_lw             : d_rmask = 4'b1111;
                         default                : d_rmask = 'x;
                     endcase
-                    cache_mem_next.rmask = d_rmask;
-                    cache_mem_next.wmask = '0;
-                    cache_mem_next.wdata = '0;
+                    load_mem_tracked = load_mem[load_entry_tracked_next];
+                    
+                    load_mem_tracked.rmask = d_rmask;
+                    
+                    // cache_mem_next.wmask = '0;
+                    // cache_mem_next.wdata = '0;
 
                     d_addr[1:0] = 2'b0;
                     accessing_cache = '1;
@@ -434,6 +443,7 @@ module split_lsq
                     cdb_mem.wdata   = '0;
                     cdb_mem.rs1_rdata = load_mem_new.rs1_rdata;
                     cdb_mem.rs2_rdata = '0;
+
                     unique case (load_mem[load_entry_tracked].funct3)
                         // rd_v = rd_wdata
                         load_f3_lb : cdb_mem.rd_v = {{24{data_in[7 +8 *load_mem[load_entry_tracked].shift_bits]}}   , data_in[8 *load_mem[load_entry_tracked].shift_bits    +: 8 ]};
