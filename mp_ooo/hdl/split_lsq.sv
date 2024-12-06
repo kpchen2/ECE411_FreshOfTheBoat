@@ -442,6 +442,7 @@ module split_lsq
                     if (discard_next_reg) 
                     begin
                         discard_next = '0;
+                        state_next = store;
                     end 
                     else 
                     begin
@@ -529,6 +530,7 @@ module split_lsq
                     if (discard_next_reg) 
                     begin
                         discard_next = '0;    
+                        state_next = load;
                     end 
                     else 
                     begin
