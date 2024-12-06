@@ -197,6 +197,8 @@ import rv32i_types::*;
     logic           false_resp, dummy_false_resp;
     logic   [31:0]  pc_in;
     logic           prefetch_stall, dummy_prefetch_stall;
+    logic   [31:0]  stream_prefetch_addr, dummy_stream_prefetch_addr;
+    logic           flip_prefetch;
 
     // assign  pc_in = pc - 32'd4;
 
@@ -204,7 +206,12 @@ import rv32i_types::*;
         pc_in = pc - 32'd4;
 
         if (prefetch_valid_reg) begin
-            pc_in[4:0] = '0;
+            if (flip_prefetch) begin
+                pc_in = pc + 32'd32;
+                pc_in[4:0] = '0;
+            end else begin
+                pc_in[4:0] = '0;
+            end
         end
     end
 
@@ -316,7 +323,8 @@ import rv32i_types::*;
         .false_resp(false_resp),
         .branch_signal(global_branch_signal),
         .prefetch_stall(prefetch_stall),
-        .full_stall(full_stall)
+        .full_stall(full_stall),
+        .stream_prefetch_addr(stream_prefetch_addr)
     );
 
     prefetch prefetch_i (
@@ -326,7 +334,9 @@ import rv32i_types::*;
         .dfp_read(dfp_read),
         .prefetch_valid(prefetch_valid),
         .prefetch_pc(prefetch_pc),
-        .branch_signal(global_branch_signal || global_branch_signal_reg)
+        .branch_signal(global_branch_signal || global_branch_signal_reg),
+        .flip_prefetch(flip_prefetch),
+        .stream_prefetch_addr(stream_prefetch_addr)
     );
 
     cache cache_d (
@@ -351,7 +361,8 @@ import rv32i_types::*;
         .false_resp(dummy_false_resp),
         .branch_signal('0),
         .prefetch_stall(dummy_prefetch_stall),
-        .full_stall(full_stall)
+        .full_stall(full_stall),
+        .stream_prefetch_addr(dummy_stream_prefetch_addr)
     );
 
     memory_queue memory_queue_i (
