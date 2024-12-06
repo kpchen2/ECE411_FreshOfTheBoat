@@ -298,7 +298,7 @@ module split_lsq
                 begin // find the store pointer ___ 
                     for (int unsigned i = 0; i < STORE_MEM_QUEUE_DEPTH; i++)
                     begin
-                        if (store_mem[i].rob_num < rob_num)
+                        if (store_mem[i].rob_num < rob_num && store_mem[i].valid)
                         begin
                             load_mem_next.store_ptr = i;
                         end
@@ -384,7 +384,7 @@ module split_lsq
             begin // loop and find a valid load to issue to cache
                 for (int unsigned i = 0; i < LOAD_MEM_QUEUE_DEPTH; i++)
                 begin
-                    if (load_mem[i].valid && load_mem[i].addr_ready && load_mem[i].store_ptr < store_head_reg[STORE_MEM_ADDR_WIDTH - 1:0]) // find valid load that has valid address
+                    if (load_mem[i].valid && load_mem[i].addr_ready && load_mem[i].store_ptr < store_head_reg[STORE_MEM_ADDR_WIDTH - 1:0] + 1'b1) // find valid load that has valid address
                     begin
                         load_ready = 1'b1;
                         load_entry_tracked_next = physicalIndexing5'(i);
