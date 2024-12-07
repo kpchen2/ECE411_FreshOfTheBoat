@@ -385,7 +385,7 @@ import rv32i_types::*;
         .rs2_rdata(fu_rs2_v_mem),
         .commited_rob(rob_head),
         .data_in(load_rdata),
-        .data_valid(d_ufp_resp),
+        // .data_valid(d_ufp_resp),
         
         // .phys_reg_out(cdb_mem.pd_s),        // OUTPUT RD_S
         // .output_valid(cdb_mem.valid),       // OUTPUT SOMEWHERE
@@ -403,6 +403,8 @@ import rv32i_types::*;
         .sb_store_resp(sb_store_resp),
         .sb_full(sb_full)
     );
+
+    logic   cur_idle;
 
     cache_arbiter arbiter (
         .clk(clk),

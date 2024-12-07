@@ -29,7 +29,7 @@ import rv32i_types::*;
 
     // dcache inputs
     input   logic   [31:0]  data_in,
-    input   logic           data_valid,
+    // input   logic           data_valid,
 
     // outputs
     output  logic           full,

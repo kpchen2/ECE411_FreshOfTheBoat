@@ -40,8 +40,6 @@ import rv32i_types::*;
     logic   [31:0]      load_addr_next, load_addr_reg;
     logic   [3:0]       load_mask_next, load_mask_reg;
 
-    logic               currently_in_load, currently_in_load_reg;
-
     always_ff @(posedge clk) begin
         if (rst) begin
             // store_buffer_reg <= '0;
@@ -50,7 +48,6 @@ import rv32i_types::*;
             store_resp <= '0;
             load_addr_reg <= '0;
             load_mask_reg <= '0;
-            currently_in_load_reg <= '0;
 
             for (int i = 0; i < 8; i++) begin
                 store_buffer_reg[i] <= '0;
@@ -63,7 +60,6 @@ import rv32i_types::*;
             store_resp <= store_resp_next;
             load_addr_reg <= load_addr_next;
             load_mask_reg <= load_mask_next;
-            currently_in_load_reg <= currently_in_load;
 
             for (int i = 0; i < 8; i++) begin
                 store_buffer_reg[i] <= store_buffer[i];
@@ -84,7 +80,6 @@ import rv32i_types::*;
         sb_ufp_wmask = '0;
         sb_ufp_wdata = '0;
         store_buffer = store_buffer_reg;
-        currently_in_load = currently_in_load_reg;
         // empty = empty_reg;
         empty = (store_buffer_reg[0] == '0);
 
@@ -99,10 +94,9 @@ import rv32i_types::*;
         end
 
         // if dfp_resp and no stores, load must've finished
-        if (ufp_resp && currently_in_load_reg) begin
+        if (ufp_resp && empty) begin
             load_resp = '1;
             load_data = ufp_rdata;
-            currently_in_load = '0;
         end
 
         // check queue for load data
@@ -149,68 +143,31 @@ import rv32i_types::*;
             // end
         end
 
-        // send store to cache
-        // if (!empty) begin
-        //     if (store_buffer_reg[0].sent_to_cache && ufp_resp) begin
-        //         for (int i = 0; i < 7; i++) begin
-        //             store_buffer[i] = store_buffer_reg[i+1];
-        //         end
-        //         store_buffer[7] = '0;
-
-        //         if (store_buffer[0] == '0) begin
-        //             empty = '1;
-        //         end
-        //         full = '0;
-        //     end
-
-        //     if (store_buffer_reg[0].sent_to_cache == '0 && store_buffer_reg[0].mask != '0) begin
-        //         store_buffer[0].sent_to_cache = '1;
-
-        //         sb_ufp_addr = store_buffer_reg[0].addr;
-        //         sb_ufp_wmask = store_buffer_reg[0].mask;
-        //         sb_ufp_wdata = store_buffer_reg[0].data;
-        //     end
-            
-
-        // // send load to cache
-        // end else begin
-        //     if (load_mask_reg != '0) begin
-        //         sb_ufp_addr = load_addr_reg;
-        //         sb_ufp_rmask = load_mask_reg;
-
-        //         load_addr_next = '0;
-        //         load_mask_next = '0;
-
-        //     end
-        //     //  else if (load_mask != '0) begin
-        //     //     sb_ufp_addr = load_addr;
-        //     //     sb_ufp_rmask = load_mask;
-        //     // end
-        // end
-
-        if (!full && load_mask_reg != '0) begin
-            // if (load_mask_reg != '0) begin
-                sb_ufp_addr = load_addr_reg;
-                sb_ufp_rmask = load_mask_reg;
-
-                load_addr_next = '0;
-                load_mask_next = '0;
-
-                currently_in_load = '1;
-            // end
-
-        end else if (!currently_in_load) begin
-            if (store_buffer_reg[0].sent_to_cache && ufp_resp) begin
-                for (int i = 0; i < 7; i++) begin
-                    store_buffer[i] = store_buffer_reg[i+1];
-                end
-                store_buffer[7] = '0;
-
-                if (store_buffer[0] == '0) begin
-                    empty = '1;
-                end
-                full = '0;
+        if (store_buffer_reg[0].sent_to_cache && ufp_resp) begin
+            for (int i = 0; i < 7; i++) begin
+                store_buffer[i] = store_buffer_reg[i+1];
             end
+            store_buffer[7] = '0;
+
+            if (store_buffer[0] == '0) begin
+                empty = '1;
+            end
+            full = '0;
+        end
+
+        // send store to cache
+        if (!empty) begin
+            // if (store_buffer_reg[0].sent_to_cache && ufp_resp) begin
+            //     for (int i = 0; i < 7; i++) begin
+            //         store_buffer[i] = store_buffer_reg[i+1];
+            //     end
+            //     store_buffer[7] = '0;
+
+            //     if (store_buffer[0] == '0) begin
+            //         empty = '1;
+            //     end
+            //     full = '0;
+            // end
 
             if (store_buffer_reg[0].sent_to_cache == '0 && store_buffer_reg[0].mask != '0) begin
                 store_buffer[0].sent_to_cache = '1;
@@ -219,6 +176,22 @@ import rv32i_types::*;
                 sb_ufp_wmask = store_buffer_reg[0].mask;
                 sb_ufp_wdata = store_buffer_reg[0].data;
             end
+            
+
+        // send load to cache
+        end else begin
+            if (load_mask_reg != '0) begin
+                sb_ufp_addr = load_addr_reg;
+                sb_ufp_rmask = load_mask_reg;
+
+                load_addr_next = '0;
+                load_mask_next = '0;
+
+            end
+            //  else if (load_mask != '0) begin
+            //     sb_ufp_addr = load_addr;
+            //     sb_ufp_rmask = load_mask;
+            // end
         end
 
         // add store to queue
