@@ -30,6 +30,14 @@ package rv32i_types;
 
 
     typedef logic [6:0] physicalIndexing;
+    typedef logic [1:0] sbIndexing;
+
+    typedef struct packed {
+        logic   [31:0]  data;
+        logic   [31:0]  addr;
+        logic   [3:0]   mask;
+        logic           sent_to_cache;
+    } sb_info;
     
     typedef struct packed {
         logic           monitor_valid;
@@ -204,6 +212,9 @@ package rv32i_types;
 
         logic   [31:0]  rs1_rdata;
         logic   [31:0]  rs2_rdata;
+
+        logic   [ROB_ADDR_WIDTH - 1:0]  tracked_rob_num;
+        logic                           accessing_cache;
     } lsq_entry_t;
     
     typedef struct packed {
