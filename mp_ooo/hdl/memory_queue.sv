@@ -151,7 +151,8 @@ import rv32i_types::*;
         mem_idx_out = tail_reg[ADDR_WIDTH - 1:0] + 1'b1;
         accessing_cache_next = '0;
 
-        load_data_in = '0;
+        // load_data_in = '0;
+        load_data_in = (sb_data_valid) ? sb_data_in : data_in;
 
         sb_data_valid_next = sb_data_valid;
         sb_store_resp_next = sb_store_resp;
@@ -173,13 +174,13 @@ import rv32i_types::*;
                 cdb_mem.addr    = dequeue_mem_next.addr;
                 cdb_mem.rmask   = dequeue_mem_next.rmask;
                 cdb_mem.wmask   = dequeue_mem_next.wmask;
-                cdb_mem.rdata   = (dequeue_mem_next.opcode == op_b_load)  ? data_in : '0;
+                cdb_mem.rdata   = (dequeue_mem_next.opcode == op_b_load)  ? load_data_in : '0;
                 cdb_mem.wdata   = (dequeue_mem_next.opcode == op_b_store) ? dequeue_mem_next.wdata : '0;
                 cdb_mem.rs1_rdata = dequeue_mem_next.rs1_rdata;
                 cdb_mem.rs2_rdata = dequeue_mem_next.rs2_rdata;
 
                 if (dequeue_mem_next.opcode == op_b_load) begin
-                    load_data_in = (sb_data_valid) ? sb_data_in : data_in;
+                    // load_data_in = (sb_data_valid) ? sb_data_in : data_in;
 
                     unique case (mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].funct3)
                         // rd_v = rd_wdata
@@ -217,7 +218,7 @@ import rv32i_types::*;
                     d_addr[1:0] = 2'b0;
                     accessing_cache_next = '1;
 
-                end else if (mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].rob_num == commited_rob) begin
+                end else if (mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].rob_num == commited_rob && !sb_full) begin
                     d_addr = mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].addr;
 
                     unique case (mem[head_reg[ADDR_WIDTH - 1:0]+1'b1].funct3)
