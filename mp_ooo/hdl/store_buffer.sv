@@ -28,9 +28,9 @@ import rv32i_types::*;
     output  logic   [31:0]  sb_ufp_wdata
 );
 
-    sb_info             store_buffer [8];
-    sb_info             store_buffer_reg [8];
-    logic   [2:0]       index;
+    sb_info             store_buffer [4];
+    sb_info             store_buffer_reg [4];
+    logic   [1:0]       index;
     logic               empty;
     // logic               full_reg;
     // logic               empty_reg;
@@ -49,7 +49,7 @@ import rv32i_types::*;
             load_addr_reg <= '0;
             load_mask_reg <= '0;
 
-            for (int i = 0; i < 8; i++) begin
+            for (int i = 0; i < 4; i++) begin
                 store_buffer_reg[i] <= '0;
             end
 
@@ -61,7 +61,7 @@ import rv32i_types::*;
             load_addr_reg <= load_addr_next;
             load_mask_reg <= load_mask_next;
 
-            for (int i = 0; i < 8; i++) begin
+            for (int i = 0; i < 4; i++) begin
                 store_buffer_reg[i] <= store_buffer[i];
             end
         end
@@ -70,7 +70,7 @@ import rv32i_types::*;
     always_comb begin
         index = '0;
         // full = full_reg;
-        full = (store_buffer_reg[7] != '0);
+        full = (store_buffer_reg[3] != '0);
         hit = '0;
         load_data = '0;
         load_resp = '0;
@@ -101,25 +101,18 @@ import rv32i_types::*;
 
         // check queue for load data
         if (load_mask_reg != '0) begin
-            for (int i = 0; i < 8; i++) begin
+            for (int i = 0; i < 4; i++) begin
                 if (store_buffer_reg[i].addr == load_addr_reg && store_buffer_reg[i].mask == load_mask_reg) begin
-                    if (i == 0) begin
-                        index = '0;
-                    end else if (i == 1) begin
-                        index = 3'b001;
-                    end else if (i == 2) begin
-                        index = 3'b010;
-                    end else if (i == 3) begin
-                        index = 3'b011;
-                    end else if (i == 4) begin
-                        index = 3'b100;
-                    end else if (i == 5) begin
-                        index = 3'b101;
-                    end else if (i == 6) begin
-                        index = 3'b110;
-                    end else begin
-                        index = '1;
-                    end
+                    index = sbIndexing'(i);
+                    // if (i == 0) begin
+                    //     index = '0;
+                    // end else if (i == 1) begin
+                    //     index = 2'b01;
+                    // end else if (i == 2) begin
+                    //     index = 2'b10;
+                    // end else begin
+                    //     index = '1;
+                    // end
 
                     hit = '1;
                 end
@@ -143,31 +136,19 @@ import rv32i_types::*;
             // end
         end
 
-        if (store_buffer_reg[0].sent_to_cache && ufp_resp) begin
-            for (int i = 0; i < 7; i++) begin
-                store_buffer[i] = store_buffer_reg[i+1];
-            end
-            store_buffer[7] = '0;
-
-            if (store_buffer[0] == '0) begin
-                empty = '1;
-            end
-            full = '0;
-        end
-
         // send store to cache
         if (!empty) begin
-            // if (store_buffer_reg[0].sent_to_cache && ufp_resp) begin
-            //     for (int i = 0; i < 7; i++) begin
-            //         store_buffer[i] = store_buffer_reg[i+1];
-            //     end
-            //     store_buffer[7] = '0;
+            if (store_buffer_reg[0].sent_to_cache && ufp_resp) begin
+                for (int i = 0; i < 3; i++) begin
+                    store_buffer[i] = store_buffer_reg[i+1];
+                end
+                store_buffer[3] = '0;
 
-            //     if (store_buffer[0] == '0) begin
-            //         empty = '1;
-            //     end
-            //     full = '0;
-            // end
+                if (store_buffer[0] == '0) begin
+                    empty = '1;
+                end
+                full = '0;
+            end
 
             if (store_buffer_reg[0].sent_to_cache == '0 && store_buffer_reg[0].mask != '0) begin
                 store_buffer[0].sent_to_cache = '1;
@@ -196,25 +177,19 @@ import rv32i_types::*;
 
         // add store to queue
         if (store_mask != '0) begin
-            for (int i = 7; i >= 0; i--) begin
+            for (int i = 3; i >= 0; i--) begin
                 if (store_buffer[i] == '0) begin
-                    if (i == 0) begin
-                        index = '0;
-                    end else if (i == 1) begin
-                        index = 3'b001;
-                    end else if (i == 2) begin
-                        index = 3'b010;
-                    end else if (i == 3) begin
-                        index = 3'b011;
-                    end else if (i == 4) begin
-                        index = 3'b100;
-                    end else if (i == 5) begin
-                        index = 3'b101;
-                    end else if (i == 6) begin
-                        index = 3'b110;
-                    end else begin
-                        index = '1;
-                    end
+                    index = sbIndexing'(i);
+                    
+                    // if (i == 0) begin
+                    //     index = '0;
+                    // end else if (i == 1) begin
+                    //     index = 2'b01;
+                    // end else if (i == 2) begin
+                    //     index = 2'b10;
+                    // end else begin
+                    //     index = '1;
+                    // end
                 end
             end
 

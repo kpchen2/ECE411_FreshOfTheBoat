@@ -30,6 +30,7 @@ package rv32i_types;
 
 
     typedef logic [6:0] physicalIndexing;
+    typedef logic [1:0] sbIndexing;
 
     typedef struct packed {
         logic   [31:0]  data;
