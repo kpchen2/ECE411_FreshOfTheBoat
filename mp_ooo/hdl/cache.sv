@@ -64,6 +64,11 @@ import rv32i_types::*;
     logic   [31:0]  prefetch_addr;
     logic           prefetch_write;
 
+    logic   [31:0]  performance_addr;
+    logic           performance_valid;
+    logic   [63:0]  performance_hits, performance_hits_reg, performance_misses, performance_misses_reg;
+    logic           performance_counter, performance_counter_reg;
+
     always_ff @(posedge clk) begin
         if (rst) begin
             stage_reg <= '0;
@@ -79,6 +84,37 @@ import rv32i_types::*;
             dfp_write_read <= dfp_switch_reg ? !dfp_write_read : dfp_write_read;
         end
     end
+
+    always_ff @(posedge clk) begin
+        if (rst) begin
+            performance_hits_reg <= '0;
+            performance_misses_reg <= '0;
+            performance_counter_reg <= '0;
+        end else begin
+            performance_hits_reg <= performance_hits;
+            performance_misses_reg <= performance_misses;
+            performance_counter_reg <= performance_counter;
+        end
+    end
+
+    always_comb begin
+        performance_hits = performance_hits_reg;
+        performance_misses = performance_misses_reg;
+        performance_counter = performance_counter_reg;
+
+        if (performance_valid) begin
+            performance_counter = '1;
+        end
+
+        if (branch_signal && performance_counter) begin
+            performance_misses = performance_misses_reg + 64'd1;
+            performance_counter = '0;
+            
+        end else if (performance_addr == ufp_addr && (ufp_rmask != '0 || ufp_wmask != '0) && performance_counter) begin
+            performance_hits = performance_hits_reg + 64'd1;
+            performance_counter = '0;
+        end
+    end 
 
     stage_1 stage_1_i (
         .clk(clk),
@@ -150,7 +186,10 @@ import rv32i_types::*;
         .prefetch_addr(prefetch_addr),
         .branch_signal(branch_signal),
         .full_stall(full_stall),
-        .stream_prefetch_addr(stream_prefetch_addr)
+        .stream_prefetch_addr(stream_prefetch_addr),
+
+        .performance_addr(performance_addr),
+        .performance_valid(performance_valid)
     );
 
     logic   [3:0]   arr_write_addr;

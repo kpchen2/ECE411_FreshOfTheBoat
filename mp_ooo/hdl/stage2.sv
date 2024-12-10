@@ -37,7 +37,10 @@ import rv32i_types::*;
     output  logic   [31:0]  prefetch_addr,
     input   logic           branch_signal,
     input   logic           full_stall,
-    output  logic   [31:0]  stream_prefetch_addr
+    output  logic   [31:0]  stream_prefetch_addr,
+
+    output  logic   [31:0]  performance_addr,
+    output  logic           performance_valid
 );
 
     logic           cache_hit;
@@ -50,6 +53,8 @@ import rv32i_types::*;
     logic           full_stall_next, full_stall_reg;
     logic           dfp_read_reg;
 
+    logic   [31:0]  performance_addr_reg;
+
     assign  full_stall_next = full_stall;
 
     always_ff @(posedge clk) begin
@@ -59,12 +64,17 @@ import rv32i_types::*;
             branch_signal_reg <= '0;
             full_stall_reg <= '0;
             dfp_read_reg <= '0;
+
+            performance_addr_reg <= '0;
+
         end else begin
             prefetch_reg <= prefetch;
             prefetch_addr_reg <= prefetch_addr;
             branch_signal_reg <= branch_signal_next;
             full_stall_reg <= full_stall_next;
             dfp_read_reg <= dfp_read;
+
+            performance_addr_reg <= performance_addr;
         end
     end
 
@@ -90,6 +100,9 @@ import rv32i_types::*;
         branch_signal_next = branch_signal ? '1 : branch_signal_reg;
         stream_prefetch_addr = '0;
 
+        performance_addr = performance_addr_reg;
+        performance_valid = '0;
+
         if (rst) begin
             dfp_addr = '0;
             ufp_resp = '0;
@@ -105,6 +118,11 @@ import rv32i_types::*;
 
             prefetch = stage_reg.prefetch ? '1 : prefetch_reg;
             prefetch_addr = prefetch_addr_reg;
+
+            if (stage_reg.prefetch) begin
+                performance_addr = stage_reg.addr;
+                performance_valid = '1;
+            end
 
             for (int i = 0; i < 4; i++) begin
                 if (valid_out[i] && tag_out[i][22:0] == stage_reg.tag && !write_done_reg) begin
