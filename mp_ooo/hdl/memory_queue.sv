@@ -6,6 +6,7 @@ import rv32i_types::*;
 (
     input   logic           clk,
     input   logic           rst,
+    input   logic           branch_signal,
 
     // rename/dispatch inputs
     input   logic   [31:0]  inst,
@@ -73,16 +74,30 @@ import rv32i_types::*;
 
     logic           accessing_cache;
 
+    logic   [127:0] timer;
+    logic   [127:0] total_time;
+    logic   [127:0] total_instr;
+
     always_ff @ (posedge clk) begin
         enqueue_reg <= enqueue_valid;
         dequeue_reg <= data_valid;
 
-        if (rst) begin
+        if (rst || branch_signal) begin
             tail_reg <= '1;
             head_reg <= '1;
 
             for (int i = 0; i < QUEUE_DEPTH; i++) begin
                 mem[i] <= '0;
+            end
+
+            if (!branch_signal) begin
+                timer <= '0;
+                total_time <= '0;
+                total_instr <= '0;
+            end else begin
+                timer <= timer;
+                total_time <= total_time;
+                total_instr <= total_instr;
             end
 
         end else begin
@@ -91,6 +106,8 @@ import rv32i_types::*;
                 mem[tail_next[ADDR_WIDTH - 1:0]] <= enqueue_mem_next;
             end
             // dequeue
+            total_time <= (data_valid_next) ? total_time + (timer - mem[head_next[ADDR_WIDTH - 1:0]].timer) : total_time;
+            total_instr <= (data_valid_next) ? total_instr + 128'd1 : total_instr;
             if (data_valid_next) begin
                 mem[head_next[ADDR_WIDTH - 1:0]] <= dequeue_mem_next;
             end
@@ -112,6 +129,8 @@ import rv32i_types::*;
   
             tail_reg <= tail_next;
             head_reg <= head_next;
+
+            timer <= timer + 1;
         end
     end
 
@@ -226,6 +245,7 @@ import rv32i_types::*;
                     enqueue_mem_next.pd_s = phys_reg_in;
                     enqueue_mem_next.rob_num = rob_num;
                     enqueue_mem_next.rd_s = rd_dispatch;
+                    enqueue_mem_next.timer = timer;
 
                 end else begin
                     tail_next = tail_reg; 

@@ -202,6 +202,8 @@ package rv32i_types;
 
         logic   [31:0]  rs1_rdata;
         logic   [31:0]  rs2_rdata;
+
+        logic   [127:0] timer;
     } lsq_entry_t;
     
     typedef struct packed {
