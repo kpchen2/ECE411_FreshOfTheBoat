@@ -40,6 +40,9 @@ import rv32i_types::*;
     logic   [31:0]      load_addr_next, load_addr_reg;
     logic   [3:0]       load_mask_next, load_mask_reg;
 
+    logic   [127:0]     cycles_saved;
+    logic   [127:0]     total_cycles;
+
     always_ff @(posedge clk) begin
         if (rst) begin
             // store_buffer_reg <= '0;
@@ -53,6 +56,9 @@ import rv32i_types::*;
                 store_buffer_reg[i] <= '0;
             end
 
+            cycles_saved <= '0;
+            total_cycles <= '0;
+
         end else begin
             // store_buffer_reg <= store_buffer;
             // full_reg <= full;
@@ -64,6 +70,9 @@ import rv32i_types::*;
             for (int i = 0; i < 4; i++) begin
                 store_buffer_reg[i] <= store_buffer[i];
             end
+
+            cycles_saved <= (!empty && load_mask_next == '0) ? cycles_saved + 1 : cycles_saved;
+            total_cycles <= total_cycles + 1;
         end
     end
 

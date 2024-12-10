@@ -215,8 +215,6 @@ package rv32i_types;
 
         logic   [ROB_ADDR_WIDTH - 1:0]  tracked_rob_num;
         logic                           accessing_cache;
-
-        logic   [127:0] timer;
     } lsq_entry_t;
     
     typedef struct packed {
